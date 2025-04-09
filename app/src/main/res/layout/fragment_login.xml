@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragment.LoginFragment">
+    
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Layout Email -->
+            <LinearLayout
+                android:id="@+id/layoutEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp">
+
+                <TextView
+                    android:id="@+id/tvEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="7dp"
+                    android:text="Email"
+                    android:textSize="12sp"
+                    android:textColor="@color/maroon"
+                    android:drawableLeft="@drawable/ic_email_19"
+                    android:drawablePadding="8dp"
+                    android:drawableTint="@color/maroon"
+                    android:fontFamily="@font/poppins_bold"/>
+                
+                <EditText
+                    android:id="@+id/etEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textEmailAddress"
+                    android:hint="Masukkan Email"
+                    android:textSize="12sp"
+                    android:padding="16dp"
+                    android:background="@drawable/frame_edit_text"
+                    android:fontFamily="@font/poppins_regular"/>
+
+            </LinearLayout>
+
+            <!-- Layout Password -->
+            <LinearLayout
+                android:id="@+id/layoutPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                android:layout_marginTop="20dp">
+
+                <TextView
+                    android:id="@+id/tvPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="7dp"
+                    android:text="Password"
+                    android:textSize="12sp"
+                    android:textColor="@color/maroon"
+                    android:drawableLeft="@drawable/ic_password_19"
+                    android:drawablePadding="8dp"
+                    android:drawableTint="@color/maroon"
+                    android:fontFamily="@font/poppins_bold"/>
+
+                <EditText
+                    android:id="@+id/etPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"
+                    android:hint="Masukkan Password"
+                    android:textSize="12sp"
+                    android:padding="16dp"
+                    android:background="@drawable/frame_edit_text"
+                    android:fontFamily="@font/poppins_regular"/>
+            </LinearLayout>
+
+            <!-- Layout Sign In Button -->
+            <LinearLayout
+                android:id="@+id/layoutSignInButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                android:layout_marginTop="20dp">
+
+                <Button
+                    android:id="@+id/btnSignIn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="7dp"
+                    android:backgroundTint="@color/maroon"
+                    android:text="Masuk"
+                    android:textSize="12sp"
+                    android:textColor="@color/putih"
+                    android:drawablePadding="8dp"
+                    android:drawableTint="@color/maroon"
+                    android:fontFamily="@font/poppins_bold"/>
+
+            </LinearLayout>
+
+            <!-- Layout Signin with Google -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                android:layout_marginTop="20dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="atau masuk menggunakan"
+                    android:textSize="12sp"
+                    android:textColor="@color/maroon"
+                    android:textAlignment="center"/>
+
+                <ImageView
+                    android:id="@+id/btnSignInGoogle"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/img_google"
+                    android:contentDescription="Signin with Google Button" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</FrameLayout>

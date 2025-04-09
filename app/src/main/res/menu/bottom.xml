@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <!-- Menu Beranda -->
+    <item
+        android:id="@+id/nav_beranda"
+        android:title="Beranda"
+        android:icon="@drawable/ic_home_29"
+        app:cnb_backgroundColor="@color/maroon"
+        app:cnb_iconColor="@color/putih"/>
+
+    <!-- Menu Pindai Motif -->
+    <item
+        android:id="@+id/nav_pindai"
+        android:title="Pindai Motif"
+        android:icon="@drawable/ic_pindai_29"
+        app:cnb_backgroundColor="@color/maroon"
+        app:cnb_iconColor="@color/putih"/>
+
+    <!-- Menu Notifkasi -->
+    <item
+        android:id="@+id/nav_notifikasi"
+        android:title="Notifikasi"
+        android:icon="@drawable/ic_notifikasi_29"
+        app:cnb_backgroundColor="@color/maroon"
+        app:cnb_iconColor="@color/putih"/>
+
+    <!-- Menu Akun -->
+    <item
+        android:id="@+id/nav_akun"
+        android:title="Akun"
+        android:icon="@drawable/ic_akun_29"
+        app:cnb_backgroundColor="@color/maroon"
+        app:cnb_iconColor="@color/putih"/>
+
+</menu>

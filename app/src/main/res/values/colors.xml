@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- Warna aplikasi -->
+    <!-- Utama: -->
+    <color name="maroon">#8D0B41</color>
+    <color name="gold">#FABC3F</color>
+
+    <!-- Sekunder: -->
+    <color name="hijau">#2E7D32</color>
+    <color name="biru">#283593</color>
+
+    <!-- Netral: -->
+    <color name="putih">#FFFFFF</color>
+    <color name="abu_terang">#F5F5F5</color>
+    <color name="abu_gelap">#212121</color>
+
+    <!-- Peringatan -->
+    <color name="merah">#FFF44336</color>
+
+</resources>
