@@ -1,7 +1,6 @@
 package com.example.sasindai.fragment;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -36,12 +35,13 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
-import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -174,9 +174,42 @@ public class LoginFragment extends Fragment {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            Log.d("Login dengan Email/Password", "Berhasil masuk dengan email");
+                            Log.d("Login dengan Email/Password", "Berhasil mendapatkan getCurrentUser, cek role");
                             FirebaseUser user = firebaseAuth.getCurrentUser();
-                            updateUI(user);
+
+                            if (user != null) {
+                                String uid = user.getUid();
+                                DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(uid);
+
+                                userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        if (snapshot.exists()) {
+                                            String role = snapshot.child("role").getValue(String.class);
+                                            Log.d("Login Fragment", "Log Role: " + role);
+                                            if ("ROLE_REGULER".equals(role)) {
+                                                Log.d("Login Fragment", "User reguler berhasil login, akses diizinkan");
+                                                sharedPreferences.edit().putBoolean("isLoggedIn", true).apply();
+                                                updateUI(user);
+                                            } else {
+                                                Log.w("Login Fragment", "Bukan user reguler, akses dibatalkan. Role: " + role);
+                                                firebaseAuth.signOut();
+                                                sharedPreferences.edit().putBoolean("isLoggedIn", false).apply();
+                                                Toast.makeText(requireContext(), "Autentikasi gagal", Toast.LENGTH_SHORT).show();
+                                            }
+                                        } else {
+                                            firebaseAuth.signOut();
+                                            Toast.makeText(requireContext(), "Data pengguna tidak ditemukan di database", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+                                        Log.e("Login", "Database error: " + error.getMessage());
+                                        Toast.makeText(requireContext(), "Terjadi kesalahan saat memuat data", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
                         } else {
                             Log.w("Login dengan Email/Password", "Gagal masuk dengan email", task.getException());
                             Toast.makeText(requireContext(), "Periksa kembali E-Mail atau Password Anda",
@@ -185,6 +218,7 @@ public class LoginFragment extends Fragment {
                         }
                     }
                 });
+
     }
 
     // End Email/Password Method
@@ -222,8 +256,14 @@ public class LoginFragment extends Fragment {
                         Log.d("Login Fragment", "Sign in dengan credential berhasil");
                         FirebaseUser user = firebaseAuth.getCurrentUser();
                         Toast.makeText(requireContext(), "Login Berhasil!", Toast.LENGTH_SHORT).show();
-                        saveUserToFirebase(user, "google");
-                        updateUI(firebaseAuth.getCurrentUser());
+                        if (user != null) {
+                            saveUserToFirebase(user);
+                            updateUI(firebaseAuth.getCurrentUser());
+                        } else {
+                            Log.w("Register Fragment", "User masih null setelah login");
+                            Toast.makeText(requireContext(), "Terjadi kesalahan saat login!", Toast.LENGTH_SHORT).show();
+                        }
+
                     } else {
                         Log.w("Login Fragment", "Sign in dengan credential gagal", task.getException());
                         Toast.makeText(requireContext(), "Login Gagal!", Toast.LENGTH_SHORT).show();
@@ -237,31 +277,35 @@ public class LoginFragment extends Fragment {
     private void updateUI(FirebaseUser currentUser) {
         Log.d("Login Fragment", "currentUser: " + (currentUser != null));
 
-        if (currentUser != null) {
-            sharedPreferences.edit().putBoolean("isLoggedIn", true).apply();
+        if (currentUser != null && sharedPreferences.getBoolean("isLoggedIn", false)) {
             Intent intent = new Intent(requireActivity(), MainHostActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
-            Toast.makeText(requireContext(), "Selamat Datang!", Toast.LENGTH_SHORT).show();
         } else {
             sharedPreferences.edit().putBoolean("isLoggedIn", false).apply();
         }
     }
 
+    // Menyimpan data pengguna setelah berhasil login (testing fungsi) metode google
+    private void saveUserToFirebase(FirebaseUser user) {
+        String namaLengkap = user.getDisplayName() != null ? user.getDisplayName() : "Tamu";
+        saveUserToFirebase(user, namaLengkap);
+    }
+
     // Menyimpan data pengguna setelah berhasil login (testing fungsi)
-    private void saveUserToFirebase(FirebaseUser user, String authMethod) {
+    private void saveUserToFirebase(FirebaseUser user, String namaLengkap) {
         if (user == null) return;
 
         DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("users");
         String uid = user.getUid();
         String email = user.getEmail() != null ? user.getEmail() : "Tamu";
         String phone = user.getPhoneNumber() != null ? user.getPhoneNumber() : "";
-        String role = "user";
+        String role = "ROLE_REGULER";
 
         // Debug
         Log.d("Simpan User", "Mengambil uid user: " + uid);
 
-        UserData newUser = new UserData(uid, email, phone, role, authMethod, new AlamatData(), false);
+        UserData newUser = new UserData(uid, email, namaLengkap, phone, role, "google", new AlamatData(), false);
 
         usersRef.child(uid).setValue(newUser).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {

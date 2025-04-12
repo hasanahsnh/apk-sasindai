@@ -3,7 +3,6 @@ package com.example.sasindai.fragment;
 import static android.app.ProgressDialog.show;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -166,6 +165,7 @@ public class RegisterFragment extends Fragment {
 
         String email = etEmailDaftar.getText().toString().trim();
         String password = etPasswordDaftar.getText().toString().trim();
+        String namaLengkap = etNamaLengkapDaftar.getText().toString().trim();
 
         if (email.isEmpty() || password.isEmpty()) {
             Toast.makeText(requireContext(), "Masukkan E-Mail atau Password terlebih dahulu!", Toast.LENGTH_SHORT).show();
@@ -183,7 +183,7 @@ public class RegisterFragment extends Fragment {
                         if (task.isSuccessful()) {
                             Log.d("Daftar User", "createUserWithEmail:success");
                             FirebaseUser user = firebaseAuth.getCurrentUser();
-                            saveUserToFirebase(user, "email/password");
+                            saveUserToFirebase(user, "email/password", namaLengkap);
                             updateUI(user);
                         } else {
                             Log.w("Daftar User", "createUserWithEmail:failure", task.getException());
@@ -230,8 +230,13 @@ public class RegisterFragment extends Fragment {
                         Log.d("Register Fragment", "Sign Up dengan credential berhasil");
                         FirebaseUser user = firebaseAuth.getCurrentUser();
                         Toast.makeText(requireContext(), "Login Berhasil!", Toast.LENGTH_SHORT).show();
-                        saveUserToFirebase(user, "google");
-                        updateUI(user);
+                        if (user != null) {
+                            saveUserToFirebase(user);
+                            updateUI(user);
+                        } else {
+                            Log.w("Register Fragment", "User masih null setelah login");
+                            Toast.makeText(requireContext(), "Terjadi kesalahan saat login!", Toast.LENGTH_SHORT).show();
+                        }
                     } else {
                         Log.w("Register Fragment", "Sign Up dengan credential gagal", task.getException());
                         Toast.makeText(requireContext(), "Login Gagal!", Toast.LENGTH_SHORT).show();
@@ -250,14 +255,19 @@ public class RegisterFragment extends Fragment {
             Intent intent = new Intent(requireActivity(), MainHostActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
-            Toast.makeText(requireContext(), "Selamat Datang!", Toast.LENGTH_SHORT).show();
         } else {
             sharedPreferences.edit().putBoolean("isLoggedIn", false).apply();
         }
     }
 
-    // Menyimpan data pengguna setelah berhasil login (testing fungsi)
-    private void saveUserToFirebase(FirebaseUser user, String authMethod) {
+    // Menyimpan data nama lengkap dengan metode auth google
+    private void saveUserToFirebase(FirebaseUser user) {
+        String namaLengkap = user.getDisplayName() != null ? user.getDisplayName() : "Tamu";
+        saveUserToFirebase(user, "google", namaLengkap);
+    }
+
+    // Menyimpan data pengguna setelah berhasil login (testing fungsi) manual
+    private void saveUserToFirebase(FirebaseUser user, String authMethod, String namaLengkap) {
         if (user == null) return;
 
         DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("users");
@@ -269,7 +279,7 @@ public class RegisterFragment extends Fragment {
         // Debug
         Log.d("Simpan User", "Mengambil uid user: " + uid);
 
-        UserData newUser = new UserData(uid, email, phone, role, authMethod, new AlamatData(), false);
+        UserData newUser = new UserData(uid, email, namaLengkap, phone, role, authMethod, new AlamatData(), false);
 
         usersRef.child(uid).setValue(newUser).addOnCompleteListener(task -> {
            if (task.isSuccessful()) {
