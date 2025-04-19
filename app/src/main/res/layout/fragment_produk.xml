@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context=".fragment.ProdukFragment"
+    android:background="@color/abu_terang">
+
+    <!-- Produk Container -->
+    <GridView
+        android:id="@+id/gridViewContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:numColumns="2"
+        tools:listitem="@layout/list_produk"
+        android:horizontalSpacing="8dp"
+        android:verticalSpacing="8dp"
+        android:stretchMode="columnWidth"
+        android:padding="8dp"
+        android:scrollbars="none"
+        android:gravity="center"/>
+
+</FrameLayout>

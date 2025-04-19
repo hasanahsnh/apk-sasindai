@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-
     <!-- Permission -->
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -16,6 +15,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Sasindai"
         tools:targetApi="31">
+        <activity
+            android:name=".KaPasaranHostActivity"
+            android:exported="false" />
+        <activity
+            android:name=".DetailProdukActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ProdukActivity"
+            android:exported="false" />
         <activity
             android:name=".KaPasaranActivity"
             android:exported="false" />

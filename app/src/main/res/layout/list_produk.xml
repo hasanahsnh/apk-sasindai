@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/frame_produk">
+
+    <!-- Img Produk -->
+    <ImageView
+        android:id="@+id/imgProduk"
+        android:layout_width="match_parent"
+        android:layout_height="160dp"
+        android:layout_marginBottom="8dp"
+        android:scaleType="centerCrop" />
+
+    <!-- Linear Layout 1 -->
+    <LinearLayout
+        android:id="@+id/layoutItem_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="8dp">
+
+        <!-- Nama Produk -->
+        <TextView
+            android:id="@+id/tvNamaProduk"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nama Produk"
+            android:textSize="14sp"
+            android:fontFamily="@font/poppins_bold"
+            android:textColor="@color/black"/>
+
+        <!-- Harga -->
+        <TextView
+            android:id="@+id/tvHargaProduk"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nama Produk"
+            android:textSize="18sp"
+            android:fontFamily="@font/poppins_regular"
+            android:textColor="@color/black"/>
+
+    </LinearLayout>
+    <!-- End linear layout 1 -->
+
+    <!-- Linear Layout 2 -->
+    <LinearLayout
+        android:id="@+id/layoutItem_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_margin="8dp">
+
+        <!-- Rating Produk -->
+        <TextView
+            android:id="@+id/tvRatingProduk"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Rating Produk"
+            android:textSize="14sp"
+            android:fontFamily="@font/poppins_regular"
+            android:textColor="@color/black"
+            android:layout_weight="1"/>
+
+        <!-- Separator -->
+        <TextView
+            android:id="@+id/tvSeparator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="|"
+            android:textSize="12sp"
+            android:fontFamily="@font/poppins_regular"
+            android:textColor="@color/abu_terang"
+            android:layout_marginStart="4dp"/>
+
+        <!-- Total terjual -->
+        <TextView
+            android:id="@+id/tvTotalProdukTerjual"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textSize="12sp"
+            android:fontFamily="@font/poppins_regular"
+            android:textColor="@color/black"
+            android:layout_marginStart="4dp"/>
+
+        <!-- Terjual -->
+        <TextView
+            android:id="@+id/tvProdukTerjual"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Terjual"
+            android:textSize="12sp"
+            android:fontFamily="@font/poppins_regular"
+            android:textColor="@color/black"
+            android:layout_marginStart="4dp"/>
+
+    </LinearLayout>
+    <!-- End linear layout 2 -->
+
+</LinearLayout>
