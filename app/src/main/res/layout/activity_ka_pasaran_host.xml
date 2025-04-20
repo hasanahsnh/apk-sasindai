@@ -8,24 +8,6 @@
     tools:context=".KaPasaranHostActivity"
     android:orientation="vertical">
 
-    <!-- Container Header -->
-    <LinearLayout
-        android:id="@+id/headerKaPasaran"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:background="@color/abu_terang"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/containerItemKaPasaran">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:textColor="Header Img"/>
-
-    </LinearLayout>
-    <!-- End container header -->
-
     <!-- Container Item -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/containerItemKaPasaran"
@@ -34,7 +16,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/headerKaPasaran">
+        app:layout_constraintTop_toTopOf="parent">
 
         <!-- Card View of Tabs -->
         <androidx.cardview.widget.CardView
@@ -81,7 +63,7 @@
 
         <!-- Fragment container -->
         <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/viewPager_2"
+            android:id="@+id/viewPager2KaPasaran"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:clipToPadding="false"

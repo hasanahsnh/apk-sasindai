@@ -155,6 +155,7 @@
 
                     <!-- Keranjang -->
                     <LinearLayout
+                        android:id="@+id/layoutFiturKaPasaran"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"

@@ -1,5 +1,6 @@
 package com.example.sasindai.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -12,8 +13,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.example.sasindai.KaPasaranHostActivity;
 import com.example.sasindai.R;
 import com.example.sasindai.adapter.HeroSliderAdapter;
 import com.example.sasindai.model.RilisMediaData;
@@ -47,6 +50,7 @@ public class BerandaFragment extends Fragment {
     private ArrayList<RilisMediaData> rilisMediaDataList;
     private RecyclerView recyclerViewHero;
     private ShimmerFrameLayout shimmerFrameLayout;
+    private LinearLayout layoutFiturKaPasaran;
 
     public BerandaFragment() {
         // Required empty public constructor
@@ -85,6 +89,17 @@ public class BerandaFragment extends Fragment {
         // Inisialisasi widget
         recyclerViewHero = view.findViewById(R.id.hero);
         shimmerFrameLayout = view.findViewById(R.id.shimmerHero);
+        layoutFiturKaPasaran = view.findViewById(R.id.layoutFiturKaPasaran);
+
+        // Arahkan ke activity host ka pasaran
+        if (layoutFiturKaPasaran != null) {
+            layoutFiturKaPasaran.setOnClickListener(v -> {
+                Intent intent = new Intent(requireContext(), KaPasaranHostActivity.class);
+                startActivity(intent);
+            });
+        } else {
+            Log.e("Beranda Fragment", "Activity host ka pasaran gagal dimuat!");
+        }
 
         // Mulai shimmer
         shimmerFrameLayout.startShimmer();

@@ -5,13 +5,10 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
-import com.example.sasindai.fragment.LoginFragment;
-import com.example.sasindai.fragment.RegisterFragment;
+import com.example.sasindai.fragment.ProdukFragment;
 
-public class AuthPagerAdapter extends FragmentStateAdapter {
-
-
-    public AuthPagerAdapter(@NonNull FragmentActivity fragmentActivity) {
+public class KaPasaranPagerAdapter extends FragmentStateAdapter {
+    public KaPasaranPagerAdapter(@NonNull FragmentActivity fragmentActivity) {
         super(fragmentActivity);
     }
 
@@ -19,9 +16,13 @@ public class AuthPagerAdapter extends FragmentStateAdapter {
     @Override
     public Fragment createFragment(int position) {
         if (position == 0) {
-            return new LoginFragment();
+            return new ProdukFragment();
         } else if (position == 1) {
-            return new RegisterFragment();
+            return new ProdukFragment();
+        } else if (position == 2) {
+            return new ProdukFragment();
+        } else if (position == 3) {
+            return new ProdukFragment();
         } else {
             return null;
         }
@@ -29,6 +30,6 @@ public class AuthPagerAdapter extends FragmentStateAdapter {
 
     @Override
     public int getItemCount() {
-        return 2;
+        return 4;
     }
 }
