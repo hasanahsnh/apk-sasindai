@@ -2,13 +2,23 @@ package com.example.sasindai.fragment;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridView;
 
 import com.example.sasindai.R;
+import com.example.sasindai.adapter.ProdukListAdapter;
+import com.example.sasindai.model.ProdukData;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -25,6 +35,8 @@ public class ProdukFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private ProdukListAdapter produkListAdapter;
+    private ArrayList<ProdukData> produkData;
 
     public ProdukFragment() {
         // Required empty public constructor
@@ -62,5 +74,26 @@ public class ProdukFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_produk, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        // Inisialisasi widget
+        RecyclerView recyclerViewListProduk = view.findViewById(R.id.gridViewListProduk);
+
+        // set nullable gridview
+        if (recyclerViewListProduk != null) {
+            recyclerViewListProduk.setLayoutManager(new GridLayoutManager(requireContext(), 2));
+            ProdukListAdapter adapter = new ProdukListAdapter(requireContext(), produkData);
+            recyclerViewListProduk.setAdapter(adapter);
+
+        } else {
+            Log.e("Produk Fragment", "Recycler view produk gagal dimuat!");
+        }
+
+        // Proses pengambilan data dari firebase
+        loadDataFromFirebase();
     }
 }
