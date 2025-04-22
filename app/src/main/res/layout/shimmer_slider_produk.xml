@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_margin="2dp"
+    android:background="@drawable/frame_produk">
+
+    <!-- Img Produk -->
+    <ImageView
+        android:id="@+id/imgListProduk"
+        android:layout_width="match_parent"
+        android:layout_height="160dp"
+        android:layout_marginBottom="8dp"
+        android:background="@color/abu_terang"
+        android:scaleType="centerCrop"
+        android:contentDescription="TODO" />
+
+    <!-- Linear Layout 1 -->
+    <LinearLayout
+        android:id="@+id/layoutItem_1"
+        android:layout_width="70dp"
+        android:layout_height="50dp"
+        android:orientation="vertical"
+        android:layout_margin="8dp"
+        android:background="@color/abu_terang"/>
+    <!-- End linear layout 1 -->
+
+    <!-- Linear Layout 2 -->
+    <LinearLayout
+        android:id="@+id/layoutItem_2"
+        android:layout_width="70dp"
+        android:layout_height="20dp"
+        android:orientation="horizontal"
+        android:layout_margin="8dp"
+        android:background="@color/abu_terang"/>
+    <!-- End linear lay 2 -->
+
+</LinearLayout>

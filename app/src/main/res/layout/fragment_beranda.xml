@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragment.BerandaFragment"
-    android:background="@color/putih">
+    android:background="@color/abu_terang">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -36,9 +36,10 @@
                 <com.facebook.shimmer.ShimmerFrameLayout
                     android:id="@+id/shimmerHero"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent">
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:visibility="visible">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -81,7 +82,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="10dp"
-                    android:columnCount="3">
+                    android:columnCount="3"
+                    android:background="@drawable/frame_bg_fitur"
+                    android:layout_margin="10dp">
 
                     <!-- Sejarah -->
                     <LinearLayout
@@ -120,6 +123,7 @@
 
                     <!-- Ka Pasaran -->
                     <LinearLayout
+                        android:id="@+id/layoutFiturKaPasaran"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
@@ -155,7 +159,6 @@
 
                     <!-- Keranjang -->
                     <LinearLayout
-                        android:id="@+id/layoutFiturKaPasaran"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
@@ -198,13 +201,24 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
                         android:layout_marginStart="24dp"
                         android:layout_marginEnd="24dp"
                         android:text="Ka Pasaran"
                         android:textColor="@color/black"
                         android:textSize="12sp"
-                        android:fontFamily="@font/poppins_bold"/>
+                        android:fontFamily="@font/poppins_bold"
+                        android:layout_weight="1"/>
+
+                    <TextView
+                        android:id="@+id/tvLihatProduk"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginEnd="24dp"
+                        android:text="Lainnya >"
+                        android:textColor="@color/maroon"
+                        android:textSize="12sp"
+                        android:fontFamily="@font/poppins_regular"/>
 
                 </LinearLayout>
 
@@ -222,6 +236,26 @@
                         android:overScrollMode="never"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"/>
+
+                    <com.facebook.shimmer.ShimmerFrameLayout
+                        android:id="@+id/shimmerProduk"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:visibility="visible">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <include layout="@layout/shimmer_slider_produk"/>
+
+                        </LinearLayout>
+
+                    </com.facebook.shimmer.ShimmerFrameLayout>
+
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 

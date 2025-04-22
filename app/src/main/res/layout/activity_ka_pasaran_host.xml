@@ -6,74 +6,64 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".KaPasaranHostActivity"
-    android:orientation="vertical">
+    android:background="@color/abu_gelap">
 
-    <!-- Container Item -->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/containerItemKaPasaran"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintStart_toStartOf="parent"
+    <!-- Card View of Tabs -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardViewKaPasaran"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/viewPager2KaPasaran"
+        app:cardUseCompatPadding="false"
+        android:background="@color/abu_gelap">
 
-        <!-- Card View of Tabs -->
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardViewKaPasaran"
+        <!-- Tab Layout -->
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabLayoutKaPasaran"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:tabIndicatorColor="@color/maroon"
+            app:tabTextColor="@color/maroon"
+            android:padding="0dp"
+            android:layout_margin="0dp">
 
-            <!-- Tab Layout -->
-            <com.google.android.material.tabs.TabLayout
-                android:id="@+id/tabLayoutKaPasaran"
+            <!-- Tab Items -->
+            <com.google.android.material.tabs.TabItem
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:tabIndicatorColor="@color/maroon"
-                app:tabIndicatorHeight="4dp"
-                app:tabTextColor="@color/maroon">
+                android:text="Populer" />
 
-                <!-- Tab Items -->
-                <com.google.android.material.tabs.TabItem
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Populer" />
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Terbaru" />
 
-                <com.google.android.material.tabs.TabItem
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Terbaru" />
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Terlaris" />
 
-                <com.google.android.material.tabs.TabItem
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Terlaris" />
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Harga" />
 
-                <com.google.android.material.tabs.TabItem
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Harga" />
+        </com.google.android.material.tabs.TabLayout>
 
-            </com.google.android.material.tabs.TabLayout>
+    </androidx.cardview.widget.CardView>
 
-        </androidx.cardview.widget.CardView>
-
-        <!-- Fragment container -->
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/viewPager2KaPasaran"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:clipToPadding="false"
-            android:fitsSystemWindows="true"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/cardViewKaPasaran"/>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-    <!-- End container item -->
+    <!-- Fragment container -->
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager2KaPasaran"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardViewKaPasaran"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

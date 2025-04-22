@@ -29,25 +29,25 @@ import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
 
-public class ProdukListAdapter extends RecyclerView.Adapter<ProdukListAdapter.ProdukViewHolder> {
+public class ProdukSliderAdapter extends RecyclerView.Adapter<ProdukSliderAdapter.ProdukSliderViewHolder> {
     private final Context context;
-    private final List<ProdukData> produkDataList;
+    private final List<ProdukData> produkData;
 
-    public ProdukListAdapter(Context context, List<ProdukData> produkDataList) {
+    public ProdukSliderAdapter(Context context, List<ProdukData> produkData) {
         this.context = context;
-        this.produkDataList = produkDataList;
+        this.produkData = produkData;
     }
 
     @NonNull
     @Override
-    public ProdukListAdapter.ProdukViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.list_produk, parent, false);
-        return new ProdukViewHolder(view);
+    public ProdukSliderAdapter.ProdukSliderViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context).inflate(R.layout.list_produk_in_beranda, parent, false);
+        return new ProdukSliderViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ProdukListAdapter.ProdukViewHolder holder, int position) {
-        ProdukData data = produkDataList.get(position);
+    public void onBindViewHolder(@NonNull ProdukSliderAdapter.ProdukSliderViewHolder holder, int position) {
+        ProdukData data = produkData.get(position);
 
         holder.tvNamaProduk.setText(data.getNamaProduk());
         holder.tvTotalProdukTerjual.setText(String.valueOf(data.getTerjual()));
@@ -93,19 +93,18 @@ public class ProdukListAdapter extends RecyclerView.Adapter<ProdukListAdapter.Pr
 
     @Override
     public int getItemCount() {
-        return produkDataList.size();
+        return Math.min(produkData.size(), 4);
     }
 
-    public static class ProdukViewHolder extends RecyclerView.ViewHolder {
+    public static class ProdukSliderViewHolder extends RecyclerView.ViewHolder {
         ImageView imgProduk;
         TextView tvNamaProduk, tvTotalProdukTerjual, tvHargaProduk;
-        public ProdukViewHolder(@NonNull View itemView) {
+        public ProdukSliderViewHolder(@NonNull View itemView) {
             super(itemView);
-            imgProduk = itemView.findViewById(R.id.imgListProduk);
-            tvNamaProduk = itemView.findViewById(R.id.tvNamaProduk);
-            tvTotalProdukTerjual = itemView.findViewById(R.id.tvTotalProdukTerjual);
-            tvHargaProduk = itemView.findViewById(R.id.tvHargaProduk);
-
+            imgProduk = itemView.findViewById(R.id.imgListProdukPreview);
+            tvNamaProduk = itemView.findViewById(R.id.tvNamaProdukPreview);
+            tvTotalProdukTerjual = itemView.findViewById(R.id.tvTotalProdukTerjualPreview);
+            tvHargaProduk = itemView.findViewById(R.id.tvHargaProdukPreview);
         }
     }
 }

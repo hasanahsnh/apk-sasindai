@@ -59,7 +59,6 @@ public class HeroSliderAdapter extends RecyclerView.Adapter<HeroSliderAdapter.He
                     }
                 })
                 .into(holder.imgSliderHero);
-
     }
 
     @Override

@@ -17,6 +17,13 @@ import android.widget.GridView;
 import com.example.sasindai.R;
 import com.example.sasindai.adapter.ProdukListAdapter;
 import com.example.sasindai.model.ProdukData;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import org.checkerframework.checker.units.qual.A;
 
 import java.util.ArrayList;
 
@@ -35,8 +42,9 @@ public class ProdukFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    private ProdukListAdapter produkListAdapter;
-    private ArrayList<ProdukData> produkData;
+    private ArrayList<ProdukData> lists = new ArrayList<>();
+    private ProdukListAdapter adapter;
+    private RecyclerView recyclerView;
 
     public ProdukFragment() {
         // Required empty public constructor
@@ -81,19 +89,58 @@ public class ProdukFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         // Inisialisasi widget
-        RecyclerView recyclerViewListProduk = view.findViewById(R.id.gridViewListProduk);
+        recyclerView = view.findViewById(R.id.gridViewListProduk);
+        Log.d("Produk Fragment", "GridView is: " + recyclerView);
 
-        // set nullable gridview
-        if (recyclerViewListProduk != null) {
-            recyclerViewListProduk.setLayoutManager(new GridLayoutManager(requireContext(), 2));
-            ProdukListAdapter adapter = new ProdukListAdapter(requireContext(), produkData);
-            recyclerViewListProduk.setAdapter(adapter);
-
-        } else {
-            Log.e("Produk Fragment", "Recycler view produk gagal dimuat!");
-        }
+        adapter = new ProdukListAdapter(requireContext(), lists);
+        recyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 2));
+        recyclerView.setAdapter(adapter);
 
         // Proses pengambilan data dari firebase
         loadDataFromFirebase();
+    }
+
+    private void loadDataFromFirebase() {
+        if (!isAdded()) {
+            Log.e("Produk Fragment", "Fragment gagal dimuat");
+            return;
+        }
+
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("produk");
+
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (!isAdded()) {
+                    Log.e("Produk Fragment", "Fragment telah dimuat, lewati perubahan data");
+                    return;
+                }
+
+                lists.clear();
+
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    try {
+                        ProdukData data = dataSnapshot.getValue(ProdukData.class);
+                        if (data != null) {
+                            lists.add(data);
+                            Log.d("Produk Fragment", "Produk ditambahkan: " + data.getNamaProduk());
+                        } else {
+                            Log.e("Produk Fragment", "Tidak ada data produk yang dimuat");
+                        }
+                    } catch (Exception e) {
+                        Log.e("Produk Fragment", "Gagal memuat data produk!" + e.getMessage());
+                    }
+                }
+
+                    adapter.notifyDataSetChanged();
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                if (!isAdded()) return;
+                Log.e("Produk Fragmment", "Database error " + error.getMessage());
+            }
+        });
     }
 }

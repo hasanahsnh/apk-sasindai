@@ -7,7 +7,7 @@
         android:id="@+id/shimmerSliderHero"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/abu_terang"
+        android:background="@color/putih"
         android:minHeight="200dp"/>
 
 </FrameLayout>

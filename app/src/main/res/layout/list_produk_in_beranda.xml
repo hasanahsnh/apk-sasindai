@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    android:layout_width="200dp"
     android:layout_height="wrap_content"
     android:orientation="vertical"
+    android:layout_marginStart="4dp"
     android:layout_margin="2dp"
     android:background="@drawable/frame_produk">
 
     <!-- Img Produk -->
     <ImageView
-        android:id="@+id/imgListProduk"
+        android:id="@+id/imgListProdukPreview"
         android:layout_width="match_parent"
         android:layout_height="160dp"
         android:layout_marginBottom="8dp"
@@ -24,17 +25,17 @@
 
         <!-- Nama Produk -->
         <TextView
-            android:id="@+id/tvNamaProduk"
+            android:id="@+id/tvNamaProdukPreview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Nama Produk"
             android:textSize="12sp"
             android:fontFamily="@font/poppins_bold"
-            android:textColor="@color/black"/>
+            android:textColor="@color/maroon"/>
 
         <!-- Harga -->
         <TextView
-            android:id="@+id/tvHargaProduk"
+            android:id="@+id/tvHargaProdukPreview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Nama Produk"
@@ -56,10 +57,10 @@
 
         <!-- Rating Produk -->
         <TextView
-            android:id="@+id/tvRatingProduk"
+            android:id="@+id/tvRatingProdukPreview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Rating Produk"
+            android:text="Rating"
             android:textSize="12sp"
             android:fontFamily="@font/poppins_regular"
             android:textColor="@color/black"
@@ -78,7 +79,7 @@
 
         <!-- Total terjual -->
         <TextView
-            android:id="@+id/tvTotalProdukTerjual"
+            android:id="@+id/tvTotalProdukTerjualPreview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="0"
