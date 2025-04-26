@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="200dp"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_marginStart="4dp"
     android:layout_margin="2dp"
@@ -101,5 +102,28 @@
 
     </LinearLayout>
     <!-- End linear layout 2 -->
+
+    <!-- Button checkout -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:background="@drawable/frame_bg_btn_checkout"
+        android:text="Beli Sekarang"
+        android:textColor="@color/putih"
+        android:fontFamily="@font/poppins_medium"
+        android:textAllCaps="false"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Lihat"
+            android:textColor="@color/putih"
+            android:fontFamily="@font/poppins_medium"
+            android:layout_margin="10dp"
+            android:textSize="14dp"/>
+
+    </LinearLayout>
 
 </LinearLayout>

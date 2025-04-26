@@ -101,4 +101,27 @@
     </LinearLayout>
     <!-- End linear layout 2 -->
 
+    <!-- Button checkout -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:background="@drawable/frame_bg_btn_checkout"
+        android:text="Beli Sekarang"
+        android:textColor="@color/putih"
+        android:fontFamily="@font/poppins_medium"
+        android:textAllCaps="false"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Lihat"
+            android:textColor="@color/putih"
+            android:fontFamily="@font/poppins_medium"
+            android:layout_margin="10dp"
+            android:textSize="14dp"/>
+
+    </LinearLayout>
+
 </LinearLayout>

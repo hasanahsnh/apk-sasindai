@@ -44,6 +44,7 @@ dependencies {
     #dokumentasinomorsatu
     */
 
+    implementation 'com.google.code.gson:gson:2.10.1' // 26/04/2025
     implementation("com.google.android.gms:play-services-auth:21.3.0") // 27/03/25
     implementation 'com.facebook.shimmer:shimmer:0.5.0' // 23/03/25
     implementation("com.google.firebase:firebase-auth") // 23/03/25

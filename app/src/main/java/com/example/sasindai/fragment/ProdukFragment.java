@@ -16,6 +16,7 @@ import android.widget.GridView;
 
 import com.example.sasindai.R;
 import com.example.sasindai.adapter.ProdukListAdapter;
+import com.example.sasindai.adapter.ShimmerProdukAdapter;
 import com.example.sasindai.model.ProdukData;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -26,6 +27,7 @@ import com.google.firebase.database.ValueEventListener;
 import org.checkerframework.checker.units.qual.A;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -44,7 +46,9 @@ public class ProdukFragment extends Fragment {
     private String mParam2;
     private ArrayList<ProdukData> lists = new ArrayList<>();
     private ProdukListAdapter adapter;
-    private RecyclerView recyclerView;
+    private ShimmerProdukAdapter shimmer;
+    private RecyclerView recyclerView, recyclerViewShimmerProduk;
+    private String kategori;
 
     public ProdukFragment() {
         // Required empty public constructor
@@ -90,7 +94,12 @@ public class ProdukFragment extends Fragment {
 
         // Inisialisasi widget
         recyclerView = view.findViewById(R.id.gridViewListProduk);
+        recyclerViewShimmerProduk = view.findViewById(R.id.recyclerViewShimmerProduk);
         Log.d("Produk Fragment", "GridView is: " + recyclerView);
+        Log.d("Produk Fragment", "GridView is: " + recyclerViewShimmerProduk);
+
+        recyclerViewShimmerProduk.setLayoutManager(new GridLayoutManager(requireContext(), 2));
+        recyclerViewShimmerProduk.setAdapter(new ShimmerProdukAdapter(6));
 
         adapter = new ProdukListAdapter(requireContext(), lists);
         recyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 2));
@@ -132,7 +141,32 @@ public class ProdukFragment extends Fragment {
                     }
                 }
 
-                    adapter.notifyDataSetChanged();
+                if (!lists.isEmpty()) {
+                    recyclerViewShimmerProduk.setVisibility(View.GONE);
+                } else {
+                    recyclerViewShimmerProduk.setVisibility(View.VISIBLE);
+                }
+
+                // Set data per tab
+                if (kategori == null) {
+                    kategori = "populer";
+                }
+                String lowerCase = kategori.toLowerCase();
+                if (lowerCase.equals("terbaru")) {
+                    lists.sort((a, b) -> b.getCreateAt().compareTo(a.getCreateAt()));
+                } else if (lowerCase.equals("terlaris")) {
+                    lists.sort((a, b) -> Integer.compare(b.getTerjual(), a.getTerjual()));
+                } else if (lowerCase.equals("harga")) {
+                    lists.sort((a, b) -> {
+                        int hargaA = a.getVarian().get(0).getHarga();
+                        int hargaB = b.getVarian().get(0).getHarga();
+                        return Integer.compare(hargaA, hargaB);
+                    });
+                } else if (lowerCase.equals("populer")){
+                    lists.sort((a, b) -> Integer.compare(b.getTerjual(), a.getTerjual()));
+                }
+
+                adapter.notifyDataSetChanged();
 
             }
 
@@ -142,5 +176,15 @@ public class ProdukFragment extends Fragment {
                 Log.e("Produk Fragmment", "Database error " + error.getMessage());
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
     }
 }

@@ -265,4 +265,9 @@ public class BerandaFragment extends Fragment {
     public void onResume() {
         super.onResume();
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
 }

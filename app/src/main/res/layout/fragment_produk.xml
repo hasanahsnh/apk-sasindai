@@ -7,6 +7,16 @@
     tools:context=".fragment.ProdukFragment"
     android:background="@color/abu_terang">
 
+    <!-- Load shimmer -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewShimmerProduk"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:listitem="@layout/shimmer_produk"
+        android:layout_marginStart="2dp"
+        android:layout_marginEnd="2dp"
+        android:visibility="visible"/>
+
     <!-- Produk Container -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/gridViewListProduk"

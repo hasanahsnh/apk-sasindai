@@ -16,16 +16,15 @@ public class KaPasaranPagerAdapter extends FragmentStateAdapter {
     @Override
     public Fragment createFragment(int position) {
         if (position == 0) {
-            return new ProdukFragment();
+            return ProdukFragment.newInstance("populer", null);
         } else if (position == 1) {
-            return new ProdukFragment();
+            return ProdukFragment.newInstance("terbaru", null);
         } else if (position == 2) {
-            return new ProdukFragment();
+            return ProdukFragment.newInstance("terlaris", null);
         } else if (position == 3) {
-            return new ProdukFragment();
-        } else {
-            return null;
+            return ProdukFragment.newInstance("harga", null);
         }
+        return null;
     }
 
     @Override
