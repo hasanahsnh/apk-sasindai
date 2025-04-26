@@ -50,9 +50,11 @@
                     android:gravity="center"
                     android:text="Nama Produk"
                     android:textColor="@color/black"
-                    android:textSize="18sp" />
+                    android:textSize="18sp"
+                    android:visibility="gone"/>
 
                 <com.facebook.shimmer.ShimmerFrameLayout
+                    android:id="@+id/shimmerNamaProduk"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginTop="15dp">
@@ -209,9 +211,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="15dp"
-                    android:text="Deskripsi Produk"/>
+                    android:text="Deskripsi Produk"
+                    android:visibility="gone"/>
 
                 <com.facebook.shimmer.ShimmerFrameLayout
+                    android:id="@+id/shimmerDeskripsiProduk"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginTop="15dp">

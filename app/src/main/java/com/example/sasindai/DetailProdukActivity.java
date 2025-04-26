@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -34,7 +35,8 @@ public class DetailProdukActivity extends AppCompatActivity {
     private RecyclerView sliderGambarProduk;
     private List<String> gambarProduk = new ArrayList<>();
     private ProdukFotoSliderAdapter adapter;
-    private ShimmerFrameLayout shimmerSliderGambarProduk;
+    private ShimmerFrameLayout shimmerSliderGambarProduk, shimmerNamaProduk;
+    private TextView namaProduk;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,13 +51,12 @@ public class DetailProdukActivity extends AppCompatActivity {
 
         sliderGambarProduk = findViewById(R.id.recyclerViewSliderGambarProduk);
         shimmerSliderGambarProduk = findViewById(R.id.shimmerSliderGambarProduk);
+        namaProduk = findViewById(R.id.namaProduk);
+        shimmerNamaProduk = findViewById(R.id.shimmerNamaProduk);
 
         adapter = new ProdukFotoSliderAdapter(this, gambarProduk);
         sliderGambarProduk.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         sliderGambarProduk.setAdapter(adapter);
-
-        shimmerSliderGambarProduk.setVisibility(View.VISIBLE);
-        shimmerSliderGambarProduk.startShimmer();
 
         // Intent data ke detail
         tampilkanDetail();
@@ -68,9 +69,22 @@ public class DetailProdukActivity extends AppCompatActivity {
     }
 
     private void tampilkanDetail() {
-        String produkJson = getIntent().getStringExtra("gambar");
+        String produkJson = getIntent().getStringExtra("produk");
         ProdukData produk = new Gson().fromJson(produkJson, ProdukData.class);
 
+        // Nampilkan data nama produk
+        if (produk.getNamaProduk() != null && namaProduk != null) {
+            namaProduk.setVisibility(View.VISIBLE);
+            shimmerNamaProduk.stopShimmer();
+            shimmerNamaProduk.setVisibility(View.GONE);
+            namaProduk.setText(produk.getNamaProduk());
+        } else {
+            shimmerNamaProduk.startShimmer();
+            shimmerNamaProduk.setVisibility(View.VISIBLE);
+        }
+        // End nama produk
+
+        // Gambar produk
         if (produk.getUrlFotoProduk() != null) {
             gambarProduk.addAll(produk.getUrlFotoProduk());
         }
@@ -90,6 +104,7 @@ public class DetailProdukActivity extends AppCompatActivity {
             shimmerSliderGambarProduk.startShimmer();
             shimmerSliderGambarProduk.setVisibility(View.VISIBLE);
         }
+        // End foto produk
 
         adapter.notifyDataSetChanged();
     }

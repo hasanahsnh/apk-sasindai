@@ -95,7 +95,7 @@ public class ProdukListAdapter extends RecyclerView.Adapter<ProdukListAdapter.Pr
 
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, DetailProdukActivity.class);
-            intent.putExtra("gambar", new Gson().toJson(data));
+            intent.putExtra("produk", new Gson().toJson(data));
             context.startActivity(intent);
         });
     }
