@@ -1,10 +1,16 @@
 package com.example.sasindai;
 
+import android.app.Dialog;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -14,14 +20,21 @@ import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.sasindai.adapter.BottomSheetProdukAdapter;
 import com.example.sasindai.adapter.ProdukFotoSliderAdapter;
 import com.example.sasindai.adapter.UkuranListAdapter;
 import com.example.sasindai.model.ProdukData;
 import com.example.sasindai.model.VarianProduk;
 import com.facebook.shimmer.ShimmerFrameLayout;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -30,18 +43,23 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class DetailProdukActivity extends AppCompatActivity {
     private RecyclerView sliderGambarProduk, recyclerViewUkuranVarian;
     private List<String> gambarProduk = new ArrayList<>();
     private List<VarianProduk> ukuranData = new ArrayList<>();
+    private ProdukData produkData;
     private ProdukFotoSliderAdapter adapter;
     private UkuranListAdapter adapterUkuran;
     private ShimmerFrameLayout shimmerSliderGambarProduk, shimmerNamaProduk, shimmerDeskripsiProduk, shimmerRentangharga, shimmerUkuran;
-    private TextView namaProduk, deskripsiProduk, tvAverageHargaProduk;
+    private TextView namaProduk, deskripsiProduk, tvAverageHargaProduk, btnTambahProdukDetail, btnBeliSekarang;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +83,18 @@ public class DetailProdukActivity extends AppCompatActivity {
         shimmerRentangharga = findViewById(R.id.shimmerRentangharga);
         recyclerViewUkuranVarian = findViewById(R.id.recyclerViewUkuranVarian);
         shimmerUkuran = findViewById(R.id.shimmerUkuran);
+        btnTambahProdukDetail = findViewById(R.id.btnTambahProdukDetail);
+        btnBeliSekarang = findViewById(R.id.btnBeliSekarang);
         // End inisial
+
+        // Show bottom sheet
+        btnTambahProdukDetail.setOnClickListener(v -> {
+            bottomSheetKeranjang();
+        });
+        btnBeliSekarang.setOnClickListener(v -> {
+            bottomSheetBeliSekarang();
+        });
+        // End show bottom sheet
 
         // Adapter foto produk
         adapter = new ProdukFotoSliderAdapter(this, gambarProduk);
@@ -90,16 +119,148 @@ public class DetailProdukActivity extends AppCompatActivity {
         });
     }
 
+    // Tampilkan bottom shhet beli sekarang
+    private void bottomSheetBeliSekarang() {
+        Dialog dialog = new Dialog(DetailProdukActivity.this);
+        dialog.setContentView(R.layout.bottom_sheet_buy_layout);
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
+        RecyclerView recyclerViewBeli = dialog.findViewById(R.id.recyclerViewItemProdukBuy);
+        recyclerViewBeli.setLayoutManager(new GridLayoutManager(this, 3));
+
+        BottomSheetProdukAdapter adapterDialog = new BottomSheetProdukAdapter(this, ukuranData);
+        recyclerViewBeli.setAdapter(adapterDialog);
+
+        Window window = dialog.getWindow();
+        if (window != null) {
+            window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            window.setGravity(Gravity.BOTTOM);
+        }
+
+        dialog.show();
+    }
+    // End tampilkan bottom sheet
+
+    // Tampilkan bottom shet keranjang
+    private void bottomSheetKeranjang() {
+        Dialog dialog = new Dialog(DetailProdukActivity.this);
+        dialog.setContentView(R.layout.bottom_sheet_cart_layout);
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
+        RecyclerView recyclerViewKeranjang = dialog.findViewById(R.id.recyclerViewItemProdukCart);
+        recyclerViewKeranjang.setLayoutManager(new GridLayoutManager(this, 3));
+
+        BottomSheetProdukAdapter adapterDialog = new BottomSheetProdukAdapter(this, ukuranData);
+        recyclerViewKeranjang.setAdapter(adapterDialog);
+
+        TextView tvQuantity = dialog.findViewById(R.id.tvQuantityCart);
+        ImageView btnPlus = dialog.findViewById(R.id.btnPlusCart);
+        ImageView btnMinus = dialog.findViewById(R.id.btnMinusCart);
+        LinearLayout btnTambah = dialog.findViewById(R.id.btnTambahProdukCart);
+
+        final int[] quantity = {1}; // default qty
+        final VarianProduk[] selectedVarian = {null}; // simpan varian yang dipilih
+
+        tvQuantity.setText(String.valueOf(quantity[0]));
+
+        btnPlus.setOnClickListener(v -> {
+            quantity[0]++;
+            tvQuantity.setText(String.valueOf(quantity[0]));
+        });
+
+        btnMinus.setOnClickListener(v -> {
+            if (quantity[0] > 1) {
+                quantity[0]--;
+                tvQuantity.setText(String.valueOf(quantity[0]));
+            }
+        });
+
+        adapterDialog.setOnItemClickListener(varianProduk -> {
+            selectedVarian[0] = varianProduk; // set varian yang dipilih
+        });
+
+        btnTambah.setOnClickListener(v -> {
+            if (selectedVarian[0] == null) {
+                Toast.makeText(this, "Pilih varian terlebih dahulu", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            tambahProdukKeDatabase(selectedVarian[0], quantity[0]);
+            dialog.dismiss();
+        });
+
+        Window window = dialog.getWindow();
+        if (window != null) {
+            window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            window.setGravity(Gravity.BOTTOM);
+        }
+
+        dialog.show();
+    }
+    // End bottom sheet layout
+
+    // Tambah produk ke keranjang
+    private void tambahProdukKeDatabase(VarianProduk varianProduk, int i) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            Toast.makeText(this, "Silakan login terlebih dahulu!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (produkData == null) {
+            Toast.makeText(this, "Data produk tidak tersedia!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String uid = user.getUid();
+        String idProduk = produkData.getIdProduk();
+        String namaVarian = varianProduk.getNama();
+        String createAt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
+
+        DatabaseReference keranjangRef = FirebaseDatabase.getInstance()
+                .getReference("keranjang")
+                .child(uid)
+                .child(idProduk)
+                .child(namaVarian);
+
+        Map<String, Object> cartItem = new HashMap<>();
+        cartItem.put("idProduk", idProduk);
+        cartItem.put("namaProduk", produkData.getNamaProduk());
+        cartItem.put("namaVarian", varianProduk.getNama());
+        cartItem.put("harga", varianProduk.getHarga());
+        cartItem.put("gambarVarian", varianProduk.getGambar());
+        cartItem.put("size", varianProduk.getSize());
+        cartItem.put("qty", i);
+        cartItem.put("createAt", createAt);
+
+        keranjangRef.setValue(cartItem)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Toast.makeText(DetailProdukActivity.this, "Produk berhasil ditambah!", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(DetailProdukActivity.this, "Gagal menambah produk!", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+    }
+    // End tambah produk ke db
+
+    // Tampilkan detail produk
     private void tampilkanDetail() {
         String produkJson = getIntent().getStringExtra("produk");
-        ProdukData produk = new Gson().fromJson(produkJson, ProdukData.class);
+        produkData = new Gson().fromJson(produkJson, ProdukData.class);
 
         // Nampilkan data nama produk
-        if (produk.getNamaProduk() != null && namaProduk != null) {
+        if (produkData.getNamaProduk() != null && namaProduk != null) {
             namaProduk.setVisibility(View.VISIBLE);
             shimmerNamaProduk.stopShimmer();
             shimmerNamaProduk.setVisibility(View.GONE);
-            namaProduk.setText(produk.getNamaProduk());
+            namaProduk.setText(produkData.getNamaProduk());
         } else {
             shimmerNamaProduk.startShimmer();
             shimmerNamaProduk.setVisibility(View.VISIBLE);
@@ -107,11 +268,11 @@ public class DetailProdukActivity extends AppCompatActivity {
         // End nama produk
 
         // Gambar produk
-        if (produk.getUrlFotoProduk() != null) {
-            gambarProduk.addAll(produk.getUrlFotoProduk());
+        if (produkData.getUrlFotoProduk() != null) {
+            gambarProduk.addAll(produkData.getUrlFotoProduk());
         }
-        if (produk.getVarian() != null) {
-            for (VarianProduk varianProduk : produk.getVarian()) {
+        if (produkData.getVarian() != null) {
+            for (VarianProduk varianProduk : produkData.getVarian()) {
                 if (varianProduk.getGambar() != null && !varianProduk.getGambar().isEmpty()) {
                     gambarProduk.add(varianProduk.getGambar());
                 }
@@ -127,9 +288,9 @@ public class DetailProdukActivity extends AppCompatActivity {
         // End foto produk
 
         // Ukuran
-        if (produk.getVarian() != null && recyclerViewUkuranVarian != null) {
+        if (produkData.getVarian() != null && recyclerViewUkuranVarian != null) {
             ukuranData.clear();
-            for (VarianProduk ukuran : produk.getVarian()) {
+            for (VarianProduk ukuran : produkData.getVarian()) {
                 if (ukuran.getSize() != null && !ukuran.getSize().isEmpty()) {
                     ukuranData.add(ukuran);
                 }
@@ -148,11 +309,11 @@ public class DetailProdukActivity extends AppCompatActivity {
         // End ukuran
 
         // Harga
-        if (produk.getVarian() != null && !produk.getVarian().isEmpty()) {
+        if (produkData.getVarian() != null && !produkData.getVarian().isEmpty()) {
             int hargaTermurah = Integer.MAX_VALUE;
             int hargaTermahal = Integer.MIN_VALUE;
 
-            for (VarianProduk hargaProduk : produk.getVarian()) {
+            for (VarianProduk hargaProduk : produkData.getVarian()) {
                 int harga = hargaProduk.getHarga();
 
                 if (harga < hargaTermurah) {
@@ -184,8 +345,8 @@ public class DetailProdukActivity extends AppCompatActivity {
         // End harga
 
         // Deskripsi produk
-        if (produk.getDeskripsiProduk() != null) {
-            deskripsiProduk.setText(produk.getDeskripsiProduk());
+        if (produkData.getDeskripsiProduk() != null) {
+            deskripsiProduk.setText(produkData.getDeskripsiProduk());
             deskripsiProduk.setVisibility(View.VISIBLE);
             shimmerDeskripsiProduk.stopShimmer();
             shimmerDeskripsiProduk.setVisibility(View.GONE);
@@ -197,6 +358,7 @@ public class DetailProdukActivity extends AppCompatActivity {
 
         adapter.notifyDataSetChanged();
     }
+    // End tampilkan produk
 
     @Override
     protected void onResume() {
