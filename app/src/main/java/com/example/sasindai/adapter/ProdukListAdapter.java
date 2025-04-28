@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -93,7 +94,7 @@ public class ProdukListAdapter extends RecyclerView.Adapter<ProdukListAdapter.Pr
                     .into(holder.imgProduk);
         }
 
-        holder.itemView.setOnClickListener(v -> {
+        holder.btnLihatDetail.setOnClickListener(v -> {
             Intent intent = new Intent(context, DetailProdukActivity.class);
             intent.putExtra("produk", new Gson().toJson(data));
             context.startActivity(intent);
@@ -108,12 +109,14 @@ public class ProdukListAdapter extends RecyclerView.Adapter<ProdukListAdapter.Pr
     public static class ProdukViewHolder extends RecyclerView.ViewHolder {
         ImageView imgProduk;
         TextView tvNamaProduk, tvTotalProdukTerjual, tvHargaProduk;
+        LinearLayout btnLihatDetail;
         public ProdukViewHolder(@NonNull View itemView) {
             super(itemView);
             imgProduk = itemView.findViewById(R.id.imgListProduk);
             tvNamaProduk = itemView.findViewById(R.id.tvNamaProduk);
             tvTotalProdukTerjual = itemView.findViewById(R.id.tvTotalProdukTerjual);
             tvHargaProduk = itemView.findViewById(R.id.tvHargaProduk);
+            btnLihatDetail = itemView.findViewById(R.id.btnLihatDetail);
 
         }
     }

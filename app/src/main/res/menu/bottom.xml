@@ -9,11 +9,11 @@
         app:cnb_backgroundColor="@color/maroon"
         app:cnb_iconColor="@color/putih"/>
 
-    <!-- Menu Pindai Motif -->
+    <!-- Menu Katalog motif -->
     <item
-        android:id="@+id/nav_pindai"
-        android:title="Pindai Motif"
-        android:icon="@drawable/ic_pindai_29"
+        android:id="@+id/nav_katalog"
+        android:title="Ketalog Motif"
+        android:icon="@drawable/ic_motif_29"
         app:cnb_backgroundColor="@color/maroon"
         app:cnb_iconColor="@color/putih"/>
 

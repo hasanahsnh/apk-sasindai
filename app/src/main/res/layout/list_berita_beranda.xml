@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/layHeaderRilisMedia"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="15dp"
+        android:layout_marginStart="10dp">
+
+        <TextView
+            android:id="@+id/tvHeaderRilisMedia"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Rilis Media"
+            android:textSize="12dp"
+            android:textColor="@color/putih"
+            android:background="@drawable/frame_bg_btn_checkout"
+            android:fontFamily="@font/poppins_bold"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:paddingTop="7dp"
+            android:paddingBottom="7dp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layKontenRilisMedia"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="50dp"
+        android:baselineAligned="false">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/tvJudulRilisMedia"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textColor="@color/putih"
+                android:text="Judul Berita/artikel"
+                android:fontFamily="@font/poppins_bold"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="15dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="200dp"
+            android:layout_height="80dp"
+            android:orientation="horizontal"
+            android:layout_weight="1"
+            android:layout_marginEnd="15dp">
+
+            <ImageView
+                android:id="@+id/imgRilisMedia"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <View
+    android:layout_width="match_parent"
+    android:layout_height="1dp"
+    android:background="#636363"
+    android:layout_marginStart="10dp"
+    android:layout_marginEnd="10dp"
+    android:layout_marginTop="150dp" />
+</FrameLayout>

@@ -4,9 +4,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Window;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -14,6 +17,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.sasindai.fragment.AkunFragment;
 import com.example.sasindai.fragment.BerandaFragment;
+import com.example.sasindai.fragment.KatalogMotifFragment;
 import com.ismaeldivita.chipnavigation.ChipNavigationBar;
 
 public class MainHostActivity extends AppCompatActivity {
@@ -26,6 +30,10 @@ public class MainHostActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main_host);
+
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO); // Set default mode gelap
+        Window window = getWindow(); // Mendapatkan objek window
+        window.setNavigationBarColor(ContextCompat.getColor(this, R.color.black)); // Set warna nav bar
 
         // Inisialisasi widget
         chipNavigationBar = findViewById(R.id.bottom_nav);
@@ -68,6 +76,8 @@ public class MainHostActivity extends AppCompatActivity {
 
         if (item == R.id.nav_beranda) {
             selectedFragment = new BerandaFragment();
+        } else if (item == R.id.nav_katalog) {
+            selectedFragment = new KatalogMotifFragment();
         } else if (item == R.id.nav_akun) {
             selectedFragment = new AkunFragment();
         } else {

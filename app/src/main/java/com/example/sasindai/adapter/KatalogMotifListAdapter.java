@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,40 +22,44 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.example.sasindai.R;
-import com.example.sasindai.model.ProdukData;
-import com.example.sasindai.model.VarianProduk;
+import com.example.sasindai.model.KatalogMotifData;
 import com.makeramen.roundedimageview.RoundedImageView;
 
 import java.util.List;
 
-public class ProdukFotoSliderAdapter extends RecyclerView.Adapter<ProdukFotoSliderAdapter.ProdukFotoSliderViewHolder> {
+public class KatalogMotifListAdapter extends RecyclerView.Adapter<KatalogMotifListAdapter.KatalogMotifListViewHolder> {
     private final Context context;
-    private final List<String> semuaGambar;
+    private final List<KatalogMotifData> data;
 
-    public ProdukFotoSliderAdapter(Context context, List<String> semuaGambar) {
+    public KatalogMotifListAdapter(Context context, List<KatalogMotifData> data) {
         this.context = context;
-        this.semuaGambar = semuaGambar;
+        this.data = data;
     }
 
     @NonNull
     @Override
-    public ProdukFotoSliderAdapter.ProdukFotoSliderViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.list_slider_foto_produk, parent, false);
-        return new ProdukFotoSliderViewHolder(view);
+    public KatalogMotifListAdapter.KatalogMotifListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context).inflate(R.layout.list_katalog_motif, parent, false);
+        return new KatalogMotifListViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ProdukFotoSliderAdapter.ProdukFotoSliderViewHolder holder, int position) {
-        String url = semuaGambar.get(position);
+    public void onBindViewHolder(@NonNull KatalogMotifListAdapter.KatalogMotifListViewHolder holder, int position) {
+        KatalogMotifData katalogMotifData = data.get(position);
+
+        holder.namaMotif.setText(katalogMotifData.getMotif());
+        holder.deskripsiMotif.setText(katalogMotifData.getFilosofi());
 
         Glide.with(context)
-                .load(url)
-                .apply(new RequestOptions().transform(new CenterCrop(), new RoundedCorners(30)))
+                .load(katalogMotifData.getGambarUrl())
+                .apply(new RequestOptions()
+                        .transform(new CenterCrop(), new RoundedCorners(25))
+                        .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL))
                 .listener(new RequestListener<Drawable>() {
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, @Nullable Object model, @NonNull Target<Drawable> target, boolean isFirstResource) {
                         if (e != null) {
-                            Log.e("Produk Foto Slider Adapter", "Gagal memuat gambar: " + url);
+                            Log.e("Glide Error", "Gagal memuat gambar pada hero slider beranda");
                         }
                         return false;
                     }
@@ -69,14 +74,26 @@ public class ProdukFotoSliderAdapter extends RecyclerView.Adapter<ProdukFotoSlid
 
     @Override
     public int getItemCount() {
-        return semuaGambar.size();
+        return data.size();
     }
 
-    public static class ProdukFotoSliderViewHolder extends RecyclerView.ViewHolder {
+    public void notifyItemChanged() {
+    }
+
+    public static class KatalogMotifListViewHolder extends RecyclerView.ViewHolder {
         RoundedImageView img;
-        public ProdukFotoSliderViewHolder(@NonNull View itemView) {
+        TextView namaMotif, deskripsiMotif;
+        public KatalogMotifListViewHolder(@NonNull View itemView) {
             super(itemView);
-            img = itemView.findViewById(R.id.imgProduk);
+            img = itemView.findViewById(R.id.imgMotif);
+            namaMotif = itemView.findViewById(R.id.tvNamaMotif);
+            deskripsiMotif = itemView.findViewById(R.id.tvDeskripsiMotif);
         }
+
+    }
+
+    public void setData(List<KatalogMotifData> newData) {
+        this.data.clear();
+        this.data.addAll(newData);
     }
 }

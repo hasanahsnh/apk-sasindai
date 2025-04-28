@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,36 +16,41 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.example.sasindai.R;
 import com.example.sasindai.model.RilisMediaData;
-import com.makeramen.roundedimageview.RoundedImageView;
 
 import java.util.List;
 
-public class HeroSliderAdapter extends RecyclerView.Adapter<HeroSliderAdapter.HeroViewHolder> {
+public class RilisMediaListAdapter extends RecyclerView.Adapter<RilisMediaListAdapter.RilisMediaListViewHolder> {
     private final Context context;
-    private final List<RilisMediaData> rilisMediaDataList;
+    private final List<RilisMediaData> data;
 
-    public HeroSliderAdapter(Context context, List<RilisMediaData> rilisMediaData) {
+    public RilisMediaListAdapter(Context context, List<RilisMediaData> data) {
         this.context = context;
-        this.rilisMediaDataList = rilisMediaData;
+        this.data = data;
     }
 
     @NonNull
     @Override
-    public HeroSliderAdapter.HeroViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.list_slider_hero, parent, false);
-        return new HeroViewHolder(view);
+    public RilisMediaListAdapter.RilisMediaListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context).inflate(R.layout.list_berita_beranda, parent, false);
+        return new RilisMediaListViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull HeroSliderAdapter.HeroViewHolder holder, int position) {
-        RilisMediaData heroData = rilisMediaDataList.get(position);
+    public void onBindViewHolder(@NonNull RilisMediaListAdapter.RilisMediaListViewHolder holder, int position) {
+        RilisMediaData rilisMediaData = data.get(position);
+
+        holder.tvJudulRilisMedia.setText(rilisMediaData.getJudulArtikel());
 
         Glide.with(context)
-                .load(heroData.getFotoBeritaUrl())
+                .load(rilisMediaData.getFotoBeritaUrl())
+                .apply(new RequestOptions().transform(new CenterCrop(), new RoundedCorners(25)))
                 .listener(new RequestListener<Drawable>() {
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, @Nullable Object model, @NonNull Target<Drawable> target, boolean isFirstResource) {
@@ -59,19 +65,21 @@ public class HeroSliderAdapter extends RecyclerView.Adapter<HeroSliderAdapter.He
                         return false;
                     }
                 })
-                .into(holder.imgSliderHero);
+                .into(holder.imgRilisMedia);
     }
 
     @Override
     public int getItemCount() {
-        return Math.min(rilisMediaDataList.size(), 4);
+        return Math.min(data.size(), 4);
     }
 
-    public static class HeroViewHolder extends RecyclerView.ViewHolder {
-        RoundedImageView imgSliderHero;
-        public HeroViewHolder(@NonNull View itemView) {
+    public static class RilisMediaListViewHolder extends RecyclerView.ViewHolder {
+        TextView tvJudulRilisMedia;
+        ImageView imgRilisMedia;
+        public RilisMediaListViewHolder(@NonNull View itemView) {
             super(itemView);
-            imgSliderHero = itemView.findViewById(R.id.imgSliderHero);
+            tvJudulRilisMedia = itemView.findViewById(R.id.tvJudulRilisMedia);
+            imgRilisMedia = itemView.findViewById(R.id.imgRilisMedia);
         }
     }
 }

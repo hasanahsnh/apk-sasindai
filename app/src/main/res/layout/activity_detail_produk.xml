@@ -77,8 +77,6 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingStart="15dp"
-                android:paddingEnd="15dp"
                 android:layout_marginBottom="15dp"
                 android:orientation="vertical">
 
@@ -124,9 +122,11 @@
                     android:fontFamily="@font/poppins_medium"
                     android:text="Harga"
                     android:textColor="@color/maroon"
-                    android:textSize="12sp"/>
+                    android:textSize="18sp"
+                    android:visibility="gone"/>
 
                 <com.facebook.shimmer.ShimmerFrameLayout
+                    android:id="@+id/shimmerRentangharga"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
@@ -171,6 +171,7 @@
                     android:layout_marginTop="15dp" />
 
                 <com.facebook.shimmer.ShimmerFrameLayout
+                    android:id="@+id/shimmerUkuran"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
@@ -212,7 +213,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="15dp"
                     android:text="Deskripsi Produk"
-                    android:visibility="gone"/>
+                    android:visibility="gone"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"/>
 
                 <com.facebook.shimmer.ShimmerFrameLayout
                     android:id="@+id/shimmerDeskripsiProduk"
@@ -333,7 +337,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Masukkan ke keranjang"
-            android:textSize="14sp"
+            android:textSize="12sp"
             android:textColor="@color/putih"
             android:fontFamily="@font/poppins_bold"
             android:padding="15dp"
@@ -346,7 +350,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Beli Sekarang"
-            android:textSize="14sp"
+            android:textSize="12sp"
             android:textColor="@color/putih"
             android:fontFamily="@font/poppins_bold"
             android:padding="15dp"

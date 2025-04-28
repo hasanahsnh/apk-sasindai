@@ -22,6 +22,8 @@ import com.example.sasindai.KaPasaranHostActivity;
 import com.example.sasindai.R;
 import com.example.sasindai.adapter.HeroSliderAdapter;
 import com.example.sasindai.adapter.ProdukSliderAdapter;
+import com.example.sasindai.adapter.RilisMediaListAdapter;
+import com.example.sasindai.adapter.ShimmerRilisMediaAdapter;
 import com.example.sasindai.model.ProdukData;
 import com.example.sasindai.model.RilisMediaData;
 import com.facebook.shimmer.ShimmerFrameLayout;
@@ -55,9 +57,10 @@ public class BerandaFragment extends Fragment {
     // Dari sini..
     private HeroSliderAdapter heroSliderAdapter;
     private ProdukSliderAdapter produkSliderAdapter;
+    private RilisMediaListAdapter rilisMediaListAdapter;
     private ArrayList<RilisMediaData> rilisMediaDataList;
     private ArrayList<ProdukData> produkDataList;
-    private RecyclerView recyclerViewHero, previewKaPasaran;
+    private RecyclerView recyclerViewHero, previewKaPasaran, previewRilisMedia, shimmerPreviewRilisMedia;
     private ShimmerFrameLayout shimmerFrameLayout, shimmerProduk;
     private LinearLayout layoutFiturKaPasaran;
     private TextView tvLihatProduk;
@@ -100,33 +103,51 @@ public class BerandaFragment extends Fragment {
         recyclerViewHero = view.findViewById(R.id.hero);
         shimmerFrameLayout = view.findViewById(R.id.shimmerHero);
         layoutFiturKaPasaran = view.findViewById(R.id.layoutFiturKaPasaran);
-
         previewKaPasaran = view.findViewById(R.id.previewKaPasaran);
         shimmerProduk = view.findViewById(R.id.shimmerProduk);
-
         tvLihatProduk = view.findViewById(R.id.tvLihatProduk);
+        previewRilisMedia = view.findViewById(R.id.previewRilisMedia);
+        shimmerPreviewRilisMedia = view.findViewById(R.id.shimmerPreviewRilisMedia);
+        // End inisial
 
         // Navigate to
         clickToNavigate();
+        // End navigate
 
-        // Mulai shimmer
-        shimmerFrameLayout.startShimmer();
-        shimmerFrameLayout.setVisibility(View.VISIBLE);
-
-        shimmerProduk.startShimmer();
-        shimmerProduk.setVisibility(View.VISIBLE);
-
+        // Hero
         if (recyclerViewHero != null) {
             recyclerViewHero.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
             rilisMediaDataList = new ArrayList<>();
         } else {
-            Log.e("Recycler View Hero", "Recycler view hero gagal dimuat");
+            Log.e("Beranda Fragment", "Recycler view hero gagal dimuat");
         }
+        // End hero
 
+        // Produk
         if (previewKaPasaran != null) {
             previewKaPasaran.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
             produkDataList = new ArrayList<>();
+        } else {
+            Log.e("Beranda Fragment", "Recycler view preview ka pasaran gagal dimuat");
         }
+        // End produk
+
+        // Rilis media
+        if (previewRilisMedia != null) {
+            previewRilisMedia.setNestedScrollingEnabled(false);
+            previewRilisMedia.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));
+            rilisMediaDataList = new ArrayList<>();
+        } else {
+            Log.e("Beranda Fragment", "Recycler view preview rilis media gagal dimuat");
+        }
+
+        if (shimmerPreviewRilisMedia != null) {
+            shimmerPreviewRilisMedia.setNestedScrollingEnabled(false);
+            shimmerPreviewRilisMedia.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));
+            shimmerPreviewRilisMedia.setAdapter(new ShimmerRilisMediaAdapter(4));
+        }
+        // End rilis media
+
 
         // Load data dari firebase (db)
         loadDataFromFirebase();
@@ -139,7 +160,7 @@ public class BerandaFragment extends Fragment {
             return;
         }
 
-        // Berita
+        // Hero
         DatabaseReference databaseReferenceRilisMedia = FirebaseDatabase.getInstance().getReference("berita");
         databaseReferenceRilisMedia.addValueEventListener(new ValueEventListener() {
             @Override
@@ -153,18 +174,11 @@ public class BerandaFragment extends Fragment {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     try {
                         RilisMediaData heroData = dataSnapshot.getValue(RilisMediaData.class);
-                        ProdukData dataProduk = dataSnapshot.getValue(ProdukData.class);
 
                         if (heroData != null) {
                             rilisMediaDataList.add(heroData);
                         } else {
                             Log.e("Beranda Fragment", "Tidak ada data untuk hero yang dimuat" + dataSnapshot);
-                        }
-
-                        if (dataProduk != null) {
-                            produkDataList.add(dataProduk);
-                        } else {
-                            Log.e("Beranda Fragment", "Tidak ada data produk yang dimuat!" + dataSnapshot);
                         }
 
                     } catch (Exception e) {
@@ -182,6 +196,8 @@ public class BerandaFragment extends Fragment {
 
                 heroSliderAdapter = new HeroSliderAdapter(getContext(), rilisMediaDataList);
                 recyclerViewHero.setAdapter(heroSliderAdapter);
+
+                heroSliderAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -192,6 +208,7 @@ public class BerandaFragment extends Fragment {
                 }
             }
         });
+        // End hero
 
         // Produk
         DatabaseReference databaseReferenceProduk = FirebaseDatabase.getInstance().getReference("produk");
@@ -229,6 +246,8 @@ public class BerandaFragment extends Fragment {
 
                 produkSliderAdapter = new ProdukSliderAdapter(requireContext(), produkDataList);
                 previewKaPasaran.setAdapter(produkSliderAdapter);
+
+                produkSliderAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -236,6 +255,54 @@ public class BerandaFragment extends Fragment {
 
             }
         });
+        // End produk
+
+        // Rilis media
+        DatabaseReference databaseReferencePreviewRilisMedia = FirebaseDatabase.getInstance().getReference("berita");
+        databaseReferencePreviewRilisMedia.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (!isAdded()) {
+                    Log.e("Beranda Fragment", "Fragment telah dimuat, lewati perubahan data");
+                    return;
+                }
+
+                rilisMediaDataList.clear();
+
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    try {
+                        RilisMediaData dataRilisMedia = dataSnapshot.getValue(RilisMediaData.class);
+                        if (dataRilisMedia != null) {
+                            rilisMediaDataList.add(dataRilisMedia);
+                        } else {
+                            Log.e("Beranda Fragment", "Tidak ada data rilis media yang dimuat!" + dataSnapshot);
+                        }
+
+                    } catch (Exception e) {
+                        Log.e("Pemuatan Data", "Error saat memuat data rilis media" + e.getMessage());
+                    }
+                }
+
+                if (rilisMediaDataList != null) {
+                    shimmerPreviewRilisMedia.setVisibility(View.GONE);
+                } else {
+                    shimmerPreviewRilisMedia.setVisibility(View.VISIBLE);
+                }
+
+                rilisMediaListAdapter = new RilisMediaListAdapter(requireContext(), rilisMediaDataList);
+                previewRilisMedia.setAdapter(rilisMediaListAdapter);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                if (!isAdded()) {
+                    Log.e("Beranda Fragment", "Gagal memuat database" + error.getMessage());
+                    Toast.makeText(requireContext(), "Gagal Memuat Data rilis media", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        // End rilis media
 
     }
 

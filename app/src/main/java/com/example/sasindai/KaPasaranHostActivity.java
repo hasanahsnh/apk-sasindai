@@ -32,7 +32,7 @@ public class KaPasaranHostActivity extends AppCompatActivity {
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO); // Set default mode gelap
         Window window = getWindow(); // Mendapatkan objek window
-        window.setStatusBarColor(ContextCompat.getColor(this, R.color.gold)); // Set warna status bar
+        window.setStatusBarColor(ContextCompat.getColor(this, R.color.putih)); // Set warna status bar
         window.setNavigationBarColor(ContextCompat.getColor(this, R.color.black)); // Set warna nav bar
 
         // SharedPrefs

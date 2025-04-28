@@ -1,12 +1,14 @@
 package com.example.sasindai.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -21,9 +23,11 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
+import com.example.sasindai.DetailProdukActivity;
 import com.example.sasindai.R;
 import com.example.sasindai.model.ProdukData;
 import com.example.sasindai.model.VarianProduk;
+import com.google.gson.Gson;
 
 import java.text.NumberFormat;
 import java.util.List;
@@ -89,6 +93,13 @@ public class ProdukSliderAdapter extends RecyclerView.Adapter<ProdukSliderAdapte
                     })
                     .into(holder.imgProduk);
         }
+
+        holder.btnLihatDetailBeranda.setOnClickListener(v -> {
+            Intent intent = new Intent(context, DetailProdukActivity.class);
+            intent.putExtra("produk", new Gson().toJson(data));
+            context.startActivity(intent);
+        });
+
     }
 
     @Override
@@ -99,12 +110,14 @@ public class ProdukSliderAdapter extends RecyclerView.Adapter<ProdukSliderAdapte
     public static class ProdukSliderViewHolder extends RecyclerView.ViewHolder {
         ImageView imgProduk;
         TextView tvNamaProduk, tvTotalProdukTerjual, tvHargaProduk;
+        LinearLayout btnLihatDetailBeranda;
         public ProdukSliderViewHolder(@NonNull View itemView) {
             super(itemView);
             imgProduk = itemView.findViewById(R.id.imgListProdukPreview);
             tvNamaProduk = itemView.findViewById(R.id.tvNamaProdukPreview);
             tvTotalProdukTerjual = itemView.findViewById(R.id.tvTotalProdukTerjualPreview);
             tvHargaProduk = itemView.findViewById(R.id.tvHargaProdukPreview);
+            btnLihatDetailBeranda = itemView.findViewById(R.id.btnLihatDetailBeranda);
         }
     }
 }
