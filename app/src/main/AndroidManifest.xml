@@ -16,12 +16,14 @@
         android:theme="@style/Theme.Sasindai"
         tools:targetApi="31">
         <activity
+            android:name=".KeranjangActivity"
+            android:exported="false" />
+        <activity
             android:name=".KaPasaranHostActivity"
             android:exported="false" />
         <activity
             android:name=".DetailProdukActivity"
-            android:exported="true">
-        </activity>
+            android:exported="true"></activity>
         <activity
             android:name=".AuthHostActivity"
             android:exported="true" />

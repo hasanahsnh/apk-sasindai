@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="6dp"
+    android:layout_marginStart="5dp"
+    android:layout_marginEnd="5dp"
+    android:layout_marginTop="2dp"
+    android:layout_marginBottom="2dp"
+    android:gravity="center_vertical"
+    android:background="@drawable/frame_produk">
+
+    <!-- Checkbox -->
+    <CheckBox
+        android:id="@+id/checkBoxItem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <!-- Gambar produk -->
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:id="@+id/imageProduk"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginStart="8dp"
+        android:scaleType="centerCrop"/>
+
+    <!-- Info produk -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginStart="8dp"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/tvNamaProdukKeranjang"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_medium"
+            android:text="Nama Produk"
+            android:textColor="@color/maroon"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tvVarianKeranjang"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Varian: Merah"
+            android:textSize="12sp"
+            android:fontFamily="@font/poppins_regular"/>
+
+        <TextView
+            android:id="@+id/tvHargaProdukKeranjang"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Rp20.000"
+            android:textColor="@color/maroon"
+            android:fontFamily="@font/poppins_regular"
+            android:textSize="13sp" />
+    </LinearLayout>
+
+    <!-- Kontrol jumlah -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/frame_list_ukuran"
+        android:padding="6dp"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/btnMinus"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_minus"/>
+
+        <TextView
+            android:id="@+id/tvQtyKeranjang"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:gravity="center"
+            android:text="1"
+            android:textSize="12sp"/>
+
+        <ImageView
+            android:id="@+id/btnPlus"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_plus"/>
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@drawable/img_trash"
+        android:layout_marginStart="5dp"/>
+
+</LinearLayout>

@@ -14,11 +14,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.sasindai.KaPasaranHostActivity;
+import com.example.sasindai.KeranjangActivity;
 import com.example.sasindai.R;
 import com.example.sasindai.adapter.HeroSliderAdapter;
 import com.example.sasindai.adapter.ProdukSliderAdapter;
@@ -64,6 +66,7 @@ public class BerandaFragment extends Fragment {
     private ShimmerFrameLayout shimmerFrameLayout, shimmerProduk;
     private LinearLayout layoutFiturKaPasaran;
     private TextView tvLihatProduk;
+    private ImageView btnGotoKeranjang;
 
     public BerandaFragment() {
         // Required empty public constructor
@@ -108,6 +111,7 @@ public class BerandaFragment extends Fragment {
         tvLihatProduk = view.findViewById(R.id.tvLihatProduk);
         previewRilisMedia = view.findViewById(R.id.previewRilisMedia);
         shimmerPreviewRilisMedia = view.findViewById(R.id.shimmerPreviewRilisMedia);
+        btnGotoKeranjang = view.findViewById(R.id.btnGotoKeranjang);
         // End inisial
 
         // Navigate to
@@ -314,7 +318,7 @@ public class BerandaFragment extends Fragment {
                 startActivity(intent);
             });
         } else {
-            Log.e("Beranda Fragment", "Activity host ka pasaran gagal dimuat!");
+            Log.e("Beranda Fragment", "layout fitur kapasaran bernilai null, gagal dimuat");
         }
 
         // Arahkan ke activity host kapasaran
@@ -324,7 +328,17 @@ public class BerandaFragment extends Fragment {
                 startActivity(intent);
             });
         } else {
-            Log.e("Beranda Fragment", "Dari tvLihatProduk, host ka pasaran gagal dimuat!");
+            Log.e("Beranda Fragment", "tv lihat produk gagal dimuat atau bernilai null!");
+        }
+
+        // Arahkan ke activity keranjang
+        if (btnGotoKeranjang != null) {
+            btnGotoKeranjang.setOnClickListener(v -> {
+                Intent intent = new Intent(requireContext(), KeranjangActivity.class);
+                startActivity(intent);
+            });
+        } else {
+            Log.e("Beranda Fragment", "Dari btnGotoKeranjang, btn goto keranjang gagal dimuat atau bernilai null");
         }
     }
 
