@@ -50,7 +50,8 @@
             <CheckBox
                 android:id="@+id/checkBoxSelectAll"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:buttonTint="@color/maroon"/>
         </LinearLayout>
 
     </LinearLayout>
@@ -72,7 +73,6 @@
 
     <!-- Btn Checkout -->
     <LinearLayout
-        android:id="@+id/btnCheckout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -88,11 +88,10 @@
             android:textSize="14sp"
             android:textColor="@color/maroon"
             android:fontFamily="@font/poppins_bold"
-            android:padding="15dp"
-            android:layout_weight="1"
             android:layout_marginEnd="6dp"/>
 
         <TextView
+            android:id="@+id/tvTotalHarga"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Total"
@@ -104,6 +103,7 @@
             android:layout_marginEnd="6dp"/>
 
         <TextView
+            android:id="@+id/btnCheckout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Checkout >"

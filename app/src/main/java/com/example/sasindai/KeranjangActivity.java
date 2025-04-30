@@ -5,6 +5,9 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Window;
+import android.widget.CheckBox;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -27,8 +30,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class KeranjangActivity extends AppCompatActivity {
@@ -37,6 +42,9 @@ public class KeranjangActivity extends AppCompatActivity {
     String userUid;
     List<KeranjangData> keranjangData = new ArrayList<>();
     FirebaseUser firebaseUser;
+    CheckBox checkBoxSelectAll;
+    TextView tvTotalHarga, btnCheckout;
+    KeranjangListAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +56,10 @@ public class KeranjangActivity extends AppCompatActivity {
         Window window = getWindow(); // Mendapatkan objek window
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.putih)); // Set warna status bar
         window.setNavigationBarColor(ContextCompat.getColor(this, R.color.black)); // Set warna nav bar
+
+        checkBoxSelectAll = findViewById(R.id.checkBoxSelectAll);
+        tvTotalHarga = findViewById(R.id.tvTotalHarga);
+        btnCheckout = findViewById(R.id.btnCheckout);
 
         // SharedPrefs
         sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
@@ -69,6 +81,16 @@ public class KeranjangActivity extends AppCompatActivity {
         recyclerViewKeranjang.setLayoutManager(new LinearLayoutManager(this));
         KeranjangListAdapter adapter = new KeranjangListAdapter(this, keranjangData);
         recyclerViewKeranjang.setAdapter(adapter);
+
+        adapter.setSelectionChangeListener(() -> {
+            int total = adapter.getTotalHargaSelected();
+            NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+            tvTotalHarga.setText(formatRupiah.format(total).replace("Rp", "Rp "));
+        });
+
+        checkBoxSelectAll.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            adapter.selectAll(isChecked);
+        });
 
         AmbilProdukUser();
 
