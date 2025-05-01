@@ -1,6 +1,7 @@
 package com.example.sasindai;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,6 +9,7 @@ import android.view.Window;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -29,6 +31,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -41,6 +44,7 @@ public class KeranjangActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences;
     String userUid;
     List<KeranjangData> keranjangData = new ArrayList<>();
+    List<KeranjangData> selectedItems = new ArrayList<>();
     FirebaseUser firebaseUser;
     CheckBox checkBoxSelectAll;
     TextView tvTotalHarga, btnCheckout;
@@ -79,7 +83,7 @@ public class KeranjangActivity extends AppCompatActivity {
         // End inisialisasi widget
 
         recyclerViewKeranjang.setLayoutManager(new LinearLayoutManager(this));
-        KeranjangListAdapter adapter = new KeranjangListAdapter(this, keranjangData);
+        adapter = new KeranjangListAdapter(this, keranjangData);
         recyclerViewKeranjang.setAdapter(adapter);
 
         adapter.setSelectionChangeListener(() -> {
@@ -90,6 +94,21 @@ public class KeranjangActivity extends AppCompatActivity {
 
         checkBoxSelectAll.setOnCheckedChangeListener((buttonView, isChecked) -> {
             adapter.selectAll(isChecked);
+        });
+
+        btnCheckout.setOnClickListener(v -> {
+            selectedItems.clear();
+            selectedItems = adapter.getSelectedItems();
+            if (selectedItems.isEmpty()) {
+                Toast.makeText(this, "Tidak ada produk yang dipilih!", Toast.LENGTH_SHORT).show();
+            } else {
+                Gson gson = new Gson();
+                String selectedItemsJson = gson.toJson(selectedItems);
+                Log.d("KeranjangActivity", "Selected Items: " + selectedItems);
+                Intent intent = new Intent(KeranjangActivity.this, DetailPemesananActivity.class);
+                intent.putExtra("selectedItems", selectedItemsJson);
+                startActivity(intent);
+            }
         });
 
         AmbilProdukUser();

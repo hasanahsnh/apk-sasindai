@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="6dp"
+    android:layout_marginTop="2dp"
+    android:layout_marginBottom="2dp"
+    android:gravity="center_vertical"
+    android:background="@drawable/frame_produk">
+
+    <!-- Gambar produk -->
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:id="@+id/imageItem"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginStart="8dp"
+        android:scaleType="centerCrop"/>
+
+    <!-- Info produk -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginStart="8dp"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/tvNamaProdukOrder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_medium"
+            android:text="Nama Produk"
+            android:textColor="@color/maroon"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tvVarianOrder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Varian: Merah"
+            android:textSize="12sp"
+            android:fontFamily="@font/poppins_regular"/>
+
+        <TextView
+            android:id="@+id/tvHargaOrder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Rp20.000"
+            android:textColor="@color/maroon"
+            android:fontFamily="@font/poppins_regular"
+            android:textSize="13sp" />
+    </LinearLayout>
+
+    <!-- Kontrol jumlah -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginEnd="8dp"
+        android:padding="6dp"
+        android:gravity="center_horizontal">
+
+        <TextView
+            android:id="@+id/btnMinus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Qty: "
+            android:textSize="12sp"
+            android:fontFamily="@font/poppins_regular"/>
+
+        <TextView
+            android:id="@+id/tvQtyOrder"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:gravity="center"
+            android:text="1"
+            android:textSize="14sp"
+            android:fontFamily="@font/poppins_regular"/>
+
+        <TextView
+            android:id="@+id/tvX"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="x"
+            android:textSize="12sp"
+            android:fontFamily="@font/poppins_regular"/>
+    </LinearLayout>
+
+</LinearLayout>

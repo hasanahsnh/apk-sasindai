@@ -129,6 +129,10 @@ public class KeranjangListAdapter extends RecyclerView.Adapter<KeranjangListAdap
         }
     }
 
+    public List<KeranjangData> getSelectedItems() {
+        return new ArrayList<>(selectedItems);
+    }
+
     @NonNull
     @Override
     public KeranjangListAdapter.KeranjangListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -178,10 +182,12 @@ public class KeranjangListAdapter extends RecyclerView.Adapter<KeranjangListAdap
                 @Override
                 public void onSuccess(Void unused) {
                     int removePosition = holder.getAdapterPosition();
-                    selectedItems.remove(data);
-                    keranjangData.remove(removePosition);
-                    notifyItemRemoved(removePosition);
-                    notifyTotalChanged();
+                    if (removePosition != RecyclerView.NO_POSITION) {
+                        selectedItems.remove(data);
+                        keranjangData.remove(removePosition);
+                        notifyItemRemoved(removePosition);
+                        notifyTotalChanged();
+                    }
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
