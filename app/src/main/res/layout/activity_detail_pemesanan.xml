@@ -36,7 +36,32 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <LinearLayout
+        android:id="@+id/progressBarDetailPemesanan"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:indeterminate="true"
+            android:indeterminateTint="@color/maroon" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sedang memuat data"
+            android:textSize="11sp"
+            android:fontFamily="@font/poppins_regular"
+            android:textColor="@color/maroon" />
+    </LinearLayout>
+
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/containerDetailPemesanan"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -68,11 +93,12 @@
                     app:layout_constraintStart_toStartOf="parent">
 
                     <TextView
+                        android:id="@+id/tvNamaPembeli"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Penerima"
                         android:textColor="@color/maroon"
-                        android:fontFamily="@font/poppins_medium"
+                        android:fontFamily="@font/poppins_bold"
                         android:textSize="12sp"/>
 
                     <TextView
@@ -80,16 +106,18 @@
                         android:layout_height="wrap_content"
                         android:text=" | "
                         android:textColor="@color/maroon"
-                        android:fontFamily="@font/poppins_medium"
+                        android:fontFamily="@font/poppins_bold"
                         android:textSize="12sp"/>
 
                     <TextView
+                        android:id="@+id/tvTelpPembeli"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="089696210706"
                         android:textColor="@color/maroon"
-                        android:fontFamily="@font/poppins_medium"
-                        android:textSize="12sp"/>
+                        android:fontFamily="@font/poppins_bold"
+                        android:textSize="12sp"
+                        android:gravity="end"/>
 
                 </LinearLayout>
 
@@ -103,18 +131,30 @@
                     android:gravity="center">
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Alamat"
                         android:textColor="@color/maroon"
-                        android:fontFamily="@font/poppins_regular"
-                        android:textSize="12sp"/>
+                        android:fontFamily="@font/poppins_bold"
+                        android:textSize="12sp"
+                        android:layout_weight="1"/>
 
                     <TextView
+                        android:id="@+id/btnMasukkanAlamat"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text=">"
-                        android:textColor="@color/maroon"
+                        android:text="Isi alamat lengkap"
+                        android:textColor="@color/black"
+                        android:fontFamily="@font/poppins_regular"
+                        android:textSize="12sp"
+                        android:gravity="end"
+                        android:layout_weight="1"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=" >"
+                        android:textColor="@color/black"
                         android:fontFamily="@font/poppins_regular"
                         android:textSize="12sp"
                         android:gravity="end"/>
@@ -142,22 +182,34 @@
                     app:layout_constraintStart_toStartOf="parent">
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Jasa Pengiriman"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="Kurir"
                         android:textColor="@color/maroon"
                         android:textSize="12sp"
-                        android:fontFamily="@font/poppins_medium"
-                        android:layout_marginBottom="8dp"/>
+                        android:fontFamily="@font/poppins_bold"
+                        android:layout_marginBottom="8dp"
+                        android:layout_weight="1"/>
 
                     <TextView
+                        android:id="@+id/btnPilihJasaPengiriman"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Pilih jasa >"
+                        android:text="Jasa yang dipilih"
                         android:textColor="@color/black"
                         android:textSize="12sp"
                         android:fontFamily="@font/poppins_regular"
                         android:layout_marginBottom="8dp"
+                        android:gravity="end"
+                        android:layout_weight="1"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=" >"
+                        android:textColor="@color/black"
+                        android:fontFamily="@font/poppins_regular"
+                        android:textSize="12sp"
                         android:gravity="end"/>
 
                 </LinearLayout>
@@ -187,8 +239,9 @@
                         android:text="Varian"
                         android:textColor="@color/maroon"
                         android:textSize="12sp"
-                        android:fontFamily="@font/poppins_medium"
-                        android:layout_marginBottom="8dp"/>
+                        android:fontFamily="@font/poppins_bold"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginStart="8dp"/>
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recyclerSelectedItems"
@@ -225,7 +278,7 @@
                         android:text="Catatan untuk penjual"
                         android:textColor="@color/maroon"
                         android:textSize="12sp"
-                        android:fontFamily="@font/poppins_medium"/>
+                        android:fontFamily="@font/poppins_bold"/>
 
                     <TextView
                         android:layout_width="match_parent"
@@ -241,9 +294,9 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <!-- Metode Pembayaran -->
+            <!-- Total rincian -->
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/layPaymentMethod"
+                android:id="@+id/layTotalRincian"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/frame_bg_fitur"
@@ -253,6 +306,7 @@
                 android:padding="8dp">
 
                 <LinearLayout
+                    android:id="@+id/tvTotalRincian"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:layout_constraintTop_toTopOf="parent"
@@ -262,27 +316,67 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Metode pembayaran tersedia"
+                        android:text="Total Rincian"
                         android:textColor="@color/maroon"
+                        android:textSize="12sp"
+                        android:fontFamily="@font/poppins_bold"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/rincianBarang"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@+id/tvTotalRincian"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Produk"
+                        android:textColor="@color/maroon"
+                        android:textSize="12sp"
+                        android:fontFamily="@font/poppins_medium"
+                        android:layout_weight="1"/>
+
+                    <TextView
+                        android:id="@+id/tvRincianProduk"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Rp 0,00"
+                        android:textColor="@color/black"
                         android:textSize="12sp"
                         android:fontFamily="@font/poppins_medium"/>
 
-                    <RadioGroup
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal">
+                </LinearLayout>
 
-                        <RadioButton
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:buttonTint="@color/maroon"/>
+                <LinearLayout
+                    android:id="@+id/rincianEkspedisi"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@+id/rincianBarang"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:orientation="horizontal">
 
-                        <ImageView
-                            android:layout_width="50dp"
-                            android:layout_height="match_parent"
-                            android:src="@drawable/img_qris"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Pengiriman"
+                        android:textColor="@color/maroon"
+                        android:textSize="12sp"
+                        android:fontFamily="@font/poppins_medium"
+                        android:layout_weight="1"/>
 
-                    </RadioGroup>
+                    <TextView
+                        android:id="@+id/rincianHargaKurir"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Rp 0,00"
+                        android:textColor="@color/black"
+                        android:textSize="12sp"
+                        android:fontFamily="@font/poppins_medium"/>
 
                 </LinearLayout>
 
@@ -316,7 +410,7 @@
             android:id="@+id/tvTotalHarga"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Total"
+            android:text="Rp 0,00"
             android:textSize="14sp"
             android:textColor="@color/maroon"
             android:fontFamily="@font/poppins_bold"
@@ -328,7 +422,7 @@
             android:id="@+id/btnCheckoutOrder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Checkout >"
+            android:text="Pembayaran >"
             android:textSize="12sp"
             android:textColor="@color/putih"
             android:fontFamily="@font/poppins_bold"

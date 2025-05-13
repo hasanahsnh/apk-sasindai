@@ -2,6 +2,8 @@ package com.example.sasindai.adapter;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,8 +25,10 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
+import com.example.sasindai.KeranjangActivity;
 import com.example.sasindai.R;
 import com.example.sasindai.model.KeranjangData;
+import com.example.sasindai.model.VarianProduk;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.datepicker.OnSelectionChangedListener;
@@ -56,6 +60,21 @@ public class KeranjangListAdapter extends RecyclerView.Adapter<KeranjangListAdap
         this.selectionChangeListener = listener;
     }
 
+    public void clearSelections() {
+        selectedItems.clear();
+        notifyItemRangeChanged(0, getItemCount());
+        notifyTotalChanged();
+    }
+
+    public void setSelectedItems(List<KeranjangData> selectedItems) {
+        this.selectedItems.clear();
+        this.selectedItems.addAll(selectedItems);
+
+        if (selectionChangeListener != null) {
+            selectionChangeListener.onSelectionChanged();
+        }
+    }
+
     public interface OnSelectionChangeListener {
         void onSelectionChanged();
     }
@@ -72,6 +91,14 @@ public class KeranjangListAdapter extends RecyclerView.Adapter<KeranjangListAdap
             total += item.getHarga() * item.getQty();
         }
         return total;
+    }
+
+    public float getBeratItemSelected() {
+        float berat = 0f;
+        for (KeranjangData item : selectedItems) {
+            berat += item.getBerat() * item.getQty();
+        }
+        return berat;
     }
 
     public void selectAll(boolean select) {
@@ -187,6 +214,13 @@ public class KeranjangListAdapter extends RecyclerView.Adapter<KeranjangListAdap
                         keranjangData.remove(removePosition);
                         notifyItemRemoved(removePosition);
                         notifyTotalChanged();
+
+                        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                            if (context instanceof KeranjangActivity) {
+                                ((KeranjangActivity) context).AmbilProdukUser(); // refresh ulang data
+                            }
+                        }, 300);
+
                     }
                 }
             }).addOnFailureListener(new OnFailureListener() {

@@ -4,10 +4,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
+import android.view.View;
 import android.view.Window;
 import android.widget.CheckBox;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,7 +37,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +56,8 @@ public class KeranjangActivity extends AppCompatActivity {
     CheckBox checkBoxSelectAll;
     TextView tvTotalHarga, btnCheckout;
     KeranjangListAdapter adapter;
+    LinearLayout progressBarKeranjang, progressBarKeranjangDataNotFound;
+    FrameLayout frameAllProduk;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,8 +71,11 @@ public class KeranjangActivity extends AppCompatActivity {
         window.setNavigationBarColor(ContextCompat.getColor(this, R.color.black)); // Set warna nav bar
 
         checkBoxSelectAll = findViewById(R.id.checkBoxSelectAll);
-        tvTotalHarga = findViewById(R.id.tvTotalHarga);
+        tvTotalHarga = findViewById(R.id.tvTotalHargaKeranjang);
         btnCheckout = findViewById(R.id.btnCheckout);
+        progressBarKeranjang = findViewById(R.id.progressBarKeranjang);
+        frameAllProduk = findViewById(R.id.frameAllProduk);
+        progressBarKeranjangDataNotFound = findViewById(R.id.progressBarKeranjangDataNotFound);
 
         // SharedPrefs
         sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
@@ -85,11 +97,14 @@ public class KeranjangActivity extends AppCompatActivity {
         recyclerViewKeranjang.setLayoutManager(new LinearLayoutManager(this));
         adapter = new KeranjangListAdapter(this, keranjangData);
         recyclerViewKeranjang.setAdapter(adapter);
+        adapter.clearSelections();
 
         adapter.setSelectionChangeListener(() -> {
             int total = adapter.getTotalHargaSelected();
             NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
-            tvTotalHarga.setText(formatRupiah.format(total).replace("Rp", "Rp "));
+
+            String formattedTotal = formatRupiah.format(total).replace("Rp", "Rp ");
+            tvTotalHarga.setText(adapter.getSelectedItems().isEmpty() ? "Rp 0,00" : formattedTotal);
         });
 
         checkBoxSelectAll.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -97,16 +112,47 @@ public class KeranjangActivity extends AppCompatActivity {
         });
 
         btnCheckout.setOnClickListener(v -> {
+            Log.i("Keranjang actv", "btn checkout berhasil ditekan, task clear");
             selectedItems.clear();
             selectedItems = adapter.getSelectedItems();
             if (selectedItems.isEmpty()) {
                 Toast.makeText(this, "Tidak ada produk yang dipilih!", Toast.LENGTH_SHORT).show();
             } else {
+                int totalHarga = adapter.getTotalHargaSelected();
+                float totalBerat = adapter.getBeratItemSelected();
+
+                Log.d("CHECK_BERAT", "Berat disimpan: " + totalBerat);
+
+                // dapatkan pref dari keranjang yang di ceklis
+                SharedPreferences prefs = getSharedPreferences("ProdukKeranjang", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putInt("total_harga", totalHarga);
+                editor.putFloat("total_berat", totalBerat);
+                editor.clear();
+                editor.apply();
+                // end
+
+                // clear pref alamat/rincian kodepos dari pref tersedia
+                SharedPreferences alamat = getSharedPreferences("AlamatPrefs", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editorAlamatDanKurir = alamat.edit();
+                editorAlamatDanKurir.clear();
+                editorAlamatDanKurir.apply();
+
+                // clear ekspedisi dipilih sebelumnya
+                SharedPreferences kurirPrefs = getSharedPreferences("KurirPrefs", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editorKurir = kurirPrefs.edit();
+                editorKurir.clear();
+                editorKurir.apply();
+
                 Gson gson = new Gson();
                 String selectedItemsJson = gson.toJson(selectedItems);
+
                 Log.d("KeranjangActivity", "Selected Items: " + selectedItems);
+
                 Intent intent = new Intent(KeranjangActivity.this, DetailPemesananActivity.class);
+
                 intent.putExtra("selectedItems", selectedItemsJson);
+
                 startActivity(intent);
             }
         });
@@ -120,13 +166,18 @@ public class KeranjangActivity extends AppCompatActivity {
         });
     }
 
-    private void AmbilProdukUser() {
+    public void AmbilProdukUser() {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("keranjang").child(userUid);
+
+        progressBarKeranjang.setVisibility(View.VISIBLE);
+        frameAllProduk.setVisibility(View.GONE);
+        progressBarKeranjangDataNotFound.setVisibility(View.GONE);
 
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 keranjangData.clear();
+                adapter.clearSelections();
 
                 for (DataSnapshot produkSnapshot : snapshot.getChildren()) {
                     for (DataSnapshot varianSnapshot : produkSnapshot.getChildren()) {
@@ -137,17 +188,42 @@ public class KeranjangActivity extends AppCompatActivity {
                     }
                 }
 
-                if (recyclerViewKeranjang != null) {
-                    recyclerViewKeranjang.getAdapter().notifyDataSetChanged();
+                progressBarKeranjang.setVisibility(View.GONE);
+
+                if (!keranjangData.isEmpty()) {
+                    frameAllProduk.setVisibility(View.VISIBLE);
+                    progressBarKeranjangDataNotFound.setVisibility(View.GONE);
                 } else {
-                    Log.e("Keranjang Activity", "Recycler view gagal dimuat atau bernilai null");
+                    frameAllProduk.setVisibility(View.GONE);
+                    progressBarKeranjangDataNotFound.setVisibility(View.VISIBLE);
                 }
+
+                if (recyclerViewKeranjang.getAdapter() != null)
+                    recyclerViewKeranjang.getAdapter().notifyDataSetChanged();
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                progressBarKeranjang.setVisibility(View.GONE);
+                frameAllProduk.setVisibility(View.GONE);
+                progressBarKeranjangDataNotFound.setVisibility(View.VISIBLE);
                 Log.e("Firebase", "Gagal mengambil data keranjang: " + error.getMessage());
             }
         });
+    }
+
+    private void tampilkanProgressBarDanLoadRincian() {
+        progressBarKeranjang.setVisibility(View.VISIBLE);
+        frameAllProduk.setVisibility(View.GONE);
+        progressBarKeranjangDataNotFound.setVisibility(View.GONE);
+
+        AmbilProdukUser();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        tampilkanProgressBarDanLoadRincian();
+        checkBoxSelectAll.setChecked(false);
     }
 }

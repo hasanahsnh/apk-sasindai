@@ -60,13 +60,18 @@ public class BottomSheetProdukAdapter extends RecyclerView.Adapter<BottomSheetPr
         VarianProduk data = varianProduk.get(position);
 
         holder.tvSheetUkuran.setText(data.getSize());
+        holder.tvNamaVarian.setText(data.getNama());
+        holder.tvStokVarian.setText(String.valueOf(data.getStok()));
 
         int adapterPosition = holder.getAdapterPosition();
-        if (adapterPosition == RecyclerView.NO_POSITION){
+        if (adapterPosition == RecyclerView.NO_POSITION) {
             return;
         }
 
-        holder.itemView.setBackgroundResource(selectedPosition == position ? R.drawable.frame_selected_item : 0);
+        holder.layoutItem.setBackgroundResource(
+                selectedPosition == position ? R.drawable.frame_selected_item: R.color.putih
+        );
+
         holder.itemView.setOnClickListener(v -> {
             int clickPosition = holder.getAdapterPosition();
             selectedPosition = clickPosition;
@@ -115,7 +120,7 @@ public class BottomSheetProdukAdapter extends RecyclerView.Adapter<BottomSheetPr
 
     public static class BottomSheetProdukViewHolder extends RecyclerView.ViewHolder {
         RoundedImageView imgSheetItem;
-        TextView tvSheetUkuran, tvSheetHarga;
+        TextView tvSheetUkuran, tvSheetHarga, tvNamaVarian, tvStokVarian;
         LinearLayout layoutItem;
         public BottomSheetProdukViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -123,6 +128,8 @@ public class BottomSheetProdukAdapter extends RecyclerView.Adapter<BottomSheetPr
             tvSheetUkuran = itemView.findViewById(R.id.tvSheetUkuran);
             tvSheetHarga = itemView.findViewById(R.id.tvSheetHarga);
             layoutItem = itemView.findViewById(R.id.layoutItem);
+            tvNamaVarian = itemView.findViewById(R.id.tvNamaVarian);
+            tvStokVarian = itemView.findViewById(R.id.tvStokVarian);
         }
     }
 }

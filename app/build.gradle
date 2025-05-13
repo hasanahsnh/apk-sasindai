@@ -19,7 +19,8 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -32,6 +33,7 @@ android {
     buildFeatures {
         viewBinding true
     }
+
 }
 
 dependencies {
@@ -40,10 +42,13 @@ dependencies {
     Letakkan dependensi baru di posisi paling atas.
     Sertakan keterangan "tanggal/bulan/tahun".
     Lakukan hal yang sama setiap kali ada penambahan.
-
-    #dokumentasinomorsatu
     */
 
+    implementation 'com.midtrans:uikit:2.0.0-SANDBOX' // 09/05/25
+    implementation 'com.squareup.okhttp3:okhttp:4.9.0' // 02/05/25
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.1' // 02/05/25
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0' // 02/05/25
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0' // 02/05/25
     implementation 'com.makeramen:roundedimageview:2.3.0' // 26/04/25
     implementation 'com.google.code.gson:gson:2.10.1' // 26/04/2025
     implementation("com.google.android.gms:play-services-auth:21.3.0") // 27/03/25

@@ -1,5 +1,7 @@
 package com.example.sasindai.model;
 
+import java.util.List;
+
 public class KeranjangData {
     private String idProduk;
     private String namaProduk;
@@ -9,12 +11,14 @@ public class KeranjangData {
     private int harga;
     private int qty;
     private String size;
+    private List<VarianProduk> varian;
+    private float berat;
 
     public KeranjangData() {
         //
     }
 
-    public KeranjangData(String idProduk, String namaProduk, String namaVarian, String createAt, String gambarVarian, int harga, int qty, String size) {
+    public KeranjangData(String idProduk, String namaProduk, String namaVarian, String createAt, String gambarVarian, int harga, int qty, String size, List<VarianProduk> varian, float berat) {
         this.idProduk = idProduk;
         this.namaProduk = namaProduk;
         this.namaVarian = namaVarian;
@@ -23,6 +27,8 @@ public class KeranjangData {
         this.harga = harga;
         this.qty = qty;
         this.size = size;
+        this.varian = varian;
+        this.berat = berat;
     }
 
     public String getIdProduk() {
@@ -87,5 +93,21 @@ public class KeranjangData {
 
     public void setSize(String size) {
         this.size = size;
+    }
+
+    public List<VarianProduk> getVarian() {
+        return varian;
+    }
+
+    public void setVarian(List<VarianProduk> varian) {
+        this.varian = varian;
+    }
+
+    public float getBerat() {
+        return berat;
+    }
+
+    public void setBerat(float berat) {
+        this.berat = berat;
     }
 }

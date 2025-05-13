@@ -23,7 +23,6 @@ import android.widget.Toast;
 import com.example.sasindai.AuthHostActivity;
 import com.example.sasindai.MainHostActivity;
 import com.example.sasindai.R;
-import com.example.sasindai.model.AlamatData;
 import com.example.sasindai.model.UserData;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -279,7 +278,7 @@ public class RegisterFragment extends Fragment {
         // Debug
         Log.d("Simpan User", "Mengambil uid user: " + uid);
 
-        UserData newUser = new UserData(uid, email, namaLengkap, phone, role, authMethod, new AlamatData(), false);
+        UserData newUser = new UserData(uid, email, namaLengkap, phone, role, authMethod, false);
 
         usersRef.child(uid).setValue(newUser).addOnCompleteListener(task -> {
            if (task.isSuccessful()) {

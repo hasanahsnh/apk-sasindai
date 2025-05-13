@@ -3,16 +3,14 @@ package com.example.sasindai.model;
 public class UserData {
     private final Boolean emailIsVerified;
     private String uid, email, namaLengkap, noTelp, role, authMethod;
-    private AlamatData alamat;
 
-    public UserData(String uid, String email, String namaLengkap, String noTelp, String role, String authMethod, AlamatData alamat, Boolean emailIsVerified) {
+    public UserData(String uid, String email, String namaLengkap, String noTelp, String role, String authMethod, Boolean emailIsVerified) {
         this.uid = uid;
         this.email = email;
         this.namaLengkap = namaLengkap;
         this.noTelp = noTelp;
         this.role = role;
         this.authMethod = authMethod;
-        this.alamat = alamat;
         this.emailIsVerified = emailIsVerified;
     }
 
@@ -62,14 +60,6 @@ public class UserData {
 
     public void setAuthMethod(String authMethod) {
         this.authMethod = authMethod;
-    }
-
-    public AlamatData getAlamat() {
-        return alamat;
-    }
-
-    public void setAlamat(AlamatData alamat) {
-        this.alamat = alamat;
     }
 
     public Boolean getEmailIsVerified() {

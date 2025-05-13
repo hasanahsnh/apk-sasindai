@@ -160,7 +160,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins_medium"
-                    android:text="Tersedia ukuran"
+                    android:text="Tersedia varian"
                     android:textColor="@color/maroon"
                     android:textSize="12sp" />
 

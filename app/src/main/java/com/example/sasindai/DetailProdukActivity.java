@@ -1,6 +1,9 @@
 package com.example.sasindai;
 
 import android.app.Dialog;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -25,8 +28,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.sasindai.adapter.BottomSheetProdukAdapter;
+import com.example.sasindai.adapter.KeranjangListAdapter;
 import com.example.sasindai.adapter.ProdukFotoSliderAdapter;
 import com.example.sasindai.adapter.UkuranListAdapter;
+import com.example.sasindai.model.KeranjangData;
 import com.example.sasindai.model.ProdukData;
 import com.example.sasindai.model.VarianProduk;
 import com.facebook.shimmer.ShimmerFrameLayout;
@@ -60,6 +65,7 @@ public class DetailProdukActivity extends AppCompatActivity {
     private UkuranListAdapter adapterUkuran;
     private ShimmerFrameLayout shimmerSliderGambarProduk, shimmerNamaProduk, shimmerDeskripsiProduk, shimmerRentangharga, shimmerUkuran;
     private TextView namaProduk, deskripsiProduk, tvAverageHargaProduk, btnTambahProdukDetail, btnBeliSekarang;
+    KeranjangListAdapter selectedItemsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,10 +132,101 @@ public class DetailProdukActivity extends AppCompatActivity {
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 
         RecyclerView recyclerViewBeli = dialog.findViewById(R.id.recyclerViewItemProdukBuy);
-        recyclerViewBeli.setLayoutManager(new GridLayoutManager(this, 3));
+        recyclerViewBeli.setLayoutManager(new GridLayoutManager(this, 2));
 
         BottomSheetProdukAdapter adapterDialog = new BottomSheetProdukAdapter(this, ukuranData);
         recyclerViewBeli.setAdapter(adapterDialog);
+        adapterDialog.notifyDataSetChanged();
+
+        TextView tvQuantity = dialog.findViewById(R.id.tvQuantityBuy);
+        ImageView btnPlus = dialog.findViewById(R.id.btnPlusBuy);
+        ImageView btnMinus = dialog.findViewById(R.id.btnMinusBuy);
+        LinearLayout btnBeli = dialog.findViewById(R.id.btnBeliProduk);
+
+        final int[] quantity = {1}; // default qty
+        final VarianProduk[] selectedVarian = {null}; // simpan varian yang dipilih
+
+        btnPlus.setOnClickListener(v -> {
+            quantity[0]++;
+            tvQuantity.setText(String.valueOf(quantity[0]));
+        });
+
+        btnMinus.setOnClickListener(v -> {
+            if (quantity[0] > 1) {
+                quantity[0]--;
+                tvQuantity.setText(String.valueOf(quantity[0]));
+            }
+        });
+
+        adapterDialog.setOnItemClickListener(varianProduk -> {
+            selectedVarian[0] = varianProduk; // set varian yang dipilih
+        });
+
+        btnBeli.setOnClickListener(v -> {
+            if (selectedVarian[0] == null) {
+                Toast.makeText(this, "Pilih varian terlebih dahulu", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            int jumlahTambah;
+            try {
+                jumlahTambah = Integer.parseInt(tvQuantity.getText().toString());
+            } catch (NumberFormatException e) {
+                Toast.makeText(this, "Jumlah tidak valid!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            int stokTersedia = selectedVarian[0].getStok();
+
+            if (jumlahTambah > stokTersedia) {
+                Toast.makeText(this, "Jumlah melebihi stok tersedia: " + stokTersedia, Toast.LENGTH_SHORT).show();
+            } else {
+                KeranjangData beliLangsung = new KeranjangData();
+                beliLangsung.setIdProduk(produkData.getIdProduk());
+                beliLangsung.setNamaProduk(produkData.getNamaProduk());
+                beliLangsung.setNamaVarian(selectedVarian[0].getNama());
+                beliLangsung.setHarga(selectedVarian[0].getHarga());
+                beliLangsung.setQty(jumlahTambah);
+                beliLangsung.setSize(selectedVarian[0].getSize());
+                beliLangsung.setGambarVarian(selectedVarian[0].getGambar());
+                beliLangsung.setBerat(selectedVarian[0].getBerat());
+                beliLangsung.setVarian(ukuranData);
+
+                // Convert ke JSON
+                List<KeranjangData> listProduk = new ArrayList<>();
+                listProduk.add(beliLangsung);
+                String jsonProduk = new Gson().toJson(listProduk);
+
+                int totalHarga = selectedVarian[0].getHarga() * jumlahTambah;
+                float totalBerat = selectedVarian[0].getBerat() * jumlahTambah;
+
+                // Simpan total harga ke SharedPreferences
+                SharedPreferences.Editor editor = getSharedPreferences("ProdukKeranjang", MODE_PRIVATE).edit();
+                editor.putString("produk_beli_langsung", jsonProduk);
+                editor.putInt("total_harga", totalHarga);
+                editor.putFloat("total_berat", totalBerat);
+                editor.apply();
+
+                // clear pref alamat/rincian kodepos dari pref tersedia
+                SharedPreferences alamat = getSharedPreferences("AlamatPrefs", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editorAlamatDanKurir = alamat.edit();
+                editorAlamatDanKurir.clear();
+                editorAlamatDanKurir.apply();
+
+                // clear ekspedisi dipilih sebelumnya
+                SharedPreferences kurirPrefs = getSharedPreferences("KurirPrefs", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editorKurir = kurirPrefs.edit();
+                editorKurir.clear();
+                editorKurir.apply();
+
+                // Pindah actv
+                Intent intent = new Intent(DetailProdukActivity.this, DetailPemesananActivity.class);
+                intent.putExtra("tipe_checkout", "beli_sekarang");
+                intent.putExtra("selectedItems", jsonProduk);
+                startActivity(intent);
+            }
+            dialog.dismiss();
+        });
 
         Window window = dialog.getWindow();
         if (window != null) {
@@ -145,13 +242,15 @@ public class DetailProdukActivity extends AppCompatActivity {
     private void bottomSheetKeranjang() {
         Dialog dialog = new Dialog(DetailProdukActivity.this);
         dialog.setContentView(R.layout.bottom_sheet_cart_layout);
+        dialog.setCancelable(true);
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 
         RecyclerView recyclerViewKeranjang = dialog.findViewById(R.id.recyclerViewItemProdukCart);
-        recyclerViewKeranjang.setLayoutManager(new GridLayoutManager(this, 3));
+        recyclerViewKeranjang.setLayoutManager(new GridLayoutManager(this, 2));
 
         BottomSheetProdukAdapter adapterDialog = new BottomSheetProdukAdapter(this, ukuranData);
         recyclerViewKeranjang.setAdapter(adapterDialog);
+        adapterDialog.notifyDataSetChanged();
 
         TextView tvQuantity = dialog.findViewById(R.id.tvQuantityCart);
         ImageView btnPlus = dialog.findViewById(R.id.btnPlusCart);
@@ -185,7 +284,21 @@ public class DetailProdukActivity extends AppCompatActivity {
                 return;
             }
 
-            tambahProdukKeDatabase(selectedVarian[0], quantity[0]);
+            int jumlahTambah;
+            try {
+                jumlahTambah = Integer.parseInt(tvQuantity.getText().toString());
+            } catch (NumberFormatException e) {
+                Toast.makeText(this, "Jumlah tidak valid!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            int stokTersedia = selectedVarian[0].getStok();
+
+            if (jumlahTambah > stokTersedia) {
+                Toast.makeText(this, "Jumlah melebihi stok tersedia: " + stokTersedia, Toast.LENGTH_SHORT).show();
+            } else {
+                tambahProdukKeDatabase(selectedVarian[0], quantity[0]);
+            }
             dialog.dismiss();
         });
 
@@ -232,6 +345,7 @@ public class DetailProdukActivity extends AppCompatActivity {
         cartItem.put("size", varianProduk.getSize());
         cartItem.put("qty", i);
         cartItem.put("createAt", createAt);
+        cartItem.put("berat", varianProduk.getBerat());
 
         keranjangRef.setValue(cartItem)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {

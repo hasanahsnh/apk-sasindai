@@ -1,37 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/layoutItem"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    android:padding="6dp">
+    card_view:cardCornerRadius="16dp"
+    card_view:cardElevation="4dp"
+    card_view:cardBackgroundColor="@android:color/white">
 
-    <com.makeramen.roundedimageview.RoundedImageView
-        android:id="@+id/imgSheetItem"
+    <LinearLayout
+        android:id="@+id/layoutItem"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="130dp"
-        android:scaleType="centerCrop"/>
+        android:orientation="vertical"
+        android:padding="6dp">
 
-    <TextView
-        android:id="@+id/tvSheetUkuran"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="12sp"
-        android:text="Ukuran"
-        android:fontFamily="@font/poppins_regular"
-        android:textColor="@color/black"
-        android:paddingTop="8dp"/>
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/imgSheetItem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="130dp"
+            android:scaleType="centerCrop" />
 
-    <TextView
-        android:id="@+id/tvSheetHarga"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Rp"
-        android:paddingBottom="8dp"
-        android:textSize="11sp"
-        android:textColor="@color/maroon"
-        android:fontFamily="@font/poppins_regular"/>
+        <TextView
+            android:id="@+id/tvNamaVarian"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:text="Nama Varian"
+            android:fontFamily="@font/poppins_regular"
+            android:textColor="@color/black"
+            android:paddingTop="8dp" />
 
-</LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:text="Size: "
+                android:fontFamily="@font/poppins_regular"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/tvSheetUkuran"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:text="Ukuran"
+                android:fontFamily="@font/poppins_regular"
+                android:textColor="@color/black" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:text="Stok: "
+                android:fontFamily="@font/poppins_regular"
+                android:textColor="@color/black"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/tvStokVarian"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:text="Stok"
+                android:fontFamily="@font/poppins_regular"
+                android:textColor="@color/black"
+                android:layout_weight="1" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvSheetHarga"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Rp"
+            android:paddingBottom="8dp"
+            android:textSize="11sp"
+            android:textColor="@color/maroon"
+            android:fontFamily="@font/poppins_regular" />
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

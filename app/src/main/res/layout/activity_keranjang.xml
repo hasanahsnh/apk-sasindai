@@ -56,11 +56,58 @@
 
     </LinearLayout>
 
-    <!-- Item-->
-    <FrameLayout
+    <LinearLayout
+        android:id="@+id/progressBarKeranjang"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <ProgressBar
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            android:indeterminateTint="@color/maroon"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Sedang memuat data"
+            android:textSize="11sp"
+            android:fontFamily="@font/poppins_regular"
+            android:textColor="@color/maroon"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/progressBarKeranjangDataNotFound"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Data keranjang tidak ditemukan"
+            android:textSize="11sp"
+            android:fontFamily="@font/poppins_regular"
+            android:textColor="@color/maroon"/>
+
+    </LinearLayout>
+
+    <!-- Item-->
+    <FrameLayout
+        android:id="@+id/frameAllProduk"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:visibility="gone">
 
         <!-- RecyclerView untuk Menampilkan List Produk -->
         <androidx.recyclerview.widget.RecyclerView
@@ -91,10 +138,10 @@
             android:layout_marginEnd="6dp"/>
 
         <TextView
-            android:id="@+id/tvTotalHarga"
+            android:id="@+id/tvTotalHargaKeranjang"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Total"
+            android:text="Rp 0,00"
             android:textSize="14sp"
             android:textColor="@color/maroon"
             android:fontFamily="@font/poppins_bold"

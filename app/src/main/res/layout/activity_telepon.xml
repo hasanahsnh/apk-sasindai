@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".TeleponActivity"
+    android:orientation="vertical"
+    android:background="@color/abu_terang">
+
+    <!-- Toolbar -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbarInputTelepon"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/putih">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Masukkan Nomor Telepon"
+            android:textSize="18sp"
+            android:fontFamily="@font/poppins_bold"
+            android:textColor="@color/maroon"
+            android:paddingStart="8dp"/>
+    </androidx.appcompat.widget.Toolbar>
+
+    <!-- ScrollView agar bisa digulir -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Alamat Lengkap -->
+            <TextView
+                android:text="Nomor telepon"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:fontFamily="@font/poppins_bold"
+                android:textColor="@color/maroon"
+                android:layout_marginBottom="8dp"/>
+
+            <!-- Kode Pos -->
+            <EditText
+                android:id="@+id/etNomorTelepon"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/frame_selected_item"
+                android:fontFamily="@font/poppins_regular"
+                android:hint="Masukkan nomor telepon"
+                android:padding="15dp"
+                android:textColor="@color/black"
+                android:textSize="12sp" />
+
+
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <TextView
+        android:id="@+id/btnTerapkanTelepon"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Simpan"
+        android:textColor="@color/putih"
+        android:gravity="center"
+        android:padding="16dp"
+        android:layout_margin="16dp"
+        android:background="@drawable/frame_bg_btn_checkout"
+        android:fontFamily="@font/poppins_bold"
+        android:textSize="16sp"/>
+
+</LinearLayout>

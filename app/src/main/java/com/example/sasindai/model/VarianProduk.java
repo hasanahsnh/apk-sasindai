@@ -9,17 +9,20 @@ public class VarianProduk {
         harga,
         stok;
 
+    private float berat;
+
     public VarianProduk() {
         // Diperlukan untuk firebase
     }
 
     // Gen constructor
-    public VarianProduk(String gambar, String nama, String size, int harga, int stok) {
+    public VarianProduk(String gambar, String nama, String size, int harga, int stok, float berat) {
         this.gambar = gambar;
         this.nama = nama;
         this.size = size;
         this.harga = harga;
         this.stok = stok;
+        this.berat = berat;
     }
 
     // Gen getter, setter
@@ -62,5 +65,13 @@ public class VarianProduk {
 
     public void setStok(int stok) {
         this.stok = stok;
+    }
+
+    public float getBerat() {
+        return berat;
+    }
+
+    public void setBerat(float berat) {
+        this.berat = berat;
     }
 }
