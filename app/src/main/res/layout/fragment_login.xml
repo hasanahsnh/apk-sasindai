@@ -108,6 +108,15 @@
                     android:drawableTint="@color/maroon"
                     android:fontFamily="@font/poppins_bold"/>
 
+                <TextView
+                    android:id="@+id/btnLupaPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Lupa password?"
+                    android:textSize="12sp"
+                    android:textColor="@color/maroon"
+                    android:textAlignment="textEnd"/>
+
             </LinearLayout>
 
             <!-- Layout Signin with Google -->

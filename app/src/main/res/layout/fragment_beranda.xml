@@ -20,6 +20,7 @@
             android:orientation="vertical">
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -203,8 +204,9 @@
 
                     </LinearLayout>
 
-                    <!-- Keranjang -->
+                    <!-- ar activity -->
                     <LinearLayout
+                        android:id="@+id/fiturAR"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
@@ -284,7 +286,9 @@
                         android:clipToPadding="true"
                         android:overScrollMode="never"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"/>
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp"/>
 
                     <com.facebook.shimmer.ShimmerFrameLayout
                         android:id="@+id/shimmerProduk"

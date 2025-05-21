@@ -1,6 +1,7 @@
 package com.example.sasindai.fragment;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -19,9 +20,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.sasindai.AuthHostActivity;
 import com.example.sasindai.KaPasaranHostActivity;
 import com.example.sasindai.KeranjangActivity;
 import com.example.sasindai.R;
+import com.example.sasindai.SceneActivity;
 import com.example.sasindai.adapter.HeroSliderAdapter;
 import com.example.sasindai.adapter.ProdukSliderAdapter;
 import com.example.sasindai.adapter.RilisMediaListAdapter;
@@ -29,6 +32,8 @@ import com.example.sasindai.adapter.ShimmerRilisMediaAdapter;
 import com.example.sasindai.model.ProdukData;
 import com.example.sasindai.model.RilisMediaData;
 import com.facebook.shimmer.ShimmerFrameLayout;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -64,9 +69,11 @@ public class BerandaFragment extends Fragment {
     private ArrayList<ProdukData> produkDataList;
     private RecyclerView recyclerViewHero, previewKaPasaran, previewRilisMedia, shimmerPreviewRilisMedia;
     private ShimmerFrameLayout shimmerFrameLayout, shimmerProduk;
-    private LinearLayout layoutFiturKaPasaran;
+    private LinearLayout layoutFiturKaPasaran, fiturAR;
     private TextView tvLihatProduk;
     private ImageView btnGotoKeranjang;
+    private SharedPreferences sharedPreferences;
+    private FirebaseUser currentUser;
 
     public BerandaFragment() {
         // Required empty public constructor
@@ -112,6 +119,7 @@ public class BerandaFragment extends Fragment {
         previewRilisMedia = view.findViewById(R.id.previewRilisMedia);
         shimmerPreviewRilisMedia = view.findViewById(R.id.shimmerPreviewRilisMedia);
         btnGotoKeranjang = view.findViewById(R.id.btnGotoKeranjang);
+        fiturAR = view.findViewById(R.id.fiturAR);
         // End inisial
 
         // Navigate to
@@ -151,7 +159,6 @@ public class BerandaFragment extends Fragment {
             shimmerPreviewRilisMedia.setAdapter(new ShimmerRilisMediaAdapter(4));
         }
         // End rilis media
-
 
         // Load data dari firebase (db)
         loadDataFromFirebase();
@@ -334,11 +341,33 @@ public class BerandaFragment extends Fragment {
         // Arahkan ke activity keranjang
         if (btnGotoKeranjang != null) {
             btnGotoKeranjang.setOnClickListener(v -> {
-                Intent intent = new Intent(requireContext(), KeranjangActivity.class);
-                startActivity(intent);
+                currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+                if (currentUser != null) {
+                    if (currentUser.isEmailVerified()) {
+                        Intent intent = new Intent(requireContext(), KeranjangActivity.class);
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(requireContext(), "Silakan verifikasi email Anda terlebih dahulu", Toast.LENGTH_LONG).show();
+                    }
+                } else {
+                    Intent intent = new Intent(requireContext(), AuthHostActivity.class);
+                    startActivity(intent);
+                    Toast.makeText(requireContext(), "Silakan login terlebih dahulu", Toast.LENGTH_SHORT).show();
+                }
             });
         } else {
             Log.e("Beranda Fragment", "Dari btnGotoKeranjang, btn goto keranjang gagal dimuat atau bernilai null");
+        }
+
+        // arahkan ke activity ar
+        if (fiturAR != null) {
+            fiturAR.setOnClickListener(v -> {
+                Intent intent = new Intent(requireContext(), SceneActivity.class);
+                startActivity(intent);
+            });
+        } else {
+            Log.e("Beranda Fragment", "tv lihat produk gagal dimuat atau bernilai null!");
         }
     }
 

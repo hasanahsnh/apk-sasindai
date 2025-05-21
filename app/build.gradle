@@ -34,6 +34,8 @@ android {
         viewBinding true
     }
 
+    ndkVersion "25.2.9519653"
+
 }
 
 dependencies {
@@ -44,6 +46,9 @@ dependencies {
     Lakukan hal yang sama setiap kali ada penambahan.
     */
 
+    implementation "com.gorisse.thomas.sceneform:sceneform:1.23.0" // 16/05/25
+    implementation 'com.google.ar:core:1.31.0' // 16/05/25
+    implementation 'com.airbnb.android:lottie:6.4.0' // 14/05/25
     implementation 'com.midtrans:uikit:2.0.0-SANDBOX' // 09/05/25
     implementation 'com.squareup.okhttp3:okhttp:4.9.0' // 02/05/25
     implementation 'com.squareup.okhttp3:logging-interceptor:4.9.1' // 02/05/25

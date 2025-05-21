@@ -50,7 +50,8 @@
                 android:text="Judul Berita/artikel"
                 android:fontFamily="@font/poppins_bold"
                 android:layout_marginStart="15dp"
-                android:layout_marginTop="15dp" />
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="15dp"/>
         </LinearLayout>
 
         <LinearLayout

@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment;
 import com.example.sasindai.fragment.AkunFragment;
 import com.example.sasindai.fragment.BerandaFragment;
 import com.example.sasindai.fragment.KatalogMotifFragment;
+import com.example.sasindai.fragment.NotificationFragment;
 import com.ismaeldivita.chipnavigation.ChipNavigationBar;
 
 public class MainHostActivity extends AppCompatActivity {
@@ -80,6 +81,8 @@ public class MainHostActivity extends AppCompatActivity {
             selectedFragment = new KatalogMotifFragment();
         } else if (item == R.id.nav_akun) {
             selectedFragment = new AkunFragment();
+        } else if (item == R.id.nav_notifikasi) {
+            selectedFragment = new NotificationFragment();
         } else {
             Log.w("Main Host Activity", "Gagal menghandle nav yang dipilih:" + item);
         }

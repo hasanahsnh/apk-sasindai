@@ -18,11 +18,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.sasindai.AuthHostActivity;
 import com.example.sasindai.MainHostActivity;
 import com.example.sasindai.R;
+import com.example.sasindai.ResetPasswordActivity;
 import com.example.sasindai.model.UserData;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -41,6 +43,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -65,6 +70,7 @@ public class LoginFragment extends Fragment {
     SharedPreferences sharedPreferences;
     Button btnSignIn;
     EditText etEmail, etPassword;
+    TextView btnLupaPassword;
 
     final ActivityResultLauncher<Intent> signInLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -137,6 +143,7 @@ public class LoginFragment extends Fragment {
         btnSignIn = view.findViewById(R.id.btnSignIn);
         etEmail = view.findViewById(R.id.etEmail);
         etPassword = view.findViewById(R.id.etPassword);
+        btnLupaPassword = view.findViewById(R.id.btnLupaPassword);
 
         // Perbarui tampilan
         authStateListener = firebaseAuth -> {
@@ -152,6 +159,11 @@ public class LoginFragment extends Fragment {
         // Pengguna masuk menggunakan metode email/password
         btnSignIn.setOnClickListener(v -> {
             emailPasswordSignIn();
+        });
+
+        btnLupaPassword.setOnClickListener(v -> {
+            Intent intent = new Intent(requireContext(), ResetPasswordActivity.class);
+            startActivity(intent);
         });
 
     }
@@ -304,9 +316,15 @@ public class LoginFragment extends Fragment {
         // Debug
         Log.d("Simpan User", "Mengambil uid user: " + uid);
 
-        UserData newUser = new UserData(uid, email, namaLengkap, phone, role, "google", false);
+        // Simpan hanya field yang perlu diperbarui
+        Map<String, Object> updateData = new HashMap<>();
+        updateData.put("uid", uid);
+        updateData.put("email", email);
+        updateData.put("namaLengkap", namaLengkap);
+        updateData.put("authMethod", "google");
+        updateData.put("role", role);
 
-        usersRef.child(uid).setValue(newUser).addOnCompleteListener(task -> {
+        usersRef.child(uid).updateChildren(updateData).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Log.d("Firebase", "User berhasil disimpan dengan role: " + role);
             } else {

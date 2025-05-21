@@ -6,13 +6,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.credentials.ClearCredentialStateRequest;
+import android.graphics.Typeface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,9 +30,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.sasindai.AuthHostActivity;
+import com.example.sasindai.KeranjangActivity;
 import com.example.sasindai.MainHostActivity;
+import com.example.sasindai.ProfileActivity;
 import com.example.sasindai.R;
+import com.google.firebase.FirebaseTooManyRequestsException;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -50,15 +59,16 @@ public class AkunFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    Button btnMasuk, btnKeluar, btnSemuaFitur;
+    Button btnMasuk;
     TextView tvSelamatDatang, emailTerverifikasi, kirimEmailVerifikasi;
     ImageView imgEmailChecked;
-    LinearLayout layoutVerifikasiEmail;
+    LinearLayout layoutVerifikasiEmail, btnKeluar, lihatBelumDibayar, lihatDikemas, lihatProfile;
     ScrollView uiFragmentAkun;
     ProgressBar progressBarAkunFragment;
     SharedPreferences sharedPreferences;
     FirebaseAuth firebaseAuth;
     FirebaseAuth.AuthStateListener authStateListener;
+    FirebaseUser currentUser;
 
     public AkunFragment() {
         // Required empty public constructor
@@ -109,11 +119,11 @@ public class AkunFragment extends Fragment {
 
         // Cek status default masuk pengguna
         sharedPreferences = requireContext().getSharedPreferences("UserPrefs", MODE_PRIVATE);
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
         // Inisialisasi
         btnMasuk = view.findViewById(R.id.btnMasuk);
         btnKeluar = view.findViewById(R.id.btnKeluar);
-        btnSemuaFitur = view.findViewById(R.id.btnSemuaFitur);
         tvSelamatDatang = view.findViewById(R.id.tvSelamatDatang);
         emailTerverifikasi = view.findViewById(R.id.emailTerverifikasi);
         layoutVerifikasiEmail = view.findViewById(R.id.layoutVerifikasiEmail);
@@ -121,6 +131,9 @@ public class AkunFragment extends Fragment {
         kirimEmailVerifikasi = view.findViewById(R.id.kirimEmailVerifikasi);
         uiFragmentAkun = view.findViewById(R.id.uiFragmentAkun);
         progressBarAkunFragment = view.findViewById(R.id.progressBarAkunFragment);
+        lihatBelumDibayar = view.findViewById(R.id.lihatBelumDibayar);
+        lihatDikemas = view.findViewById(R.id.lihatDikemas);
+        lihatProfile = view.findViewById(R.id.lihatProfile);
 
         // Perbarui tampilan
         authStateListener = firebaseAuth -> {
@@ -161,11 +174,92 @@ public class AkunFragment extends Fragment {
         });
 
         btnKeluar.setOnClickListener(v -> {
-            firebaseAuth.signOut();
-            updateUI(null);
-            Log.i("Button Keluar", "Pengguna menekan button keluar");
-            Toast.makeText(requireContext(), "Berhasil keluar!", Toast.LENGTH_SHORT).show();
+            AlertDialog alertDialog = new AlertDialog.Builder(requireContext())
+                    .setMessage("Apakah Anda yakin ingin keluar?")
+                    .setPositiveButton("Ya", (dialog, which) -> {
+                        firebaseAuth.signOut();
+                        updateUI(null);
+                        Toast.makeText(requireContext(), "Berhasil keluar!", Toast.LENGTH_SHORT).show();
+                    })
+                    .setNegativeButton("Batal", (dialog, which) -> dialog.dismiss())
+                    .create();
+
+            alertDialog.setOnShowListener(dialog -> {
+                Typeface font = ResourcesCompat.getFont(requireContext(), R.font.poppins_medium);
+                Typeface fontReguler = ResourcesCompat.getFont(requireContext(), R.font.poppins_bold);
+                TextView messageView = alertDialog.findViewById(android.R.id.message);
+                Button positiveBtn = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                Button negativeBtn = alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+
+                if (positiveBtn != null) {
+                    positiveBtn.setTextColor(ContextCompat.getColor(requireContext(), R.color.maroon));
+                    positiveBtn.setTypeface(font);
+                }
+
+                if (negativeBtn != null) {
+                    negativeBtn.setTextColor(ContextCompat.getColor(requireContext(), R.color.maroon));
+                    negativeBtn.setTypeface(font);
+                }
+
+                if (messageView != null) {
+                    messageView.setTypeface(fontReguler);
+                    messageView.setTextColor(ContextCompat.getColor(requireContext(), R.color.black));
+                    messageView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+                }
+            });
+
+            alertDialog.show();
         });
+
+        clickToNavigate();
+
+    }
+
+    // Cek status user apakah sudah login dan terautentikasi
+    private void clickToNavigate() {
+        // Belum dibayar
+        if (lihatBelumDibayar != null && lihatDikemas != null && lihatProfile != null) {
+            lihatBelumDibayar.setOnClickListener(v -> {
+                if (currentUser != null) {
+                    if (currentUser.isEmailVerified()) {
+                        Toast.makeText(requireContext(), "User terautentikasi", Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(requireContext(), "Silakan verifikasi email Anda terlebih dahulu", Toast.LENGTH_LONG).show();
+                    }
+                } else {
+                    Toast.makeText(requireContext(), "Silakan login terlebih dahulu", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            lihatDikemas.setOnClickListener(v -> {
+                if (currentUser != null) {
+                    if (currentUser.isEmailVerified()) {
+                        Toast.makeText(requireContext(), "User terautentikasi", Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(requireContext(), "Silakan verifikasi email Anda terlebih dahulu", Toast.LENGTH_LONG).show();
+                    }
+                } else {
+                    Toast.makeText(requireContext(), "Silakan login terlebih dahulu", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            lihatProfile.setOnClickListener(v -> {
+                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                if (currentUser != null) {
+                    if (currentUser.isEmailVerified()) {
+                        Intent intent = new Intent(requireContext(), ProfileActivity.class);
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(requireContext(), "Silakan verifikasi email Anda terlebih dahulu", Toast.LENGTH_LONG).show();
+                    }
+                } else {
+                    Toast.makeText(requireContext(), "Silakan login terlebih dahulu", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            Log.e("Akun Fragment", "Dari btnGotoKeranjang, btn goto keranjang gagal dimuat atau bernilai null");
+        }
+
 
     }
 
@@ -178,7 +272,6 @@ public class AkunFragment extends Fragment {
             sharedPreferences.edit().putBoolean("isLoggedIn", true).apply();
             btnMasuk.setVisibility(View.GONE);
             btnKeluar.setVisibility(View.VISIBLE);
-            btnSemuaFitur.setVisibility(View.VISIBLE);
 
             // Memperoleh data akunnya
             String email = currentUser.getEmail();
@@ -192,16 +285,9 @@ public class AkunFragment extends Fragment {
             if (emailVerified) {
                 layoutVerifikasiEmail.setVisibility(View.GONE);
                 imgEmailChecked.setVisibility(View.VISIBLE);
-
-                btnSemuaFitur.setOnClickListener(v -> {
-                    Toast.makeText(requireContext(), "Selamat menikmati semua fitur", Toast.LENGTH_SHORT).show();
-                });
             } else {
                 layoutVerifikasiEmail.setVisibility(View.VISIBLE);
                 imgEmailChecked.setVisibility(View.GONE);
-                btnSemuaFitur.setOnClickListener(v -> {
-                    Toast.makeText(requireContext(), "Verifikasi akun terlebih dahulu", Toast.LENGTH_SHORT).show();
-                });
                 kirimEmailVerifikasi.setOnClickListener(v -> {
                     KirimEmailVerifikasi();
                 });
@@ -211,10 +297,6 @@ public class AkunFragment extends Fragment {
             btnMasuk.setVisibility(View.VISIBLE);
             btnKeluar.setVisibility(View.GONE);
             layoutVerifikasiEmail.setVisibility(View.GONE);
-            btnSemuaFitur.setOnClickListener(v -> {
-                Toast.makeText(requireContext(), "Silakan masuk terlebih dahulu!", Toast.LENGTH_SHORT).show();
-            });
-
             emailTerverifikasi.setText("Silakan masuk untuk akses semua fitur!");
 
         }
@@ -228,10 +310,20 @@ public class AkunFragment extends Fragment {
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             Log.d("Mengirim Email", "Email verifikasi dikirim");
-                            Toast.makeText(requireContext(), "Email verifikasi telah dikirim. Silakan cek email Anda", Toast.LENGTH_LONG).show();
+                            if (isAdded()) {
+                                Toast.makeText(requireContext(), "Email verifikasi telah dikirim. Silakan cek email Anda", Toast.LENGTH_LONG).show();
+                            }
                         } else {
+                            Exception e = task.getException();
                             Log.e("Mengirim Email", "Gagal mengirim email verifikasi", task.getException());
-                            Toast.makeText(requireContext(), "Gagal mengirim email verifikasi", Toast.LENGTH_SHORT).show();
+
+                            if (e instanceof FirebaseAuthRecentLoginRequiredException) {
+                                Toast.makeText(requireContext(), "Sesi login kedaluwarsa. Silakan login ulang.", Toast.LENGTH_SHORT).show();
+                            } else if (e instanceof FirebaseTooManyRequestsException) {
+                                Toast.makeText(requireContext(), "Terlalu banyak permintaan. Coba beberapa saat lagi.", Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(requireContext(), "Gagal mengirim email verifikasi: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
                         }
                     });
         } else {

@@ -25,4 +25,6 @@
     <!-- Peringatan -->
     <color name="merah">#FFF44336</color>
 
+    <color name="dark_maroon">#700933</color>
+
 </resources>

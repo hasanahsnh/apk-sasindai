@@ -15,6 +15,8 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.airbnb.lottie.LottieAnimationView;
+import com.airbnb.lottie.LottieDrawable;
 import com.example.sasindai.R;
 import com.example.sasindai.adapter.KatalogMotifListAdapter;
 import com.example.sasindai.model.KatalogMotifData;
@@ -46,6 +48,7 @@ public class KatalogMotifFragment extends Fragment {
     private ArrayList<KatalogMotifData> data = new ArrayList<>();
     private StaggeredGridLayoutManager staggeredGridLayoutManager;
     private ProgressBar progressBar;
+    private LottieAnimationView animDataNotFound;
 
     public KatalogMotifFragment() {
         // Required empty public constructor
@@ -88,6 +91,8 @@ public class KatalogMotifFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        animDataNotFound = view.findViewById(R.id.animDataNotFound);
 
         recyclerViewKatalogMotif = view.findViewById(R.id.recyclerViewKatalogMotif);
         progressBar = view.findViewById(R.id.progressBar);
@@ -146,8 +151,15 @@ public class KatalogMotifFragment extends Fragment {
 
                 if (data.size() >= staggeredGridLayoutManager.getSpanCount()) {
                     recyclerViewKatalogMotif.setVisibility(View.VISIBLE);
+
+                    animDataNotFound.pauseAnimation();
+                    animDataNotFound.setVisibility(View.GONE);
                 } else {
                     recyclerViewKatalogMotif.setVisibility(View.GONE);
+
+                    animDataNotFound.setVisibility(View.VISIBLE);
+                    animDataNotFound.setRepeatCount(LottieDrawable.INFINITE);
+                    animDataNotFound.playAnimation();
                 }
 
                 progressBar.setVisibility(View.GONE);

@@ -27,6 +27,8 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.airbnb.lottie.LottieAnimationView;
+import com.airbnb.lottie.LottieDrawable;
 import com.example.sasindai.adapter.KeranjangListAdapter;
 import com.example.sasindai.model.KeranjangData;
 import com.google.firebase.auth.FirebaseAuth;
@@ -56,8 +58,9 @@ public class KeranjangActivity extends AppCompatActivity {
     CheckBox checkBoxSelectAll;
     TextView tvTotalHarga, btnCheckout;
     KeranjangListAdapter adapter;
-    LinearLayout progressBarKeranjang, progressBarKeranjangDataNotFound;
+    LinearLayout progressBarKeranjang, layoutProgressBarKeranjangDataNotFound;
     FrameLayout frameAllProduk;
+    LottieAnimationView progressBarKeranjangDataNotFound;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +79,7 @@ public class KeranjangActivity extends AppCompatActivity {
         progressBarKeranjang = findViewById(R.id.progressBarKeranjang);
         frameAllProduk = findViewById(R.id.frameAllProduk);
         progressBarKeranjangDataNotFound = findViewById(R.id.progressBarKeranjangDataNotFound);
+        layoutProgressBarKeranjangDataNotFound = findViewById(R.id.layoutProgressBarKeranjangDataNotFound);
 
         // SharedPrefs
         sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
@@ -195,7 +199,10 @@ public class KeranjangActivity extends AppCompatActivity {
                     progressBarKeranjangDataNotFound.setVisibility(View.GONE);
                 } else {
                     frameAllProduk.setVisibility(View.GONE);
+                    layoutProgressBarKeranjangDataNotFound.setVisibility(View.VISIBLE);
                     progressBarKeranjangDataNotFound.setVisibility(View.VISIBLE);
+                    progressBarKeranjangDataNotFound.setRepeatCount(LottieDrawable.INFINITE);
+                    progressBarKeranjangDataNotFound.playAnimation();
                 }
 
                 if (recyclerViewKeranjang.getAdapter() != null)

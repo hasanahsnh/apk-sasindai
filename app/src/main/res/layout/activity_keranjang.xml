@@ -83,21 +83,19 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/progressBarKeranjangDataNotFound"
+        android:id="@+id/layoutProgressBarKeranjangDataNotFound"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:orientation="vertical"
-        android:gravity="center">
+        android:gravity="center"
+        android:visibility="gone">
 
-        <TextView
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/progressBarKeranjangDataNotFound"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Data keranjang tidak ditemukan"
-            android:textSize="11sp"
-            android:fontFamily="@font/poppins_regular"
-            android:textColor="@color/maroon"/>
+            app:lottie_rawRes="@raw/ghost"/>
 
     </LinearLayout>
 

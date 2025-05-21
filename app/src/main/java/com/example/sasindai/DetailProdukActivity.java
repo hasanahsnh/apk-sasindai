@@ -65,7 +65,7 @@ public class DetailProdukActivity extends AppCompatActivity {
     private UkuranListAdapter adapterUkuran;
     private ShimmerFrameLayout shimmerSliderGambarProduk, shimmerNamaProduk, shimmerDeskripsiProduk, shimmerRentangharga, shimmerUkuran;
     private TextView namaProduk, deskripsiProduk, tvAverageHargaProduk, btnTambahProdukDetail, btnBeliSekarang;
-    KeranjangListAdapter selectedItemsAdapter;
+    FirebaseUser currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,12 +93,35 @@ public class DetailProdukActivity extends AppCompatActivity {
         btnBeliSekarang = findViewById(R.id.btnBeliSekarang);
         // End inisial
 
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
         // Show bottom sheet
         btnTambahProdukDetail.setOnClickListener(v -> {
-            bottomSheetKeranjang();
+            if (currentUser != null) {
+                if (currentUser.isEmailVerified()){
+                    bottomSheetKeranjang();
+                } else {
+                    Toast.makeText(this, "Silakan verifikasi email Anda terlebih dahulu", Toast.LENGTH_LONG).show();
+                }
+            } else {
+                Intent intent = new Intent(DetailProdukActivity.this, AuthHostActivity.class);
+                startActivity(intent);
+                Toast.makeText(this, "Silakan login terlebih dahulu", Toast.LENGTH_SHORT).show();
+            }
+
         });
         btnBeliSekarang.setOnClickListener(v -> {
-            bottomSheetBeliSekarang();
+            if (currentUser != null) {
+                if (currentUser.isEmailVerified()) {
+                    bottomSheetBeliSekarang();
+                } else {
+                    Toast.makeText(this, "Silakan verifikasi email Anda terlebih dahulu", Toast.LENGTH_LONG).show();
+                }
+            } else {
+                Intent intent = new Intent(DetailProdukActivity.this, AuthHostActivity.class);
+                startActivity(intent);
+                Toast.makeText(this, "Silakan login terlebih dahulu", Toast.LENGTH_SHORT).show();
+            }
         });
         // End show bottom sheet
 

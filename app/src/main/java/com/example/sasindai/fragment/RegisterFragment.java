@@ -42,6 +42,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link RegisterFragment#newInstance} factory method to
@@ -272,15 +275,21 @@ public class RegisterFragment extends Fragment {
         DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("users");
         String uid = user.getUid();
         String email = user.getEmail() != null ? user.getEmail() : "Tamu";
-        String phone = user.getPhoneNumber() != null ? user.getPhoneNumber() : "";
+        String phone = user.getPhoneNumber() != null ? user.getPhoneNumber() : "Nomor telepon tidak ditemukan";
         String role = "ROLE_REGULER";
 
         // Debug
         Log.d("Simpan User", "Mengambil uid user: " + uid);
 
-        UserData newUser = new UserData(uid, email, namaLengkap, phone, role, authMethod, false);
+        // Simpan hanya field yang perlu diperbarui
+        Map<String, Object> updateData = new HashMap<>();
+        updateData.put("uid", uid);
+        updateData.put("email", email);
+        updateData.put("namaLengkap", namaLengkap);
+        updateData.put("authMethod", "google");
+        updateData.put("role", role);
 
-        usersRef.child(uid).setValue(newUser).addOnCompleteListener(task -> {
+        usersRef.child(uid).updateChildren(updateData).addOnCompleteListener(task -> {
            if (task.isSuccessful()) {
                Log.d("Firebase", "User berhasil disimpan dengan role: " + role);
            } else {
