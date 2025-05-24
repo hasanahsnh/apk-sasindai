@@ -72,6 +72,8 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void updateProfile() {
+
+        // Update telepon
         aturTelepon.setOnClickListener(v -> {
             // Ambil nilai sebelumnya dari TextView
             String currentNoTelp = aturTelepon.getText().toString();

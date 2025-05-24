@@ -25,6 +25,7 @@ import com.example.sasindai.KaPasaranHostActivity;
 import com.example.sasindai.KeranjangActivity;
 import com.example.sasindai.R;
 import com.example.sasindai.SceneActivity;
+import com.example.sasindai.TransaksiActivity;
 import com.example.sasindai.adapter.HeroSliderAdapter;
 import com.example.sasindai.adapter.ProdukSliderAdapter;
 import com.example.sasindai.adapter.RilisMediaListAdapter;
@@ -71,7 +72,7 @@ public class BerandaFragment extends Fragment {
     private ShimmerFrameLayout shimmerFrameLayout, shimmerProduk;
     private LinearLayout layoutFiturKaPasaran, fiturAR;
     private TextView tvLihatProduk;
-    private ImageView btnGotoKeranjang;
+    private ImageView btnGotoKeranjang, btnGotoOrders;
     private SharedPreferences sharedPreferences;
     private FirebaseUser currentUser;
 
@@ -120,6 +121,7 @@ public class BerandaFragment extends Fragment {
         shimmerPreviewRilisMedia = view.findViewById(R.id.shimmerPreviewRilisMedia);
         btnGotoKeranjang = view.findViewById(R.id.btnGotoKeranjang);
         fiturAR = view.findViewById(R.id.fiturAR);
+        btnGotoOrders = view.findViewById(R.id.btnGotoOrders);
         // End inisial
 
         // Navigate to
@@ -368,6 +370,16 @@ public class BerandaFragment extends Fragment {
             });
         } else {
             Log.e("Beranda Fragment", "tv lihat produk gagal dimuat atau bernilai null!");
+        }
+
+        // Ke actv orders
+        if (btnGotoOrders != null) {
+            btnGotoOrders.setOnClickListener(v -> {
+                Intent intent = new Intent(requireContext(), TransaksiActivity.class);
+                startActivity(intent);
+            });
+        } else {
+            Log.e("Beranda Fragment", "tv btn Goto orders gagal dimuat atau bernilai null!");
         }
     }
 

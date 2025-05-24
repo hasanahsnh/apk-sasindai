@@ -102,18 +102,21 @@
                         android:textSize="12sp"/>
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text=" | "
-                        android:textColor="@color/maroon"
-                        android:fontFamily="@font/poppins_bold"
-                        android:textSize="12sp"/>
-
-                    <TextView
                         android:id="@+id/tvTelpPembeli"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="089696210706"
+                        android:textColor="@color/maroon"
+                        android:fontFamily="@font/poppins_bold"
+                        android:textSize="12sp"
+                        android:layout_weight="1"
+                        android:gravity="end"/>
+
+                    <TextView
+                        android:id="@+id/aturTelepon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=" >"
                         android:textColor="@color/maroon"
                         android:fontFamily="@font/poppins_bold"
                         android:textSize="12sp"
@@ -131,24 +134,24 @@
                     android:gravity="center">
 
                     <TextView
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Alamat"
                         android:textColor="@color/maroon"
                         android:fontFamily="@font/poppins_bold"
-                        android:textSize="12sp"
-                        android:layout_weight="1"/>
+                        android:textSize="12sp"/>
 
                     <TextView
                         android:id="@+id/btnMasukkanAlamat"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Isi alamat lengkap"
                         android:textColor="@color/black"
                         android:fontFamily="@font/poppins_regular"
                         android:textSize="12sp"
                         android:gravity="end"
-                        android:layout_weight="1"/>
+                        android:layout_weight="1"
+                        android:layout_marginStart="45dp"/>
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -188,7 +191,6 @@
                         android:textColor="@color/maroon"
                         android:textSize="12sp"
                         android:fontFamily="@font/poppins_bold"
-                        android:layout_marginBottom="8dp"
                         android:layout_weight="1"/>
 
                     <TextView
@@ -199,7 +201,6 @@
                         android:textColor="@color/black"
                         android:textSize="12sp"
                         android:fontFamily="@font/poppins_regular"
-                        android:layout_marginBottom="8dp"
                         android:gravity="end"
                         android:layout_weight="1"/>
 
@@ -248,47 +249,111 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:listitem="@layout/list_item_in_checkout"/>
+                        app:layout_constraintTop_toTopOf="parent"/>
 
                 </LinearLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <!-- Tinggalkan catatan -->
+            <!-- Daftar metode pembayaran -->
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/layCatatan"
+                android:id="@+id/layMetodePembayaran"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/frame_bg_fitur"
-                android:layout_margin="8dp"
-                android:padding="8dp">
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="8dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    android:gravity="center_horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Catatan untuk penjual"
-                        android:textColor="@color/maroon"
-                        android:textSize="12sp"
-                        android:fontFamily="@font/poppins_bold"/>
+                    android:background="@drawable/frame_bg_fitur"
+                    android:padding="8dp">
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Tinggalkan catatan >"
-                        android:textColor="@color/black"
+                        android:text="Metode Pembayaran"
+                        android:textColor="@color/maroon"
                         android:textSize="12sp"
+                        android:fontFamily="@font/poppins_bold"
+                        android:layout_marginStart="8dp"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Pilih Metode Pembayaran!"
+                        android:textColor="@color/black"
+                        android:textSize="11sp"
                         android:fontFamily="@font/poppins_regular"
-                        android:layout_marginBottom="8dp"
-                        android:gravity="end"/>
+                        android:layout_marginStart="8dp"/>
+
+                    <RadioGroup
+                        android:id="@+id/radioGroupMetode"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <FrameLayout
+                            android:id="@+id/frameQris"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <RadioButton
+                                android:id="@+id/radioQris"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="start|center_vertical"
+                                android:textSize="12sp"
+                                android:fontFamily="@font/poppins_bold"
+                                android:buttonTint="@color/black" />
+
+                            <ImageView
+                                android:id="@+id/imgQris"
+                                android:layout_width="80dp"
+                                android:layout_height="20dp"
+                                android:layout_marginStart="30dp"
+                                android:layout_gravity="center_vertical"
+                                android:src="@drawable/img_qris" />
+                        </FrameLayout>
+
+                        <FrameLayout
+                            android:id="@+id/frameShopee"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <RadioButton
+                                android:id="@+id/radioShopeePay"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="start|center_vertical"
+                                android:textSize="12sp"
+                                android:fontFamily="@font/poppins_bold"
+                                android:buttonTint="@color/black" />
+
+                            <ImageView
+                                android:id="@+id/imgShopee"
+                                android:layout_width="100dp"
+                                android:layout_height="24dp"
+                                android:layout_marginStart="44dp"
+                                android:layout_gravity="center_vertical"
+                                android:src="@drawable/img_shopeepay" />
+                        </FrameLayout>
+
+                    </RadioGroup>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Kami akan terus menambah metode pembayaran untuk memudahkan transaksi pengguna."
+                        android:textColor="@color/black"
+                        android:textSize="11sp"
+                        android:fontFamily="@font/poppins_regular"
+                        android:layout_marginStart="8dp"/>
 
                 </LinearLayout>
 
@@ -303,6 +368,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
                 android:padding="8dp">
 
                 <LinearLayout
@@ -363,7 +429,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Pengiriman"
+                        android:text="Ongkir"
                         android:textColor="@color/maroon"
                         android:textSize="12sp"
                         android:fontFamily="@font/poppins_medium"
@@ -372,11 +438,11 @@
                     <TextView
                         android:id="@+id/rincianHargaKurir"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
+                        android:fontFamily="@font/poppins_medium"
                         android:text="Rp 0,00"
                         android:textColor="@color/black"
-                        android:textSize="12sp"
-                        android:fontFamily="@font/poppins_medium"/>
+                        android:textSize="12sp" />
 
                 </LinearLayout>
 
@@ -414,7 +480,6 @@
             android:textSize="14sp"
             android:textColor="@color/maroon"
             android:fontFamily="@font/poppins_bold"
-            android:padding="15dp"
             android:layout_weight="1"
             android:layout_marginEnd="6dp"/>
 
@@ -422,7 +487,7 @@
             android:id="@+id/btnCheckoutOrder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Pembayaran >"
+            android:text="Sandbox"
             android:textSize="12sp"
             android:textColor="@color/putih"
             android:fontFamily="@font/poppins_bold"
@@ -431,6 +496,20 @@
             android:gravity="center"
             android:layout_weight="1"/>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Bayar"
+            android:textSize="12sp"
+            android:textColor="@color/putih"
+            android:fontFamily="@font/poppins_bold"
+            android:padding="15dp"
+            android:background="@drawable/frame_bg_btn_checkout"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:layout_marginStart="6dp"/>
+
     </LinearLayout>
+
 
 </LinearLayout>

@@ -1,9 +1,13 @@
 package com.example.sasindai;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Window;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,12 +21,16 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.example.sasindai.adapter.KaPasaranPagerAdapter;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class KaPasaranHostActivity extends AppCompatActivity {
 
     TabLayout tabLayoutKaPasaran;
     ViewPager2 viewPager2KaPasaran;
     SharedPreferences sharedPreferences;
+    ImageView imgKeranjang;
+    FirebaseUser currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,12 +49,27 @@ public class KaPasaranHostActivity extends AppCompatActivity {
         // Inisial widget
         tabLayoutKaPasaran = findViewById(R.id.tabLayoutKaPasaran);
         viewPager2KaPasaran = findViewById(R.id.viewPager2KaPasaran);
+        imgKeranjang = findViewById(R.id.imgKeranjang);
+
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (imgKeranjang != null) {
+            imgKeranjang.setOnClickListener(v -> {
+                if (currentUser != null) {
+                    Intent intent = new Intent(this, KeranjangActivity.class);
+                    startActivity(intent);
+                } else {
+                    Intent intent = new Intent(this, AuthHostActivity.class);
+                    startActivity(intent);
+                    Toast.makeText(this, "Silakan login terlebih dahulu!", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            Log.e("Ka Pasaran Host", "img keranjang bernilai null");
+        }
 
         // Set tab layout
-        tabLayoutKaPasaran.addTab((tabLayoutKaPasaran.newTab().setText("Populer")));
         tabLayoutKaPasaran.addTab((tabLayoutKaPasaran.newTab().setText("Terbaru")));
         tabLayoutKaPasaran.addTab((tabLayoutKaPasaran.newTab().setText("Terlaris")));
-        tabLayoutKaPasaran.addTab((tabLayoutKaPasaran.newTab().setText("Harga")));
 
         // Set adapter
         KaPasaranPagerAdapter kaPasaranPagerAdapter = new KaPasaranPagerAdapter(this);
@@ -55,13 +78,9 @@ public class KaPasaranHostActivity extends AppCompatActivity {
         new TabLayoutMediator(tabLayoutKaPasaran, viewPager2KaPasaran,
                 (tab, i) -> {
                     if (i == 0) {
-                        tab.setText("Populer");
+                        tab.setText("terbaru");
                     } else if (i == 1) {
-                        tab.setText("Terbaru");
-                    } else if (i == 2) {
-                        tab.setText("Terlaris");
-                    } else {
-                        tab.setText("Harga");
+                        tab.setText("terlaris");
                     }
                 }
         ).attach();

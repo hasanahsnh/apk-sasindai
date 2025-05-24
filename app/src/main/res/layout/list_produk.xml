@@ -17,7 +17,7 @@
     <!-- Linear Layout 1 -->
     <LinearLayout
         android:id="@+id/layoutItem_1"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_margin="8dp">
@@ -55,7 +55,7 @@
         android:layout_margin="8dp">
 
         <!-- Rating Produk -->
-        <TextView
+        <!--<TextView
             android:id="@+id/tvRatingProduk"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -65,7 +65,6 @@
             android:textColor="@color/black"
             android:layout_weight="1"/>
 
-        <!-- Separator -->
         <TextView
             android:id="@+id/tvSeparator"
             android:layout_width="wrap_content"
@@ -74,7 +73,7 @@
             android:textSize="12sp"
             android:fontFamily="@font/poppins_regular"
             android:textColor="@color/abu_terang"
-            android:layout_marginStart="4dp"/>
+            android:layout_marginStart="4dp"/>-->
 
         <!-- Total terjual -->
         <TextView

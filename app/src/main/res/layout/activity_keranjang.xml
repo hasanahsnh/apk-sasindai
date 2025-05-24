@@ -14,7 +14,8 @@
         android:id="@+id/layHeaderKeranjang"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:background="@color/putih">
 
         <LinearLayout
             android:layout_width="0dp"
@@ -27,7 +28,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:text="Keranjang"
-                android:textSize="14sp"
+                android:textSize="18sp"
                 android:textColor="@color/maroon"
                 android:fontFamily="@font/poppins_bold"/>
         </LinearLayout>
@@ -37,7 +38,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="end"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:layout_gravity="center">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -124,7 +126,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:padding="15dp">
+        android:padding="15dp"
+        android:background="@drawable/bg_dialog">
 
         <TextView
             android:layout_width="wrap_content"

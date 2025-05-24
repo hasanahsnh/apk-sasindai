@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -13,7 +14,9 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.collection.ArraySet;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -53,6 +56,11 @@ public class PilihKurirActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_pilih_kurir);
+
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO); // Set default mode gelap
+        Window window = getWindow(); // Mendapatkan objek window
+        window.setStatusBarColor(ContextCompat.getColor(this, R.color.putih)); // Set warna status bar
+        window.setNavigationBarColor(ContextCompat.getColor(this, R.color.black)); // Set warna nav bar
 
         etKodePos = findViewById(R.id.etKodePos);
         tvOngkir = findViewById(R.id.tvOngkir);

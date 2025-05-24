@@ -173,10 +173,6 @@ public class KeranjangActivity extends AppCompatActivity {
     public void AmbilProdukUser() {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("keranjang").child(userUid);
 
-        progressBarKeranjang.setVisibility(View.VISIBLE);
-        frameAllProduk.setVisibility(View.GONE);
-        progressBarKeranjangDataNotFound.setVisibility(View.GONE);
-
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -224,13 +220,18 @@ public class KeranjangActivity extends AppCompatActivity {
         frameAllProduk.setVisibility(View.GONE);
         progressBarKeranjangDataNotFound.setVisibility(View.GONE);
 
-        AmbilProdukUser();
+        new Handler().postDelayed(() -> AmbilProdukUser(), 5000);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        tampilkanProgressBarDanLoadRincian();
+        progressBarKeranjang.setVisibility(View.VISIBLE);
+        frameAllProduk.setVisibility(View.GONE);
+        progressBarKeranjangDataNotFound.setVisibility(View.GONE);
+
         checkBoxSelectAll.setChecked(false);
+
+        new Handler().postDelayed(this::AmbilProdukUser, 5000);
     }
 }

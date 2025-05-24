@@ -152,18 +152,25 @@ public class ProdukFragment extends Fragment {
                     kategori = "populer";
                 }
                 String lowerCase = kategori.toLowerCase();
-                if (lowerCase.equals("terbaru")) {
-                    lists.sort((a, b) -> b.getCreateAt().compareTo(a.getCreateAt()));
-                } else if (lowerCase.equals("terlaris")) {
-                    lists.sort((a, b) -> Integer.compare(b.getTerjual(), a.getTerjual()));
-                } else if (lowerCase.equals("harga")) {
-                    lists.sort((a, b) -> {
-                        int hargaA = a.getVarian().get(0).getHarga();
-                        int hargaB = b.getVarian().get(0).getHarga();
-                        return Integer.compare(hargaA, hargaB);
-                    });
-                } else if (lowerCase.equals("populer")){
-                    lists.sort((a, b) -> Integer.compare(b.getTerjual(), a.getTerjual()));
+
+                switch (lowerCase) {
+                    case "terbaru":
+                        lists.sort((a, b) -> b.getCreateAt().compareTo(a.getCreateAt()));
+                        break;
+                    case "terlaris":
+                        lists.sort((a, b) -> Integer.compare(b.getTerjual(), a.getTerjual()));
+                        break;
+                    case "harga":
+                        lists.sort((a, b) -> {
+                            int hargaA = a.getVarian().get(0).getHarga();
+                            int hargaB = b.getVarian().get(0).getHarga();
+                            return Integer.compare(hargaA, hargaB);
+                        });
+                        break;
+                    case "populer":
+                    default:
+                        lists.sort((a, b) -> Integer.compare(b.getTerjual(), a.getTerjual())); // Atau logika khusus jika punya view count
+                        break;
                 }
 
                 adapter.notifyDataSetChanged();

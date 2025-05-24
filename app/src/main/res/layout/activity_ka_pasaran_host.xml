@@ -8,6 +8,43 @@
     tools:context=".KaPasaranHostActivity"
     android:background="@color/abu_gelap">
 
+    <!-- Toolbar -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbarProduk"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/putih"
+        android:elevation="4dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/poppins_bold"
+                android:padding="12dp"
+                android:paddingStart="8dp"
+                android:text="Produk Sasirangan"
+                android:textColor="@color/maroon"
+                android:textSize="18sp" />
+
+            <ImageView
+                android:id="@+id/imgKeranjang"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/img_cart" />
+        </LinearLayout>
+
+    </androidx.appcompat.widget.Toolbar>
+
     <!-- Card View of Tabs -->
     <androidx.cardview.widget.CardView
         android:id="@+id/cardViewKaPasaran"
@@ -15,7 +52,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbarProduk"
         app:layout_constraintBottom_toTopOf="@id/viewPager2KaPasaran"
         app:cardUseCompatPadding="false"
         android:background="@color/abu_gelap">
@@ -30,12 +67,6 @@
             android:padding="0dp"
             android:layout_margin="0dp">
 
-            <!-- Tab Items -->
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Populer" />
-
             <com.google.android.material.tabs.TabItem
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -45,11 +76,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Terlaris" />
-
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Harga" />
 
         </com.google.android.material.tabs.TabLayout>
 

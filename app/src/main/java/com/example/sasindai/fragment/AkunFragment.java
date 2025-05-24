@@ -12,6 +12,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
@@ -38,8 +39,11 @@ import com.google.firebase.FirebaseTooManyRequestsException;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.checkerframework.checker.units.qual.C;
 
@@ -69,6 +73,7 @@ public class AkunFragment extends Fragment {
     FirebaseAuth firebaseAuth;
     FirebaseAuth.AuthStateListener authStateListener;
     FirebaseUser currentUser;
+    ConstraintLayout lengkapiData;
 
     public AkunFragment() {
         // Required empty public constructor
@@ -134,6 +139,7 @@ public class AkunFragment extends Fragment {
         lihatBelumDibayar = view.findViewById(R.id.lihatBelumDibayar);
         lihatDikemas = view.findViewById(R.id.lihatDikemas);
         lihatProfile = view.findViewById(R.id.lihatProfile);
+        lengkapiData = view.findViewById(R.id.lengkapiData);
 
         // Perbarui tampilan
         authStateListener = firebaseAuth -> {
@@ -149,6 +155,32 @@ public class AkunFragment extends Fragment {
                                     .getReference("users")
                                     .child(currentUser.getUid());
                             userRef.child("emailIsVerified").setValue(true);
+
+                            userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    if (snapshot.exists()) {
+                                        try {
+                                            String noTelp = snapshot.child("noTelp").getValue(String.class);
+                                            if (noTelp != null) {
+                                                lengkapiData.setVisibility(View.GONE);
+                                            } else {
+                                                lengkapiData.setVisibility(View.VISIBLE);
+                                            }
+                                        } catch (Exception e) {
+                                            Log.e("Akun Fragment", "error: " + e.getMessage());
+                                        }
+
+                                    } else {
+                                        lengkapiData.setVisibility(View.VISIBLE);
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+                                    lengkapiData.setVisibility(View.VISIBLE);
+                                }
+                            });
                         }
 
                         updateUI(firebaseAuth.getCurrentUser());
@@ -272,6 +304,7 @@ public class AkunFragment extends Fragment {
             sharedPreferences.edit().putBoolean("isLoggedIn", true).apply();
             btnMasuk.setVisibility(View.GONE);
             btnKeluar.setVisibility(View.VISIBLE);
+            lengkapiData.setVisibility(View.GONE);
 
             // Memperoleh data akunnya
             String email = currentUser.getEmail();
@@ -298,7 +331,8 @@ public class AkunFragment extends Fragment {
             btnKeluar.setVisibility(View.GONE);
             layoutVerifikasiEmail.setVisibility(View.GONE);
             emailTerverifikasi.setText("Silakan masuk untuk akses semua fitur!");
-
+            lengkapiData.setVisibility(View.GONE);
+            imgEmailChecked.setVisibility(View.GONE);
         }
     }
 

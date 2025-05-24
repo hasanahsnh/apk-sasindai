@@ -8,6 +8,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,7 +29,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.sasindai.adapter.DetailPemesananAdapter;
-import com.example.sasindai.model.DaftarKurirData;
 import com.example.sasindai.model.KeranjangData;
 import com.example.sasindai.model.ProdukData;
 import com.example.sasindai.model.VarianProduk;
@@ -71,8 +72,15 @@ public class DetailPemesananActivity extends AppCompatActivity {
     LinearLayout progressBarDetailPemesanan;
     NestedScrollView containerDetailPemesanan;
     String uid;
+    String namaLengkap = "Nama lengkap tidak ditemukan";
+    String noTelp = "No. Telepon tidak ditemukan";
+    boolean isTelpValid = false;
+    RadioGroup radioGroup;
+    RadioButton radioQris, radioShopee;
+    int selectedId;
+    String selectedPayment = null;
     ActivityResultLauncher<Intent> launcher;
-    DaftarKurirData selectedKurir;
+    String orderId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,7 +107,22 @@ public class DetailPemesananActivity extends AppCompatActivity {
         containerDetailPemesanan = findViewById(R.id.containerDetailPemesanan);
         jasaPengiriman = findViewById(R.id.btnPilihJasaPengiriman);
         btnCheckoutOrder = findViewById(R.id.btnCheckoutOrder);
+        radioGroup = findViewById(R.id.radioGroupMetode);
+        radioQris = findViewById(R.id.radioQris);
+        radioShopee = findViewById(R.id.radioShopeePay);
         // End inisial
+
+        radioQris.setOnClickListener(v -> {
+            radioQris.setChecked(true);
+            radioShopee.setChecked(false);
+            selectedPayment = "qris";
+        });
+
+        radioShopee.setOnClickListener(v -> {
+            radioShopee.setChecked(true);
+            radioQris.setChecked(false);
+            selectedPayment = "shopeepay";
+        });
 
         // get prefs
         sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
@@ -113,76 +136,9 @@ public class DetailPemesananActivity extends AppCompatActivity {
         DatabaseReference dbKeranjang = FirebaseDatabase.getInstance().getReference();
         // End inisial tabel
 
-        // Ambil data user login sekarang
-        currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (currentUser != null) {
-            uid = currentUser.getUid();
-            DatabaseReference ref = FirebaseDatabase.getInstance()
-                    .getReference("users")
-                    .child(uid);
+        loadUserData();
 
-            // ambil data user
-            ref.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    String namaLengkap = snapshot.child("namaLengkap").getValue(String.class);
-                    String noTelp = snapshot.child("noTelp").getValue(String.class);
-
-                    boolean isNamaValid = namaLengkap != null && !namaLengkap.trim().isEmpty();
-                    boolean isTelpValid = noTelp != null && !noTelp.trim().isEmpty();
-
-                    // Jika ditemukan nama lengkap
-                    if (isNamaValid) {
-                        tvNamaPembeli.setText(namaLengkap);
-                    } else {
-                        tvNamaPembeli.setText("Nama tidak ditemukan!");
-                    }
-
-                    // jika ditemukan nomor telepon
-                    if (isTelpValid) {
-                        tvTelpPembeli.setText(noTelp);
-                    } else {
-                        tvTelpPembeli.setText("No telepon belum diisi!, klik untuk mengisi");
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-                    Log.e("FirebaseError", "Gagal mengambil data: " + error.getMessage());
-                    tvNamaPembeli.setText("Gagal memuat nama");
-                    tvTelpPembeli.setText("Gagal memuat nomor telepon");
-                }
-            });
-        } else {
-            // Jika user memang tidak pernah login
-            tvNamaPembeli.setText("User belum login");
-        }
-        // End ambil data user login sekarang
-
-        // Click btn masukkan alamat
-        btnMasukkanAlamat.setOnClickListener(v -> {
-            Intent intent = new Intent(DetailPemesananActivity.this, AlamatActivity.class);
-            startActivity(intent);
-        });
-        // end proses
-
-        // Click btn masukkan telepon
-        tvTelpPembeli.setOnClickListener(v -> {
-            Intent intent = new Intent(DetailPemesananActivity.this, TeleponActivity.class);
-            startActivity(intent);
-        });
-        // end proses
-
-        // Click btn mengisi jasa pengiriman (ekspedisi)
-        jasaPengiriman.setOnClickListener(v -> {
-            Intent intent = new Intent(DetailPemesananActivity.this, PilihKurirActivity.class);
-            startActivity(intent);
-        });
-        // end proses
-
-        // Menampilkan rincian pembelian (go to..)
-        totalRincian();
-        // end proses
+        lengkapiData();
 
         // Mulai proses launcher terhadap status transaksi
         launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
@@ -190,6 +146,7 @@ public class DetailPemesananActivity extends AppCompatActivity {
                 Intent data = result.getData();
                 if (data != null) {
                     TransactionResult transactionResult = data.getParcelableExtra(UiKitConstants.KEY_TRANSACTION_RESULT);
+                    Log.i("Launcher", "Transaction Result: " + transactionResult);
                     if (transactionResult != null) {
                         String status = transactionResult.getStatus();
                         Log.d("TRANSACTION", "Status: " + status);
@@ -260,7 +217,7 @@ public class DetailPemesananActivity extends AppCompatActivity {
                                 });
                             }
 
-                            Intent intent = new Intent(this, KeranjangActivity.class);
+                            Intent intent = new Intent(this, TransaksiActivity.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                             startActivity(intent);
                             finish();
@@ -300,8 +257,18 @@ public class DetailPemesananActivity extends AppCompatActivity {
                                 }
                             });
 
-                        } else {
-                            Toast.makeText(this, "Transaksi dibatalkan atau tidak diketahui.", Toast.LENGTH_SHORT).show();
+                        } else if ("canceled".equalsIgnoreCase(status)) {
+                            Toast.makeText(this, "Transaksi dibatalkan.", Toast.LENGTH_SHORT).show();
+
+                            if (orderId != null) {
+                                Log.d("CHECKOUT", "Update status canceled for orderId: " + orderId);
+                                DatabaseReference pesananRef = FirebaseDatabase.getInstance()
+                                        .getReference("orders").child(orderId);
+                                pesananRef.child("status").setValue("canceled");
+                            } else {
+                                Log.e("CHECKOUT", "orderId null saat update status canceled");
+                            }
+
                         }
                     }
                 }
@@ -348,6 +315,79 @@ public class DetailPemesananActivity extends AppCompatActivity {
         });
     }
 
+    private void lengkapiData() {
+        // Click btn masukkan alamat
+        btnMasukkanAlamat.setOnClickListener(v -> {
+            Intent intent = new Intent(DetailPemesananActivity.this, AlamatActivity.class);
+            startActivity(intent);
+        });
+        // end proses
+
+        // Click btn masukkan telepon
+        tvTelpPembeli.setOnClickListener(v -> {
+            Intent intent = new Intent(DetailPemesananActivity.this, ProfileActivity.class);
+            startActivity(intent);
+        });
+        // end proses
+
+        // Click btn mengisi jasa pengiriman (ekspedisi)
+        jasaPengiriman.setOnClickListener(v -> {
+            Intent intent = new Intent(DetailPemesananActivity.this, PilihKurirActivity.class);
+            startActivity(intent);
+        });
+        // end proses
+    }
+
+    private void loadUserData() {
+        progressBarDetailPemesanan.setVisibility(View.VISIBLE);
+        containerDetailPemesanan.setVisibility(View.GONE);
+
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            uid = currentUser.getUid();
+            DatabaseReference ref = FirebaseDatabase.getInstance()
+                    .getReference("users")
+                    .child(uid);
+
+            ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    String namaLengkap = snapshot.child("namaLengkap").getValue(String.class);
+                    noTelp = snapshot.child("noTelp").getValue(String.class);
+
+                    boolean isNamaValid = namaLengkap != null && !namaLengkap.trim().isEmpty();
+                    isTelpValid = noTelp != null && !noTelp.trim().isEmpty();
+
+                    if (isNamaValid) {
+                        tvNamaPembeli.setText(namaLengkap);
+                    } else {
+                        tvNamaPembeli.setText("Nama tidak ditemukan!");
+                    }
+
+                    if (isTelpValid) {
+                        tvTelpPembeli.setText(noTelp);
+                    } else {
+                        tvTelpPembeli.setText("No telepon belum diisi!, klik untuk mengisi");
+                    }
+
+                    totalRincian();
+
+                    progressBarDetailPemesanan.setVisibility(View.GONE);
+                    containerDetailPemesanan.setVisibility(View.VISIBLE);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Log.e("FirebaseError", "Gagal mengambil data: " + error.getMessage());
+                    tvNamaPembeli.setText("Gagal memuat nama");
+                    tvTelpPembeli.setText("Gagal memuat nomor telepon");
+                }
+            });
+        } else {
+            tvNamaPembeli.setText("User belum login");
+        }
+    }
+
     private boolean checkOutOrder() {
         boolean isValid = true;
 
@@ -385,6 +425,12 @@ public class DetailPemesananActivity extends AppCompatActivity {
             );
             isValid = false;
         }
+
+        if (selectedPayment == null) {
+            Toast.makeText(this, "Silakan pilih metode pembayaran", Toast.LENGTH_SHORT).show();
+            isValid = false;
+        }
+
         return isValid;
     }
 
@@ -394,6 +440,9 @@ public class DetailPemesananActivity extends AppCompatActivity {
 
     private void lanjutkanPembayaran() {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        assert currentUser != null;
+        String uid = currentUser.getUid();
+
         if (currentUser == null) {
             Toast.makeText(this, "User belum login", Toast.LENGTH_SHORT).show();
             return;
@@ -407,6 +456,20 @@ public class DetailPemesananActivity extends AppCompatActivity {
             int ongkir = kurirPrefs.getInt("kurir_harga", 0);
             int totalBayar = totalHarga + ongkir;
 
+            String alamat = alamatPrefs.getString("alamat", "");
+            String kelurahan = alamatPrefs.getString("subdistrict", "Kelurahan tidak ditemukan");
+            String kecamatan = alamatPrefs.getString("district", "Kecamatan tidak ditemukan");
+            String kota = alamatPrefs.getString("city", "Kota tidak ditemukan");
+            String provinsi = alamatPrefs.getString("province", "Provinsi tidak ditemukan");
+            String kodePos = alamatPrefs.getString("kode_pos", "Kodepos tidak ditemukan");
+
+            String alamatLengkap = alamat + ", "
+                    + kelurahan + ", "
+                    + kecamatan + ", "
+                    + kota + ", "
+                    + provinsi + ", "
+                    + kodePos;
+
             Log.d("CHECKOUT", "Harga Produk: " + totalHarga);
             Log.d("CHECKOUT", "Ongkir: " + ongkir);
             Log.d("CHECKOUT", "Total Bayar: " + totalBayar);
@@ -416,11 +479,13 @@ public class DetailPemesananActivity extends AppCompatActivity {
                 json.put("total", totalBayar);
                 json.put("ongkir", ongkir);
                 json.put("harga_produk", totalHarga);
-                json.put("alamat", alamatPrefs.getString("alamat", ""));
+                json.put("alamat", alamatLengkap);
                 json.put("kurir", kurirPrefs.getString("kurir_nama", ""));
                 json.put("layanan", kurirPrefs.getString("kurir_service", ""));
                 JSONArray produkArray = getProdukArray();
                 json.put("produk_dipesan", produkArray);
+                json.put("metode_pembayaran", selectedPayment);
+                json.put("uid", uid);
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -447,7 +512,7 @@ public class DetailPemesananActivity extends AppCompatActivity {
                         String responseBody = response.body().string();
                         JSONObject responseJson = new JSONObject(responseBody);
                         String snapToken = responseJson.getString("snap_token");
-                        String orderId = responseJson.getString("order_id");
+                        orderId = responseJson.getString("order_id");
 
                         runOnUiThread(() -> {
                             Log.d("CHECKOUT", "Order ID: " + orderId);
@@ -544,8 +609,11 @@ public class DetailPemesananActivity extends AppCompatActivity {
             btnMasukkanAlamat.setText(alamatLengkap);
         }
 
-        String telp = telpPrefs.getString("telp", "Masukkan nomor telepon >");
-        tvTelpPembeli.setText(telp);
+        if (isTelpValid) {
+            tvTelpPembeli.setText(noTelp);
+        } else {
+            tvTelpPembeli.setText("No telepon belum diisi!, klik untuk mengisi");
+        }
 
         // Total rincian
         tvTotalHarga.setText(formatRupiah.format(rincianHargaBarang + hargaEkspedisi).replace("Rp", "Rp "));
@@ -561,17 +629,18 @@ public class DetailPemesananActivity extends AppCompatActivity {
         progressBarDetailPemesanan.setVisibility(View.VISIBLE);
         containerDetailPemesanan.setVisibility(View.GONE);
 
-        new android.os.Handler().postDelayed(() -> {
-            totalRincian();
-
-            progressBarDetailPemesanan.setVisibility(View.GONE);
-            containerDetailPemesanan.setVisibility(View.VISIBLE);
-        }, 1000);
+        loadUserData();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        tampilkanProgressBarDanLoadRincian();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
         tampilkanProgressBarDanLoadRincian();
     }
 
