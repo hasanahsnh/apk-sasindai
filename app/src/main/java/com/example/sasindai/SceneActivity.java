@@ -11,7 +11,6 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -45,6 +44,7 @@ public class SceneActivity extends AppCompatActivity {
     ArrayList<Objek3DData> dataList = new ArrayList<>();
     ShimmerFrameLayout shimmerPreviewObjek3d;
     Objek3DAdapter adapter;
+    String selectedModelUrl = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,10 +63,13 @@ public class SceneActivity extends AppCompatActivity {
         shimmerPreviewObjek3d.setVisibility(View.VISIBLE);
         recyclerViewProduk.setVisibility(View.GONE);
 
-        String modelUrl = "https://storage.googleapis.com/download/storage/v1/b/sascode-aa3b7.appspot.com/o/objek3d%2F3DModel.glb?generation=1747498510235987&alt=media";
         arSceneView.setOnTapArPlaneListener((hitResult, plane, motionEvent) -> {
-            // Uri dari model GLB yang mau dimuat
-            Uri modelUri = Uri.parse(modelUrl);
+            if (selectedModelUrl == null || selectedModelUrl.isEmpty()) {
+                Toast.makeText(this, "Pilih model terlebih dahulu dari daftar", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            Uri modelUri = Uri.parse(selectedModelUrl);
 
             ModelRenderable.builder()
                     .setSource( this, modelUri)
@@ -143,7 +146,11 @@ public class SceneActivity extends AppCompatActivity {
                     recyclerViewProduk.setVisibility(View.GONE);
                 }
 
-                adapter = new Objek3DAdapter(SceneActivity.this, dataList);
+                adapter = new Objek3DAdapter(SceneActivity.this, dataList, objek3DData -> {
+                    selectedModelUrl = objek3DData.getGlbUrl();
+                    Toast.makeText(SceneActivity.this, "Model dipilih, Silakan arahkan layar ke space yang kosong dan tap layar!", Toast.LENGTH_SHORT).show();
+                });
+
                 recyclerViewProduk.setAdapter(adapter);
 
                 adapter.notifyDataSetChanged();

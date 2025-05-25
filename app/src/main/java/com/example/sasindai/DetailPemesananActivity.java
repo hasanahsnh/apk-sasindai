@@ -3,6 +3,7 @@ package com.example.sasindai;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -108,15 +109,8 @@ public class DetailPemesananActivity extends AppCompatActivity {
         jasaPengiriman = findViewById(R.id.btnPilihJasaPengiriman);
         btnCheckoutOrder = findViewById(R.id.btnCheckoutOrder);
         radioGroup = findViewById(R.id.radioGroupMetode);
-        radioQris = findViewById(R.id.radioQris);
         radioShopee = findViewById(R.id.radioShopeePay);
         // End inisial
-
-        radioQris.setOnClickListener(v -> {
-            radioQris.setChecked(true);
-            radioShopee.setChecked(false);
-            selectedPayment = "qris";
-        });
 
         radioShopee.setOnClickListener(v -> {
             radioShopee.setChecked(true);
@@ -279,7 +273,7 @@ public class DetailPemesananActivity extends AppCompatActivity {
         // Click event btn checkout, penambahan validasi kelengkapan input
         btnCheckoutOrder.setOnClickListener(v -> {
             if (checkOutOrder()) {
-                lanjutkanPembayaran();
+                cplCheckout();
             }
         });
         // end event
@@ -527,6 +521,111 @@ public class DetailPemesananActivity extends AppCompatActivity {
 
                             setLocaleNew("id");
                             uiKitApi.startPaymentUiFlow(DetailPemesananActivity.this, launcher, snapToken);
+                        });
+                    } else {
+                        Log.e("CHECKOUT", "Gagal Checkout: " + response.code());
+                        runOnUiThread(() ->
+                                Toast.makeText(this, "Checkout gagal: " + response.code(), Toast.LENGTH_SHORT).show()
+                        );
+                    }
+                } catch (IOException | JSONException e) {
+                    e.printStackTrace();
+                    runOnUiThread(() ->
+                            Toast.makeText(this, "Terjadi kesalahan: " + e.getMessage(), Toast.LENGTH_LONG).show()
+                    );
+                }
+            }).start();
+
+        }).addOnFailureListener(e -> {
+            Toast.makeText(this, "Gagal mendapatkan token autentikasi", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        });
+    }
+
+    private void cplCheckout() {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        assert currentUser != null;
+        String uid = currentUser.getUid();
+
+        if (currentUser == null) {
+            Toast.makeText(this, "User belum login", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        currentUser.getIdToken(true).addOnSuccessListener(result -> {
+            String idToken = result.getToken();
+            Log.d("AUTH", "ID Token: " + idToken);
+
+            int totalHarga = keranjangPrefs.getInt("total_harga", 0);
+            int ongkir = kurirPrefs.getInt("kurir_harga", 0);
+            int totalBayar = totalHarga + ongkir;
+
+            String alamat = alamatPrefs.getString("alamat", "");
+            String kelurahan = alamatPrefs.getString("subdistrict", "Kelurahan tidak ditemukan");
+            String kecamatan = alamatPrefs.getString("district", "Kecamatan tidak ditemukan");
+            String kota = alamatPrefs.getString("city", "Kota tidak ditemukan");
+            String provinsi = alamatPrefs.getString("province", "Provinsi tidak ditemukan");
+            String kodePos = alamatPrefs.getString("kode_pos", "Kodepos tidak ditemukan");
+
+            String alamatLengkap = alamat + ", "
+                    + kelurahan + ", "
+                    + kecamatan + ", "
+                    + kota + ", "
+                    + provinsi + ", "
+                    + kodePos;
+
+            Log.d("CHECKOUT", "Harga Produk: " + totalHarga);
+            Log.d("CHECKOUT", "Ongkir: " + ongkir);
+            Log.d("CHECKOUT", "Total Bayar: " + totalBayar);
+
+            JSONObject json = new JSONObject();
+            try {
+                json.put("total", totalBayar);
+                json.put("ongkir", ongkir);
+                json.put("harga_produk", totalHarga);
+                json.put("alamat", alamatLengkap);
+                json.put("kurir", kurirPrefs.getString("kurir_nama", ""));
+                json.put("layanan", kurirPrefs.getString("kurir_service", ""));
+                JSONArray produkArray = getProdukArray();
+                json.put("produk_dipesan", produkArray);
+                json.put("metode_pembayaran", selectedPayment);
+                json.put("uid", uid);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return;
+            }
+
+            OkHttpClient client = new OkHttpClient();
+
+            RequestBody body = RequestBody.create(
+                    json.toString(),
+                    MediaType.parse("application/json; charset=utf-8")
+            );
+
+            Request request = new Request.Builder()
+                    .url("http://192.168.130.173:8000/api/cpl_checkout")
+                    .addHeader("Authorization", "Bearer " + idToken)
+                    .addHeader("Accept", "application/json")
+                    .post(body)
+                    .build();
+
+            new Thread(() -> {
+                try (Response response = client.newCall(request).execute()) {
+                    if (response.isSuccessful()) {
+                        String responseBody = response.body().string();
+                        JSONObject responseJson = new JSONObject(responseBody);
+                        String paymentUrl = responseJson.getString("payment_url");
+                        orderId = responseJson.getString("order_id");
+
+                        runOnUiThread(() -> {
+                            Log.d("CHECKOUT", "Order ID: " + orderId);
+                            Log.d("CHECKOUT", "Payment URL: " + paymentUrl);
+
+                            // Buka payment URL di WebView activity (jika kamu buat) atau browser
+                            Intent intent = new Intent(this, PaymentActivity.class);
+                            intent.putExtra("payment_url", paymentUrl);
+                            startActivity(intent);
                         });
                     } else {
                         Log.e("CHECKOUT", "Gagal Checkout: " + response.code());

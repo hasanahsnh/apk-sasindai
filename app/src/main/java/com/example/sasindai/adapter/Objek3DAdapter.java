@@ -25,10 +25,16 @@ import java.util.List;
 public class Objek3DAdapter extends RecyclerView.Adapter<Objek3DAdapter.Objek3DViewHolder> {
     private final Context context;
     private final List<Objek3DData> data;
+    private final OnItemClickListener listener;
 
-    public Objek3DAdapter(Context context, List<Objek3DData> data) {
+    public Objek3DAdapter(Context context, List<Objek3DData> data, OnItemClickListener listener) {
         this.context = context;
         this.data = data;
+        this.listener = listener;
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(Objek3DData objek3DData);
     }
 
     @NonNull
@@ -60,6 +66,12 @@ public class Objek3DAdapter extends RecyclerView.Adapter<Objek3DAdapter.Objek3DV
                     }
                 })
                 .into(holder.img);
+
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onItemClick(item);
+            }
+        });
     }
 
     @Override

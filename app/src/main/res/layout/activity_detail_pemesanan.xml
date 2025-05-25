@@ -299,29 +299,6 @@
                         android:orientation="vertical">
 
                         <FrameLayout
-                            android:id="@+id/frameQris"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
-
-                            <RadioButton
-                                android:id="@+id/radioQris"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="start|center_vertical"
-                                android:textSize="12sp"
-                                android:fontFamily="@font/poppins_bold"
-                                android:buttonTint="@color/black" />
-
-                            <ImageView
-                                android:id="@+id/imgQris"
-                                android:layout_width="80dp"
-                                android:layout_height="20dp"
-                                android:layout_marginStart="30dp"
-                                android:layout_gravity="center_vertical"
-                                android:src="@drawable/img_qris" />
-                        </FrameLayout>
-
-                        <FrameLayout
                             android:id="@+id/frameShopee"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
