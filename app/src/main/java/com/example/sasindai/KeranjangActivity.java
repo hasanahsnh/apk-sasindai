@@ -156,6 +156,7 @@ public class KeranjangActivity extends AppCompatActivity {
                 Intent intent = new Intent(KeranjangActivity.this, DetailPemesananActivity.class);
 
                 intent.putExtra("selectedItems", selectedItemsJson);
+                intent.putExtra("tipe_checkout", "item_keranjang");
 
                 startActivity(intent);
             }

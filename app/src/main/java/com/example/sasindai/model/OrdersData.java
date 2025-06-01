@@ -11,18 +11,19 @@ public class OrdersData {
     private String namaLengkap;
     private String no_telp;
     private String order_id;
+    private String payment_url;
     private List<ItemProdukOrderData> produk;
-    private String snap_token;
     private String status;
-    private long total;
+    private int total;
     private String uid;
     private String updated_at;
+    private String uidPenjual;
+    private String statusPesanan;
 
     public OrdersData() {
-
     }
 
-    public OrdersData(String alamat, String created_at, String kurir, String layanan, String metode_pembayaran, String namaLengkap, String no_telp, String order_id, List<ItemProdukOrderData> produk, String snap_token, String status, long total, String uid, String updated_at) {
+    public OrdersData(String alamat, String created_at, String kurir, String layanan, String metode_pembayaran, String namaLengkap, String no_telp, String order_id, String payment_url, List<ItemProdukOrderData> produk, String status, int total, String uid, String updated_at, String uidPenjual, String statusPesanan) {
         this.alamat = alamat;
         this.created_at = created_at;
         this.kurir = kurir;
@@ -31,12 +32,30 @@ public class OrdersData {
         this.namaLengkap = namaLengkap;
         this.no_telp = no_telp;
         this.order_id = order_id;
+        this.payment_url = payment_url;
         this.produk = produk;
-        this.snap_token = snap_token;
         this.status = status;
         this.total = total;
         this.uid = uid;
         this.updated_at = updated_at;
+        this.uidPenjual = uidPenjual;
+        this.statusPesanan = statusPesanan;
+    }
+
+    public String getStatusPesanan() {
+        return statusPesanan;
+    }
+
+    public void setStatusPesanan(String statusPesanan) {
+        this.statusPesanan = statusPesanan;
+    }
+
+    public String getUidPenjual() {
+        return uidPenjual;
+    }
+
+    public void setUidPenjual(String uidPenjual) {
+        this.uidPenjual = uidPenjual;
     }
 
     public String getAlamat() {
@@ -103,20 +122,20 @@ public class OrdersData {
         this.order_id = order_id;
     }
 
+    public String getPayment_url() {
+        return payment_url;
+    }
+
+    public void setPayment_url(String payment_url) {
+        this.payment_url = payment_url;
+    }
+
     public List<ItemProdukOrderData> getProduk() {
         return produk;
     }
 
     public void setProduk(List<ItemProdukOrderData> produk) {
         this.produk = produk;
-    }
-
-    public String getSnap_token() {
-        return snap_token;
-    }
-
-    public void setSnap_token(String snap_token) {
-        this.snap_token = snap_token;
     }
 
     public String getStatus() {
@@ -127,11 +146,11 @@ public class OrdersData {
         this.status = status;
     }
 
-    public long getTotal() {
+    public int getTotal() {
         return total;
     }
 
-    public void setTotal(long total) {
+    public void setTotal(int total) {
         this.total = total;
     }
 

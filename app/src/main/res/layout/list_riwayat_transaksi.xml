@@ -89,17 +89,10 @@
             android:id="@+id/statusTransaksi"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Ststus transaksi"
+            android:text="Lihat detail >"
             android:textSize="12sp"
             android:fontFamily="@font/poppins_regular"
             android:textColor="@color/maroon"/>
-
-        <ImageView
-            android:id="@+id/imgTrash"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:src="@drawable/img_pay"
-            android:layout_marginTop="15dp"/>
     </LinearLayout>
 
 

@@ -80,8 +80,8 @@ public class DetailPemesananActivity extends AppCompatActivity {
     RadioButton radioQris, radioShopee;
     int selectedId;
     String selectedPayment = null;
-    ActivityResultLauncher<Intent> launcher;
     String orderId;
+    private boolean isCheckingStatus = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,7 +114,6 @@ public class DetailPemesananActivity extends AppCompatActivity {
 
         radioShopee.setOnClickListener(v -> {
             radioShopee.setChecked(true);
-            radioQris.setChecked(false);
             selectedPayment = "shopeepay";
         });
 
@@ -134,141 +133,7 @@ public class DetailPemesananActivity extends AppCompatActivity {
 
         lengkapiData();
 
-        // Mulai proses launcher terhadap status transaksi
-        launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-            if (result != null && result.getResultCode() == RESULT_OK) {
-                Intent data = result.getData();
-                if (data != null) {
-                    TransactionResult transactionResult = data.getParcelableExtra(UiKitConstants.KEY_TRANSACTION_RESULT);
-                    Log.i("Launcher", "Transaction Result: " + transactionResult);
-                    if (transactionResult != null) {
-                        String status = transactionResult.getStatus();
-                        Log.d("TRANSACTION", "Status: " + status);
-                        if ("success".equalsIgnoreCase(status) || "pending".equalsIgnoreCase(status)) {
-                            String tipeCheckout = getIntent().getStringExtra("tipe_checkout");
-                            Toast.makeText(this, "Pembayaran " + status + "!", Toast.LENGTH_SHORT).show();
-
-                            uid = currentUser.getUid();
-
-                            if ("beli_sekarang".equalsIgnoreCase(tipeCheckout)) {
-                                String json = getIntent().getStringExtra("selectedItems");
-                                if (json != null) {
-                                    Type type = new TypeToken<List<KeranjangData>>(){}.getType();
-                                    List<KeranjangData> selectedItems = new Gson().fromJson(json, type);
-
-                                    for (KeranjangData item : selectedItems) {
-                                        String idProduk = item.getIdProduk();
-                                        String namaVarian = item.getNamaVarian();
-                                        int qty = item.getQty();
-
-                                        dbKeranjang.child("produk").child(idProduk).get().addOnSuccessListener(produkSnap -> {
-                                            ProdukData produkData = produkSnap.getValue(ProdukData.class);
-                                            if (produkData != null) {
-                                                List<VarianProduk> varianList = produkData.getVarian();
-                                                for (VarianProduk varian : varianList) {
-                                                    if (varian.getNama().equalsIgnoreCase(namaVarian)) {
-                                                        varian.setStok(varian.getStok() - qty);
-                                                        produkData.setSisaStok(produkData.getSisaStok() - qty);
-                                                        produkData.setTerjual(produkData.getTerjual() + qty);
-                                                        break;
-                                                    }
-                                                }
-                                                dbKeranjang.child("produk").child(idProduk).setValue(produkData);
-                                            }
-                                        });
-                                    }
-                                }
-                            } else {
-                                dbKeranjang.child("keranjang").child(uid).get().addOnSuccessListener(snapshot -> {
-                                    for (DataSnapshot idProdukSnap : snapshot.getChildren()) {
-                                        String idProduk = idProdukSnap.getKey();
-
-                                        for (DataSnapshot varianSnap : idProdukSnap.getChildren()) {
-                                            String namaVarian = varianSnap.getKey();
-                                            int qty = varianSnap.child("qty").getValue(Integer.class);
-
-                                            if (idProduk != null) {
-                                                dbKeranjang.child("produk").child(idProduk).get().addOnSuccessListener(produkSnap -> {
-                                                    ProdukData produkData = produkSnap.getValue(ProdukData.class);
-                                                    if (produkData != null) {
-                                                        List<VarianProduk> varianList = produkData.getVarian();
-                                                        for (VarianProduk varian : varianList) {
-                                                            if (varian.getNama().equalsIgnoreCase(namaVarian)) {
-                                                                varian.setStok(varian.getStok() - qty);
-                                                                produkData.setSisaStok(produkData.getSisaStok() - qty);
-                                                                produkData.setTerjual(produkData.getTerjual() + qty);
-                                                                break;
-                                                            }
-                                                        }
-                                                        dbKeranjang.child("produk").child(idProduk).setValue(produkData);
-                                                    }
-                                                });
-
-                                                dbKeranjang.child("keranjang").child(uid).child(idProduk).child(namaVarian).removeValue();
-                                            }
-                                        }
-                                    }
-                                });
-                            }
-
-                            Intent intent = new Intent(this, TransaksiActivity.class);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(intent);
-                            finish();
-
-                        } else if ("failed".equalsIgnoreCase(status)) {
-                            Toast.makeText(this, "Pembayaran gagal.", Toast.LENGTH_SHORT).show();
-
-                            dbKeranjang.child("keranjang").child(uid).get().addOnSuccessListener(snapshot -> {
-                                for (DataSnapshot idProdukSnap : snapshot.getChildren()) {
-                                    String idProduk = idProdukSnap.getKey();
-
-                                    for (DataSnapshot varianSnap : idProdukSnap.getChildren()) {
-                                        String namaVarian = varianSnap.getKey();
-                                        int qty = varianSnap.child("qty").getValue(Integer.class);
-
-                                        // Kembalikan stok
-                                        if (idProduk != null) {
-                                            dbKeranjang.child("produk").child(idProduk).get().addOnSuccessListener(produkSnap -> {
-                                                ProdukData produkData = produkSnap.getValue(ProdukData.class);
-                                                if (produkData != null) {
-                                                    List<VarianProduk> varianList = produkData.getVarian();
-                                                    for (VarianProduk varian : varianList) {
-                                                        if (varian.getNama().equalsIgnoreCase(namaVarian)) {
-                                                            varian.setStok(varian.getStok() + qty);
-                                                            produkData.setSisaStok(produkData.getSisaStok() + qty);
-                                                            break;
-                                                        }
-                                                    }
-                                                    dbKeranjang.child("produk").child(idProduk).setValue(produkData);
-                                                }
-                                            });
-
-                                            // Hapus dari keranjang
-                                            dbKeranjang.child("keranjang").child(uid).child(idProduk).child(namaVarian).removeValue();
-                                        }
-                                    }
-                                }
-                            });
-
-                        } else if ("canceled".equalsIgnoreCase(status)) {
-                            Toast.makeText(this, "Transaksi dibatalkan.", Toast.LENGTH_SHORT).show();
-
-                            if (orderId != null) {
-                                Log.d("CHECKOUT", "Update status canceled for orderId: " + orderId);
-                                DatabaseReference pesananRef = FirebaseDatabase.getInstance()
-                                        .getReference("orders").child(orderId);
-                                pesananRef.child("status").setValue("canceled");
-                            } else {
-                                Log.e("CHECKOUT", "orderId null saat update status canceled");
-                            }
-
-                        }
-                    }
-                }
-            }
-        });
-        // end proses
+        // Cek status transaksi untuk update tampilan keranjang:
 
         // Click event btn checkout, penambahan validasi kelengkapan input
         btnCheckoutOrder.setOnClickListener(v -> {
@@ -515,12 +380,12 @@ public class DetailPemesananActivity extends AppCompatActivity {
                             UiKitApi uiKitApi = new UiKitApi.Builder()
                                     .withMerchantClientKey("SB-Mid-client-LtKp1sBGtb5Kkf8i")
                                     .withContext(DetailPemesananActivity.this)
-                                    .withMerchantUrl("http://192.168.130.173:8000/api/checkout/")
+                                    .withMerchantUrl("http://192.168.156.173:8000/api/checkout/")
                                     .enableLog(true)
                                     .build();
 
                             setLocaleNew("id");
-                            uiKitApi.startPaymentUiFlow(DetailPemesananActivity.this, launcher, snapToken);
+                            //uiKitApi.startPaymentUiFlow(DetailPemesananActivity.this, launcher, snapToken);
                         });
                     } else {
                         Log.e("CHECKOUT", "Gagal Checkout: " + response.code());
@@ -574,6 +439,19 @@ public class DetailPemesananActivity extends AppCompatActivity {
                     + provinsi + ", "
                     + kodePos;
 
+            String jsonKeranjang = getIntent().getStringExtra("selectedItems");
+            assert jsonKeranjang != null;
+            Log.d("JSON_KERANJANG_RAW", jsonKeranjang);
+            String uidPenjual = null;
+
+            Type type = new TypeToken<List<KeranjangData>>() {
+            }.getType();
+            List<KeranjangData> selectedItems = new Gson().fromJson(jsonKeranjang, type);
+
+            if (!selectedItems.isEmpty()) {
+                uidPenjual = selectedItems.get(0).getUidPenjual();
+            }
+
             Log.d("CHECKOUT", "Harga Produk: " + totalHarga);
             Log.d("CHECKOUT", "Ongkir: " + ongkir);
             Log.d("CHECKOUT", "Total Bayar: " + totalBayar);
@@ -590,6 +468,8 @@ public class DetailPemesananActivity extends AppCompatActivity {
                 json.put("produk_dipesan", produkArray);
                 json.put("metode_pembayaran", selectedPayment);
                 json.put("uid", uid);
+                json.put("uid_penjual", uidPenjual);
+                json.put("statusPesanan", "menunggu pembayaran");
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -604,7 +484,7 @@ public class DetailPemesananActivity extends AppCompatActivity {
             );
 
             Request request = new Request.Builder()
-                    .url("http://192.168.130.173:8000/api/cpl_checkout")
+                    .url("http://192.168.156.173:8000/api/cpl_checkout")
                     .addHeader("Authorization", "Bearer " + idToken)
                     .addHeader("Accept", "application/json")
                     .post(body)
@@ -625,6 +505,14 @@ public class DetailPemesananActivity extends AppCompatActivity {
                             // Buka payment URL di WebView activity (jika kamu buat) atau browser
                             Intent intent = new Intent(this, PaymentActivity.class);
                             intent.putExtra("payment_url", paymentUrl);
+                            intent.putExtra("order_id", orderId);
+
+                            SharedPreferences prefs = getSharedPreferences("checkout_data", MODE_PRIVATE);
+                            prefs.edit()
+                                    .putString("tipe_checkout", getIntent().getStringExtra("tipe_checkout"))
+                                    .putString("selectedItems", getIntent().getStringExtra("selectedItems"))
+                                    .apply();
+
                             startActivity(intent);
                         });
                     } else {
@@ -644,6 +532,56 @@ public class DetailPemesananActivity extends AppCompatActivity {
         }).addOnFailureListener(e -> {
             Toast.makeText(this, "Gagal mendapatkan token autentikasi", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
+        });
+    }
+
+    private void checkoutManual() {
+        currentUser.getIdToken(true).addOnSuccessListener(result -> {
+            String idToken = result.getToken();
+            Log.d("AUTH", "ID Token: " + idToken);
+
+            int totalHarga = keranjangPrefs.getInt("total_harga", 0);
+            int ongkir = kurirPrefs.getInt("kurir_harga", 0);
+            int totalBayar = totalHarga + ongkir;
+
+            String alamat = alamatPrefs.getString("alamat", "");
+            String kelurahan = alamatPrefs.getString("subdistrict", "Kelurahan tidak ditemukan");
+            String kecamatan = alamatPrefs.getString("district", "Kecamatan tidak ditemukan");
+            String kota = alamatPrefs.getString("city", "Kota tidak ditemukan");
+            String provinsi = alamatPrefs.getString("province", "Provinsi tidak ditemukan");
+            String kodePos = alamatPrefs.getString("kode_pos", "Kodepos tidak ditemukan");
+
+            String alamatLengkap = alamat + ", "
+                    + kelurahan + ", "
+                    + kecamatan + ", "
+                    + kota + ", "
+                    + provinsi + ", "
+                    + kodePos;
+
+            Log.d("CHECKOUT", "Harga Produk: " + totalHarga);
+            Log.d("CHECKOUT", "Ongkir: " + ongkir);
+            Log.d("CHECKOUT", "Total Bayar: " + totalBayar);
+
+            JSONObject json = new JSONObject();
+            try {
+                json.put("total", totalBayar);
+                json.put("ongkir", ongkir);
+                json.put("harga_produk", totalHarga);
+                json.put("alamat", alamatLengkap);
+                json.put("kurir", kurirPrefs.getString("kurir_nama", ""));
+                json.put("layanan", kurirPrefs.getString("kurir_service", ""));
+                JSONArray produkArray = getProdukArray();
+                json.put("produk_dipesan", produkArray);
+                json.put("metode_pembayaran", selectedPayment);
+                json.put("uid", uid); // uid users
+                // tambahkan uid penjual
+
+
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return;
+            }
         });
     }
 

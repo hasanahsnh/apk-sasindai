@@ -214,6 +214,7 @@ public class DetailProdukActivity extends AppCompatActivity {
                 beliLangsung.setGambarVarian(selectedVarian[0].getGambar());
                 beliLangsung.setBerat(selectedVarian[0].getBerat());
                 beliLangsung.setVarian(ukuranData);
+                beliLangsung.setUidPenjual(produkData.getUid());
 
                 // Convert ke JSON
                 List<KeranjangData> listProduk = new ArrayList<>();
@@ -348,7 +349,7 @@ public class DetailProdukActivity extends AppCompatActivity {
             return;
         }
 
-        String uid = user.getUid();
+        String uid = user.getUid(); // ambil uid pembeli
         String idProduk = produkData.getIdProduk();
         String namaVarian = varianProduk.getNama();
         String createAt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
@@ -369,6 +370,7 @@ public class DetailProdukActivity extends AppCompatActivity {
         cartItem.put("qty", i);
         cartItem.put("createAt", createAt);
         cartItem.put("berat", varianProduk.getBerat());
+        cartItem.put("uidPenjual", produkData.getUid());
 
         keranjangRef.setValue(cartItem)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {

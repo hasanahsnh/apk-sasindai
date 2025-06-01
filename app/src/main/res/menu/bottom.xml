@@ -17,14 +17,6 @@
         app:cnb_backgroundColor="@color/maroon"
         app:cnb_iconColor="@color/putih"/>
 
-    <!-- Menu Notifkasi -->
-    <item
-        android:id="@+id/nav_notifikasi"
-        android:title="Notifikasi"
-        android:icon="@drawable/ic_notifikasi_29"
-        app:cnb_backgroundColor="@color/maroon"
-        app:cnb_iconColor="@color/putih"/>
-
     <!-- Menu Akun -->
     <item
         android:id="@+id/nav_akun"

@@ -81,8 +81,6 @@ public class MainHostActivity extends AppCompatActivity {
             selectedFragment = new KatalogMotifFragment();
         } else if (item == R.id.nav_akun) {
             selectedFragment = new AkunFragment();
-        } else if (item == R.id.nav_notifikasi) {
-            selectedFragment = new NotificationFragment();
         } else {
             Log.w("Main Host Activity", "Gagal menghandle nav yang dipilih:" + item);
         }

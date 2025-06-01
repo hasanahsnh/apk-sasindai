@@ -286,9 +286,7 @@
                         android:clipToPadding="true"
                         android:overScrollMode="never"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        android:paddingStart="8dp"
-                        android:paddingEnd="8dp"/>
+                        app:layout_constraintBottom_toBottomOf="parent"/>
 
                     <com.facebook.shimmer.ShimmerFrameLayout
                         android:id="@+id/shimmerProduk"

@@ -13,12 +13,13 @@ public class KeranjangData {
     private String size;
     private List<VarianProduk> varian;
     private float berat;
+    private String uidPenjual;
 
     public KeranjangData() {
         //
     }
 
-    public KeranjangData(String idProduk, String namaProduk, String namaVarian, String createAt, String gambarVarian, int harga, int qty, String size, List<VarianProduk> varian, float berat) {
+    public KeranjangData(String idProduk, String namaProduk, String namaVarian, String createAt, String gambarVarian, int harga, int qty, String size, List<VarianProduk> varian, float berat, String uidPenjual) {
         this.idProduk = idProduk;
         this.namaProduk = namaProduk;
         this.namaVarian = namaVarian;
@@ -29,6 +30,15 @@ public class KeranjangData {
         this.size = size;
         this.varian = varian;
         this.berat = berat;
+        this.uidPenjual = uidPenjual;
+    }
+
+    public String getUidPenjual() {
+        return uidPenjual;
+    }
+
+    public void setUidPenjual(String uidPenjual) {
+        this.uidPenjual = uidPenjual;
     }
 
     public String getIdProduk() {

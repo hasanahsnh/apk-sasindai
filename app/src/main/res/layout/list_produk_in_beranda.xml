@@ -4,35 +4,34 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:layout_marginStart="4dp"
-    android:layout_margin="2dp"
+    android:layout_marginStart="10dp"
     android:background="@drawable/frame_produk">
 
     <!-- Img Produk -->
     <ImageView
         android:id="@+id/imgListProdukPreview"
         android:layout_width="match_parent"
-        android:layout_height="160dp"
+        android:layout_height="150dp"
         android:layout_marginBottom="8dp"
         android:scaleType="centerCrop" />
 
     <!-- Linear Layout 1 -->
     <LinearLayout
         android:id="@+id/layoutItem_1"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_margin="8dp">
+        android:layout_margin="6dp">
 
         <!-- Nama Produk -->
         <TextView
             android:id="@+id/tvNamaProdukPreview"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Nama Produk"
-            android:textSize="12sp"
             android:fontFamily="@font/poppins_bold"
-            android:textColor="@color/maroon"/>
+            android:text="Nama Produk"
+            android:textColor="@color/maroon"
+            android:textSize="12sp" />
 
         <!-- Harga -->
         <TextView
@@ -54,7 +53,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_margin="8dp">
+        android:layout_margin="6dp">
 
         <!-- Rating Produk -->
         <TextView
@@ -108,7 +107,7 @@
         android:id="@+id/btnLihatDetailBeranda"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="15dp"
+        android:layout_margin="6dp"
         android:background="@drawable/frame_bg_btn_checkout"
         android:text="Beli Sekarang"
         android:textColor="@color/putih"
