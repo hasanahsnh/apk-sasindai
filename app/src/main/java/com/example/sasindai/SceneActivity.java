@@ -36,6 +36,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class SceneActivity extends AppCompatActivity {
@@ -45,6 +46,7 @@ public class SceneActivity extends AppCompatActivity {
     ShimmerFrameLayout shimmerPreviewObjek3d;
     Objek3DAdapter adapter;
     String selectedModelUrl = null;
+    boolean isModelPlaced = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,10 +66,17 @@ public class SceneActivity extends AppCompatActivity {
         recyclerViewProduk.setVisibility(View.GONE);
 
         arSceneView.setOnTapArPlaneListener((hitResult, plane, motionEvent) -> {
+            if (isModelPlaced) {
+                Toast.makeText(this, "Model sudah ditempatkan atau tunggu pemrosesan model", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             if (selectedModelUrl == null || selectedModelUrl.isEmpty()) {
                 Toast.makeText(this, "Pilih model terlebih dahulu dari daftar", Toast.LENGTH_SHORT).show();
                 return;
             }
+
+            isModelPlaced = true;
 
             Uri modelUri = Uri.parse(selectedModelUrl);
 
@@ -96,6 +105,7 @@ public class SceneActivity extends AppCompatActivity {
                         modelNode.setLocalPosition(new Vector3(0f, 0f, 0f));
                     })
                     .exceptionally(throwable -> {
+                        isModelPlaced = false;
                         Toast.makeText(this, "Gagal memuat model 3D", Toast.LENGTH_SHORT).show();
                         Log.e("SceneActivity", "Error load model 3D: ", throwable);
                         return null;
@@ -147,8 +157,19 @@ public class SceneActivity extends AppCompatActivity {
                 }
 
                 adapter = new Objek3DAdapter(SceneActivity.this, dataList, objek3DData -> {
+                    isModelPlaced = false;
                     selectedModelUrl = objek3DData.getGlbUrl();
-                    Toast.makeText(SceneActivity.this, "Model dipilih, Silakan arahkan layar ke space yang kosong dan tap layar!", Toast.LENGTH_SHORT).show();
+                    List<Node> toRemove = new ArrayList<>();
+                    for (Node node : arSceneView.getArSceneView().getScene().getChildren()) {
+                        if (node instanceof AnchorNode) {
+                            toRemove.add(node);
+                        }
+                    }
+
+                    for (Node node : toRemove) {
+                        fadeOutAndRemove(node, null);
+                    }
+                    Toast.makeText(SceneActivity.this, "Model dipilih, silakan tap di area kosong!", Toast.LENGTH_SHORT).show();
                 });
 
                 recyclerViewProduk.setAdapter(adapter);
@@ -163,5 +184,12 @@ public class SceneActivity extends AppCompatActivity {
                 Toast.makeText(SceneActivity.this, "Gagal Memuat Data", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void fadeOutAndRemove(Node node, Runnable onFinish) {
+        node.setRenderable(null); // Sembunyikan renderable
+        node.setEnabled(false);   // Nonaktifkan node dari scene
+        arSceneView.getArSceneView().getScene().removeChild(node); // Hapus node dari scene
+        if (onFinish != null) onFinish.run();
     }
 }

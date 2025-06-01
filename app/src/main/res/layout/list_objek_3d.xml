@@ -10,10 +10,20 @@
     android:layout_marginTop="15dp"
     android:layout_marginBottom="15dp">
 
-    <com.makeramen.roundedimageview.RoundedImageView
-        android:id="@+id/imgSliderObjek3d"
+    <LinearLayout
+        android:id="@+id/linLayoutItem3d"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="centerCrop"/>
+        android:orientation="horizontal"
+        android:padding="6dp">
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/imgSliderObjek3d"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            app:riv_corner_radius="16dp"/>
+
+    </LinearLayout>
 
 </androidx.cardview.widget.CardView>

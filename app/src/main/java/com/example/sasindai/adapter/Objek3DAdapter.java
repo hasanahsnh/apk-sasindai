@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,6 +27,7 @@ public class Objek3DAdapter extends RecyclerView.Adapter<Objek3DAdapter.Objek3DV
     private final Context context;
     private final List<Objek3DData> data;
     private final OnItemClickListener listener;
+    private int selectedPosition = -1;
 
     public Objek3DAdapter(Context context, List<Objek3DData> data, OnItemClickListener listener) {
         this.context = context;
@@ -67,11 +69,24 @@ public class Objek3DAdapter extends RecyclerView.Adapter<Objek3DAdapter.Objek3DV
                 })
                 .into(holder.img);
 
+        holder.linLayoutItem3d.setBackgroundResource(
+                selectedPosition == position ? R.drawable.frame_selected_item : android.R.color.transparent
+        );
+
         holder.itemView.setOnClickListener(v -> {
-            if (listener != null) {
-                listener.onItemClick(item);
+            int previousSelected = selectedPosition;
+            int clickPosition = holder.getAdapterPosition();
+            if (clickPosition != RecyclerView.NO_POSITION) {
+                selectedPosition = clickPosition;
+                notifyItemChanged(previousSelected);
+                notifyItemChanged(selectedPosition);
+                if (listener != null) {
+                    listener.onItemClick(data.get(clickPosition));
+                }
             }
         });
+
+        Log.d("Adapter", "Binding position: " + position + ", selected: " + selectedPosition);
     }
 
     @Override
@@ -81,9 +96,11 @@ public class Objek3DAdapter extends RecyclerView.Adapter<Objek3DAdapter.Objek3DV
 
     public static class Objek3DViewHolder extends RecyclerView.ViewHolder {
         RoundedImageView img;
+        LinearLayout linLayoutItem3d;
         public Objek3DViewHolder(@NonNull View itemView) {
             super(itemView);
             img = itemView.findViewById(R.id.imgSliderObjek3d);
+            linLayoutItem3d = itemView.findViewById(R.id.linLayoutItem3d);
         }
     }
 }
