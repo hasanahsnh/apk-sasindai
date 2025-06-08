@@ -35,15 +35,33 @@
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        android:gravity="bottom">
 
-        <ImageView
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:src="@drawable/img_help"
-            android:contentDescription="Forum"
-            android:layout_gravity="end"
-            android:layout_marginEnd="20dp"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="AR Produk"
+                android:textColor="@color/maroon"
+                android:textSize="20sp"
+                android:fontFamily="@font/poppins_bold"/>
+
+            <ImageView
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/img_help"
+                android:contentDescription="Forum"
+                android:layout_gravity="end"
+                android:layout_marginEnd="20dp"/>
+
+        </LinearLayout>
 
         <!-- FrameLayout untuk tumpang tindih shimmer dan recyclerview -->
         <FrameLayout

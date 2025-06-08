@@ -18,7 +18,7 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.example.sasindai.R;
-import com.example.sasindai.fragment.Objek3DData;
+import com.example.sasindai.model.Objek3DData;
 import com.makeramen.roundedimageview.RoundedImageView;
 
 import java.util.List;

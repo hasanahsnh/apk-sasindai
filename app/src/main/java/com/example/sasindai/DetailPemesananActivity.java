@@ -380,7 +380,7 @@ public class DetailPemesananActivity extends AppCompatActivity {
                             UiKitApi uiKitApi = new UiKitApi.Builder()
                                     .withMerchantClientKey("SB-Mid-client-LtKp1sBGtb5Kkf8i")
                                     .withContext(DetailPemesananActivity.this)
-                                    .withMerchantUrl("http://192.168.156.173:8000/api/checkout/")
+                                    .withMerchantUrl("http://192.168.152.173:8000/api/checkout/")
                                     .enableLog(true)
                                     .build();
 
@@ -484,7 +484,7 @@ public class DetailPemesananActivity extends AppCompatActivity {
             );
 
             Request request = new Request.Builder()
-                    .url("http://192.168.156.173:8000/api/cpl_checkout")
+                    .url("http://192.168.152.173:8000/api/cpl_checkout")
                     .addHeader("Authorization", "Bearer " + idToken)
                     .addHeader("Accept", "application/json")
                     .post(body)

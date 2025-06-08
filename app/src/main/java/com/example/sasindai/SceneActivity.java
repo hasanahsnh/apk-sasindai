@@ -19,7 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.sasindai.adapter.Objek3DAdapter;
-import com.example.sasindai.fragment.Objek3DData;
+import com.example.sasindai.model.Objek3DData;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.ar.core.Anchor;
 import com.google.ar.sceneform.AnchorNode;

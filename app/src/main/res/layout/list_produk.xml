@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/lihatDetailProduk"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -18,9 +19,10 @@
     <LinearLayout
         android:id="@+id/layoutItem_1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
-        android:layout_margin="8dp">
+        android:layout_margin="8dp"
+        android:layout_weight="1">
 
         <!-- Nama Produk -->
         <TextView
@@ -52,28 +54,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_margin="8dp">
-
-        <!-- Rating Produk -->
-        <!--<TextView
-            android:id="@+id/tvRatingProduk"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Rating Produk"
-            android:textSize="12sp"
-            android:fontFamily="@font/poppins_regular"
-            android:textColor="@color/black"
-            android:layout_weight="1"/>
-
-        <TextView
-            android:id="@+id/tvSeparator"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="|"
-            android:textSize="12sp"
-            android:fontFamily="@font/poppins_regular"
-            android:textColor="@color/abu_terang"
-            android:layout_marginStart="4dp"/>-->
+        android:layout_margin="8dp"
+        android:gravity="bottom">
 
         <!-- Total terjual -->
         <TextView
@@ -99,29 +81,5 @@
 
     </LinearLayout>
     <!-- End linear layout 2 -->
-
-    <!-- Button checkout -->
-    <LinearLayout
-        android:id="@+id/btnLihatDetail"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="15dp"
-        android:background="@drawable/frame_bg_btn_checkout"
-        android:text="Beli Sekarang"
-        android:textColor="@color/putih"
-        android:fontFamily="@font/poppins_medium"
-        android:textAllCaps="false"
-        android:gravity="center">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Lihat"
-            android:textColor="@color/putih"
-            android:fontFamily="@font/poppins_medium"
-            android:layout_margin="10dp"
-            android:textSize="14dp"/>
-
-    </LinearLayout>
 
 </LinearLayout>

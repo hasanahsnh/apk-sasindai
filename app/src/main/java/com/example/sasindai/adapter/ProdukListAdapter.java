@@ -116,7 +116,7 @@ public class ProdukListAdapter extends RecyclerView.Adapter<ProdukListAdapter.Pr
             tvNamaProduk = itemView.findViewById(R.id.tvNamaProduk);
             tvTotalProdukTerjual = itemView.findViewById(R.id.tvTotalProdukTerjual);
             tvHargaProduk = itemView.findViewById(R.id.tvHargaProduk);
-            btnLihatDetail = itemView.findViewById(R.id.btnLihatDetail);
+            btnLihatDetail = itemView.findViewById(R.id.lihatDetailProduk);
 
         }
     }

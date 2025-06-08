@@ -87,6 +87,11 @@ public class PaymentActivity extends AppCompatActivity {
         Type type = new TypeToken<List<KeranjangData>>(){}.getType();
         List<KeranjangData> selectedItems = new Gson().fromJson(jsonSelectedItems, type);
 
+        if (selectedItems == null || selectedItems.isEmpty()) {
+            Log.e("STOK", "Data selectedItems kosong atau null");
+            return;
+        }
+
         for (KeranjangData item : selectedItems) {
             String idProduk = item.getIdProduk();
             String namaVarian = item.getNamaVarian();
@@ -95,17 +100,23 @@ public class PaymentActivity extends AppCompatActivity {
             DatabaseReference produkRef = FirebaseDatabase.getInstance().getReference()
                     .child("produk")
                     .child(idProduk);
+
             produkRef.runTransaction(new Transaction.Handler() {
                 @Override
-                public Transaction.@NonNull Result doTransaction(@NonNull MutableData currentData) {
+                public Transaction.Result doTransaction(@NonNull MutableData currentData) {
                     ProdukData produkData = currentData.getValue(ProdukData.class);
                     if (produkData == null || produkData.getVarian() == null) return Transaction.success(currentData);
 
                     boolean varianDitemukan = false;
                     for (VarianProduk varian : produkData.getVarian()) {
                         if (varian.getNama().equalsIgnoreCase(namaVarian)) {
+                            if (varian.getStok() < qty) {
+                                Log.e("STOK", "Stok tidak cukup! Varian: " + namaVarian + ", Stok tersedia: " + varian.getStok() + ", Qty diminta: " + qty);
+                                return Transaction.abort();
+                            }
+
                             varian.setStok(varian.getStok() - qty);
-                            produkData.setSisaStok(produkData.getSisaStok() - qty);
+                            produkData.setSisaStok(Math.max(0, produkData.getSisaStok() - qty));
                             produkData.setTerjual(produkData.getTerjual() + qty);
                             varianDitemukan = true;
                             break;
@@ -114,6 +125,7 @@ public class PaymentActivity extends AppCompatActivity {
 
                     if (!varianDitemukan) {
                         Log.e("STOK", "Varian tidak ditemukan saat pengurangan: " + namaVarian);
+                        return Transaction.abort();
                     }
 
                     currentData.setValue(produkData);
@@ -136,7 +148,7 @@ public class PaymentActivity extends AppCompatActivity {
                         });
 
                     } else {
-                        Log.e("STOK", "Gagal kurangi stok: " + error.getMessage());
+                        Log.e("STOK", "Gagal kurangi stok: " + (error != null ? error.getMessage() : "Transaksi dibatalkan"));
                     }
                 }
             });

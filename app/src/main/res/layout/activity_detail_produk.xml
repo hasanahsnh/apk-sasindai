@@ -239,7 +239,7 @@
             <!-- End deskripsi produk -->
 
             <!-- Penilaian produk -->
-            <LinearLayout
+            <!--<LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="15dp"
@@ -276,11 +276,11 @@
 
                 </LinearLayout>
 
-            </LinearLayout>
+            </LinearLayout>-->
             <!-- End penilaian -->
 
             <!-- Rekomendasi produk -->
-            <LinearLayout
+            <!--<LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="15dp"
@@ -316,7 +316,7 @@
 
                 </com.facebook.shimmer.ShimmerFrameLayout>
 
-            </LinearLayout>
+            </LinearLayout>-->
             <!-- End rekomendasi -->
 
         </LinearLayout>

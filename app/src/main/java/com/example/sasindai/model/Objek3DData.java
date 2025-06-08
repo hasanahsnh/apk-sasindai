@@ -1,4 +1,4 @@
-package com.example.sasindai.fragment;
+package com.example.sasindai.model;
 
 public class Objek3DData {
     public String idObjek;
