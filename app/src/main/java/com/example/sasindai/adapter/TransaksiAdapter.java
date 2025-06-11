@@ -1,10 +1,12 @@
 package com.example.sasindai.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,11 +17,13 @@ import com.example.sasindai.R;
 import com.example.sasindai.model.ItemProdukOrderData;
 import com.example.sasindai.model.OrdersData;
 import com.example.sasindai.model.ProdukData;
+import com.example.sasindai.DetailPesananActivity;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 import com.makeramen.roundedimageview.RoundedImageView;
 
 import java.text.NumberFormat;
@@ -95,6 +99,12 @@ public class TransaksiAdapter extends RecyclerView.Adapter<TransaksiAdapter.Tran
             });
         }
 
+        holder.framePesanan.setOnClickListener(v -> {
+            Intent intent = new Intent(context, DetailPesananActivity.class);
+            intent.putExtra("detailPesanan", new Gson().toJson(data));
+            context.startActivity(intent);
+        });
+
     }
 
     @Override
@@ -105,8 +115,9 @@ public class TransaksiAdapter extends RecyclerView.Adapter<TransaksiAdapter.Tran
     public static class TransaksiViewHolder extends RecyclerView.ViewHolder {
         RoundedImageView imageProdukRiwayat;
         TextView tvNamaProdukRiwayat, tvVarianRiwayat,
-                tvQtyRiwayat, tvHargaProdukRiwayat, statusTransaksi,
+                tvQtyRiwayat, tvHargaProdukRiwayat,
                 idPesanan, statusPembayaran, countTotalPesanan, totalhargaPesanan;
+        LinearLayout framePesanan;
         public TransaksiViewHolder(@NonNull View itemView) {
             super(itemView);
             imageProdukRiwayat = itemView.findViewById(R.id.imageProdukRiwayat);
@@ -118,6 +129,7 @@ public class TransaksiAdapter extends RecyclerView.Adapter<TransaksiAdapter.Tran
             statusPembayaran = itemView.findViewById(R.id.statusPembayaran);
             countTotalPesanan = itemView.findViewById(R.id.countTotalPesanan);
             totalhargaPesanan = itemView.findViewById(R.id.totalhargaPesanan);
+            framePesanan = itemView.findViewById(R.id.framePesanan);
         }
     }
 }

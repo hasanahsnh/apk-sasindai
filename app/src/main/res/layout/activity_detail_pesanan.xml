@@ -1,10 +1,414 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".DetailPesananActivity">
+    tools:context=".DetailPesananActivity"
+    android:orientation="vertical"
+    android:background="@color/abu_terang">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- Toolbar -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:background="@color/putih">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:paddingStart="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ID Pesanan: "
+                android:textSize="12sp"
+                android:fontFamily="@font/poppins_bold"
+                android:textColor="@color/maroon" />
+
+            <TextView
+                android:id="@+id/detailIdPesanan"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="ID Pesanan"
+                android:textSize="12sp"
+                android:fontFamily="@font/poppins_bold"
+                android:layout_weight="1"/>
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:id="@+id/progressBarDetailPemesanan"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:indeterminate="true"
+            android:indeterminateTint="@color/maroon" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sedang memuat data"
+            android:textSize="11sp"
+            android:fontFamily="@font/poppins_regular"
+            android:textColor="@color/maroon" />
+    </LinearLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/containerDetailPemesanan"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true"
+        android:overScrollMode="never"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Alamat -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layDataPenerima"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/frame_bg_fitur"
+                android:layout_margin="8dp"
+                android:padding="8dp">
+
+                <!-- Nama penerima dan telp -->
+                <LinearLayout
+                    android:id="@+id/layPenerima"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent">
+
+                    <TextView
+                        android:id="@+id/tvNamaPembeli"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Penerima"
+                        android:textColor="@color/maroon"
+                        android:fontFamily="@font/poppins_bold"
+                        android:textSize="12sp"/>
+
+                    <TextView
+                        android:id="@+id/detailTelp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="089696210706"
+                        android:textColor="@color/maroon"
+                        android:fontFamily="@font/poppins_bold"
+                        android:textSize="12sp"
+                        android:gravity="end"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintTop_toBottomOf="@+id/layPenerima"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:gravity="center">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Alamat"
+                        android:textColor="@color/maroon"
+                        android:fontFamily="@font/poppins_bold"
+                        android:textSize="12sp"/>
+
+                    <TextView
+                        android:id="@+id/detailAlamat"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Alamat lengkap"
+                        android:textColor="@color/black"
+                        android:fontFamily="@font/poppins_regular"
+                        android:textSize="12sp"
+                        android:gravity="end"
+                        android:layout_weight="1"
+                        android:layout_marginStart="45dp"/>
+
+                </LinearLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- Pilih Ekspedisi -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layEkspedisi"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/frame_bg_fitur"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:padding="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="Kurir"
+                        android:textColor="@color/maroon"
+                        android:textSize="12sp"
+                        android:fontFamily="@font/poppins_bold"
+                        android:layout_weight="1"/>
+
+                    <TextView
+                        android:id="@+id/detailJasaPengiriman"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Jasa yang dipilih"
+                        android:textColor="@color/black"
+                        android:textSize="12sp"
+                        android:fontFamily="@font/poppins_regular"
+                        android:gravity="end"
+                        android:layout_weight="1"/>
+
+                </LinearLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- Daftar item -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layDataProduk"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/frame_bg_fitur"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:background="@color/abu_terang">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Varian"
+                        android:textColor="@color/maroon"
+                        android:textSize="12sp"
+                        android:fontFamily="@font/poppins_bold"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginStart="8dp"/>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerSelectedItems"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"/>
+
+                </LinearLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- Daftar metode pembayaran -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layMetodePembayaran"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/frame_bg_fitur"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="8dp"
+                android:padding="8dp">
+
+                <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Metode Pembayaran"
+                    android:textColor="@color/maroon"
+                    android:textSize="12sp"
+                    android:fontFamily="@font/poppins_bold"
+                    android:layout_weight="1"/>
+
+                <TextView
+                    android:id="@+id/detailChannelPayment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="channel yang dipilih"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    android:fontFamily="@font/poppins_regular"
+                    android:gravity="end"
+                    android:layout_weight="1"/>
+
+            </LinearLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- Total rincian -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layTotalRincian"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/frame_bg_fitur"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
+                android:padding="8dp">
+
+                <LinearLayout
+                    android:id="@+id/tvTotalRincian"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Total Rincian"
+                        android:textColor="@color/maroon"
+                        android:textSize="12sp"
+                        android:fontFamily="@font/poppins_bold"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/rincianBarang"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@+id/tvTotalRincian"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Produk"
+                        android:textColor="@color/maroon"
+                        android:textSize="12sp"
+                        android:fontFamily="@font/poppins_medium"
+                        android:layout_weight="1"/>
+
+                    <TextView
+                        android:id="@+id/detailTotalHargaProduk"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Rp 0,00"
+                        android:textColor="@color/black"
+                        android:textSize="12sp"
+                        android:fontFamily="@font/poppins_medium"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/rincianEkspedisi"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@+id/rincianBarang"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Ongkir"
+                        android:textColor="@color/maroon"
+                        android:textSize="12sp"
+                        android:fontFamily="@font/poppins_medium"
+                        android:layout_weight="1"/>
+
+                    <TextView
+                        android:id="@+id/detailHargaOngkir"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:fontFamily="@font/poppins_medium"
+                        android:text="Rp 0,00"
+                        android:textColor="@color/black"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Btn Checkout -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:padding="15dp"
+        android:background="@color/putih">
+
+        <TextView
+            android:id="@+id/btnCheckoutOrder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Bayar sekarang"
+            android:textSize="12sp"
+            android:textColor="@color/putih"
+            android:fontFamily="@font/poppins_bold"
+            android:paddingTop="15dp"
+            android:paddingBottom="15dp"
+            android:background="@drawable/frame_bg_btn_checkout"
+            android:gravity="center"
+            android:layout_weight="1"/>
+
+        <!-- <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Bayar"
+            android:textSize="12sp"
+            android:textColor="@color/putih"
+            android:fontFamily="@font/poppins_bold"
+            android:padding="15dp"
+            android:background="@drawable/frame_bg_btn_checkout"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:layout_marginStart="6dp"/> -->
+
+    </LinearLayout>
+
+
+</LinearLayout>

@@ -456,6 +456,9 @@ public class DetailPemesananActivity extends AppCompatActivity {
             Log.d("CHECKOUT", "Ongkir: " + ongkir);
             Log.d("CHECKOUT", "Total Bayar: " + totalBayar);
 
+            SharedPreferences prefss = getSharedPreferences("checkout_data", MODE_PRIVATE);
+            String tipeCheckout = prefss.getString("tipe_checkout", "");
+
             JSONObject json = new JSONObject();
             try {
                 json.put("total", totalBayar);
@@ -470,6 +473,9 @@ public class DetailPemesananActivity extends AppCompatActivity {
                 json.put("uid", uid);
                 json.put("uid_penjual", uidPenjual);
                 json.put("statusPesanan", "menunggu pembayaran");
+                json.put("tipe_checkout", tipeCheckout);
+
+                Log.i("JSON via beli_langsung", "Data " + json.toString());
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -504,6 +510,7 @@ public class DetailPemesananActivity extends AppCompatActivity {
 
                             // Buka payment URL di WebView activity (jika kamu buat) atau browser
                             Intent intent = new Intent(this, PaymentActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             intent.putExtra("payment_url", paymentUrl);
                             intent.putExtra("order_id", orderId);
 
@@ -679,11 +686,5 @@ public class DetailPemesananActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         tampilkanProgressBarDanLoadRincian();
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        Toast.makeText(DetailPemesananActivity.this, "Checkout dibatalkan", Toast.LENGTH_SHORT).show();
     }
 }

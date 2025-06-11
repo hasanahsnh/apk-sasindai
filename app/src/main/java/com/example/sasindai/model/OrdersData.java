@@ -19,11 +19,13 @@ public class OrdersData {
     private String updated_at;
     private String uidPenjual;
     private String statusPesanan;
+    private int biayaOngkir;
+    private String tipeCheckout;
 
     public OrdersData() {
     }
 
-    public OrdersData(String alamat, String created_at, String kurir, String layanan, String metode_pembayaran, String namaLengkap, String no_telp, String order_id, String payment_url, List<ItemProdukOrderData> produk, String status, int total, String uid, String updated_at, String uidPenjual, String statusPesanan) {
+    public OrdersData(String alamat, String created_at, String kurir, String layanan, String metode_pembayaran, String namaLengkap, String no_telp, String order_id, String payment_url, List<ItemProdukOrderData> produk, String status, int total, String uid, String updated_at, String uidPenjual, String statusPesanan, int biayaOngkir, String tipeCheckout) {
         this.alamat = alamat;
         this.created_at = created_at;
         this.kurir = kurir;
@@ -40,6 +42,24 @@ public class OrdersData {
         this.updated_at = updated_at;
         this.uidPenjual = uidPenjual;
         this.statusPesanan = statusPesanan;
+        this.biayaOngkir = biayaOngkir;
+        this.tipeCheckout = tipeCheckout;
+    }
+
+    public String getTipeCheckout() {
+        return tipeCheckout;
+    }
+
+    public void setTipeCheckout(String tipeCheckout) {
+        this.tipeCheckout = tipeCheckout;
+    }
+
+    public int getBiayaOngkir() {
+        return biayaOngkir;
+    }
+
+    public void setBiayaOngkir(int biayaOngkir) {
+        this.biayaOngkir = biayaOngkir;
     }
 
     public String getStatusPesanan() {

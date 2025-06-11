@@ -209,48 +209,10 @@ public class PaymentActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        String orderId = getIntent().getStringExtra("order_id");
-        tipeCheckout = getIntent().getStringExtra("tipe_checkout");
-        jsonSelectedItems = getIntent().getStringExtra("selectedItems");
-
-        if (tipeCheckout == null || jsonSelectedItems == null) {
-            SharedPreferences prefs = getSharedPreferences("checkout_data", MODE_PRIVATE);
-            if (tipeCheckout == null)
-                tipeCheckout = prefs.getString("tipe_checkout", null);
-            if (jsonSelectedItems == null)
-                jsonSelectedItems = prefs.getString("selectedItems", null);
-        }
-
-        Log.d("STOK", "onBackPressed: tipeCheckout=" + tipeCheckout);
-
-        if (orderId != null) {
-            DatabaseReference statusRef = FirebaseDatabase.getInstance().getReference("orders")
-                    .child(orderId)
-                    .child("status");
-
-            statusRef.get().addOnSuccessListener(snapshot -> {
-                if (snapshot.exists()) {
-                    String status = snapshot.getValue(String.class);
-                    Log.d("Payment", "Status pesanan: " + status);
-
-                    if ("success".equalsIgnoreCase(status) || "pending".equalsIgnoreCase(status)) {
-                        kurangiStokProduk(tipeCheckout, jsonSelectedItems);
-                    } else if ("canceled".equalsIgnoreCase(status) || "expired".equalsIgnoreCase(status)) {
-                        kembalikanStokProduk(tipeCheckout, jsonSelectedItems);
-                    }
-                }
-
-                Intent intent = new Intent(this, KeranjangActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-                finish();
-
-            }).addOnFailureListener(e -> {
-                Log.e("CHECKOUT", "Gagal mengambil status pesanan", e);
-                super.onBackPressed();
-            });
-        } else {
-            super.onBackPressed();
-        }
+        super.onBackPressed();
+        Intent intent = new Intent(this, MainHostActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();
     }
 }
