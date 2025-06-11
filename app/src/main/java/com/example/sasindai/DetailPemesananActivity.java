@@ -456,8 +456,9 @@ public class DetailPemesananActivity extends AppCompatActivity {
             Log.d("CHECKOUT", "Ongkir: " + ongkir);
             Log.d("CHECKOUT", "Total Bayar: " + totalBayar);
 
+            String tipeCheckoutIntent = getIntent().getStringExtra("tipe_checkout");
             SharedPreferences prefss = getSharedPreferences("checkout_data", MODE_PRIVATE);
-            String tipeCheckout = prefss.getString("tipe_checkout", "");
+            String tipeCheckout = tipeCheckoutIntent != null ? tipeCheckoutIntent : prefss.getString("tipe_checkout", "");
 
             JSONObject json = new JSONObject();
             try {
@@ -481,6 +482,11 @@ public class DetailPemesananActivity extends AppCompatActivity {
                 e.printStackTrace();
                 return;
             }
+
+            // Bersihkan `tipe_checkout` dari SharedPreferences setelah dipakai
+            SharedPreferences.Editor editor = prefss.edit();
+            editor.remove("tipe_checkout");
+            editor.apply();
 
             OkHttpClient client = new OkHttpClient();
 
