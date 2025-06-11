@@ -216,14 +216,6 @@ public class KeranjangActivity extends AppCompatActivity {
         });
     }
 
-    private void tampilkanProgressBarDanLoadRincian() {
-        progressBarKeranjang.setVisibility(View.VISIBLE);
-        frameAllProduk.setVisibility(View.GONE);
-        progressBarKeranjangDataNotFound.setVisibility(View.GONE);
-
-        new Handler().postDelayed(() -> AmbilProdukUser(), 5000);
-    }
-
     @Override
     protected void onResume() {
         super.onResume();

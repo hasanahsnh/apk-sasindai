@@ -140,7 +140,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/lengkapiData"
+                android:id="@+id/lengkapiTelp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="10dp"
@@ -162,7 +162,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:fontFamily="@font/poppins_medium"
-                        android:text="Lengkapi nomor telepon untuk menerima notifikasi."
+                        android:text="Lengkapi nomor telepon untuk notifikasi."
                         android:textColor="@color/merah"
                         android:textSize="12sp"
                         android:paddingStart="10dp" />
@@ -171,146 +171,51 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <!-- Transaksi -->
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
+                android:id="@+id/lihatProfile"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="35dp">
 
-                <GridLayout
-                    android:id="@+id/gridLayoutFitur"
+                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:columnCount="3"
-                    android:layout_margin="10dp"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent">
+                    android:text="Profile"
+                    android:paddingStart="15dp"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    android:layout_weight="1"/>
 
-                    <!-- Belum dibayar -->
-                    <LinearLayout
-                        android:id="@+id/lihatBelumDibayar"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_columnWeight="1"
-                        android:gravity="start|center_horizontal"
-                        android:background="@drawable/frame_bg_fitur"
-                        android:padding="6dp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=">"
+                    android:paddingEnd="15dp"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    android:layout_weight="1"
+                    android:gravity="end"/>
 
-                        <ImageView
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:layout_gravity="center"
-                            android:src="@drawable/img_wallet"/>
+            </LinearLayout>
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:gravity="center">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="10dp"
-                                android:text="Belum Bayar"
-                                android:textAlignment="center"
-                                android:fontFamily="@font/poppins_medium"
-                                android:textColor="@color/maroon"
-                                android:textSize="9sp"
-                                android:maxLines="2"/>
-
-                        </LinearLayout>
-
-                    </LinearLayout>
-
-                    <!-- Dikemas -->
-                    <LinearLayout
-                        android:id="@+id/lihatDikemas"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_columnWeight="1"
-                        android:gravity="start|center_horizontal"
-                        android:background="@drawable/frame_bg_fitur"
-                        android:layout_marginStart="6dp"
-                        android:padding="6dp">
-
-                        <ImageView
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:layout_gravity="center"
-                            android:src="@drawable/img_box"/>
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:gravity="center">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="10dp"
-                                android:text="Dikemas"
-                                android:textAlignment="center"
-                                android:fontFamily="@font/poppins_medium"
-                                android:textColor="@color/maroon"
-                                android:textSize="9sp"
-                                android:maxLines="2"/>
-
-                        </LinearLayout>
-
-                    </LinearLayout>
-
-                    <!-- Profile -->
-                    <LinearLayout
-                        android:id="@+id/lihatProfile"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_columnWeight="1"
-                        android:gravity="start|center_horizontal"
-                        android:background="@drawable/frame_bg_fitur"
-                        android:layout_marginStart="6dp"
-                        android:padding="6dp">
-
-                        <ImageView
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:layout_gravity="center"
-                            android:src="@drawable/img_settings"/>
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:gravity="center">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="10dp"
-                                android:text="Profile"
-                                android:textAlignment="center"
-                                android:fontFamily="@font/poppins_medium"
-                                android:textColor="@color/maroon"
-                                android:textSize="9sp"
-                                android:maxLines="2"/>
-
-                        </LinearLayout>
-
-                    </LinearLayout>
-
-                </GridLayout>
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            <View
+                android:id="@+id/view"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#888888"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginTop="8dp"/>
 
             <!-- btn bantuan -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="35dp">
+                android:layout_marginTop="8dp">
 
                 <TextView
                     android:layout_width="match_parent"

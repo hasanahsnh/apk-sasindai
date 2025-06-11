@@ -8,7 +8,6 @@ public class ItemProdukOrderData {
     private int qty;
 
     public ItemProdukOrderData() {
-
     }
 
     public ItemProdukOrderData(String id_produk, String nama_produk, String nama_varian, int harga, int qty) {

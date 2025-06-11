@@ -29,6 +29,7 @@ import java.util.Locale;
 public class TransaksiAdapter extends RecyclerView.Adapter<TransaksiAdapter.TransaksiViewHolder> {
     private final Context context;
     private final List<OrdersData> ordersData;
+    int totalPesanan = 0;
 
     public TransaksiAdapter(Context context, List<OrdersData> ordersData) {
         this.context = context;
@@ -49,22 +50,25 @@ public class TransaksiAdapter extends RecyclerView.Adapter<TransaksiAdapter.Tran
         String status = data.getStatus();
         NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
 
-        // Siapkan builder untuk setiap field
-        StringBuilder namaProdukBuilder = new StringBuilder();
-        StringBuilder qtyBuilder = new StringBuilder();
-        StringBuilder hargaBuilder = new StringBuilder();
+        totalPesanan = data.getProduk() != null ? data.getProduk().size() : 0;
 
-        for (ItemProdukOrderData item : data.getProduk()) {
-            namaProdukBuilder.append(item.getNama_varian()).append("\n");
-            qtyBuilder.append("Qty: ").append(item.getQty()).append("\n");
-            hargaBuilder.append("Harga: ").append(formatter.format(item.getHarga())).append("\n");
+        // Cek apakah list produk tidak kosong
+        if (data.getProduk() != null && !data.getProduk().isEmpty()) {
+            ItemProdukOrderData item = data.getProduk().get(0); // hanya produk ke-0
+
+            holder.tvNamaProdukRiwayat.setText(item.getNama_varian());
+            holder.tvQtyRiwayat.setText(String.valueOf(item.getQty()));
+            holder.tvHargaProdukRiwayat.setText(formatter.format(item.getHarga()).replace("Rp", "Rp "));
+        } else {
+            holder.tvNamaProdukRiwayat.setText("-");
+            holder.tvQtyRiwayat.setText("-");
+            holder.tvHargaProdukRiwayat.setText("-");
         }
 
-        // Set data ke masing-masing TextView
-        holder.tvNamaProdukRiwayat.setText(namaProdukBuilder.toString().trim());
-        holder.tvQtyRiwayat.setText(qtyBuilder.toString().trim());
-        holder.tvHargaProdukRiwayat.setText(hargaBuilder.toString().trim());
-        holder.statusTransaksi.setText(status);
+        holder.statusPembayaran.setText(status);
+        holder.idPesanan.setText(data.getOrder_id());
+        holder.countTotalPesanan.setText(String.valueOf(totalPesanan));
+        holder.totalhargaPesanan.setText(formatter.format(data.getTotal()).replace("Rp", "Rp "));
 
         // Ambil gambar dari ProdukData berdasarkan id_produk dari item pertama
         if (!data.getProduk().isEmpty()) {
@@ -101,7 +105,8 @@ public class TransaksiAdapter extends RecyclerView.Adapter<TransaksiAdapter.Tran
     public static class TransaksiViewHolder extends RecyclerView.ViewHolder {
         RoundedImageView imageProdukRiwayat;
         TextView tvNamaProdukRiwayat, tvVarianRiwayat,
-                tvQtyRiwayat, tvHargaProdukRiwayat, statusTransaksi;
+                tvQtyRiwayat, tvHargaProdukRiwayat, statusTransaksi,
+                idPesanan, statusPembayaran, countTotalPesanan, totalhargaPesanan;
         public TransaksiViewHolder(@NonNull View itemView) {
             super(itemView);
             imageProdukRiwayat = itemView.findViewById(R.id.imageProdukRiwayat);
@@ -109,7 +114,10 @@ public class TransaksiAdapter extends RecyclerView.Adapter<TransaksiAdapter.Tran
             tvQtyRiwayat = itemView.findViewById(R.id.tvQtyRiwayat);
             tvVarianRiwayat = itemView.findViewById(R.id.tvVarianRiwayat);
             tvHargaProdukRiwayat = itemView.findViewById(R.id.tvHargaProdukRiwayat);
-            statusTransaksi = itemView.findViewById(R.id.statusTransaksi);
+            idPesanan = itemView.findViewById(R.id.idPesanan);
+            statusPembayaran = itemView.findViewById(R.id.statusPembayaran);
+            countTotalPesanan = itemView.findViewById(R.id.countTotalPesanan);
+            totalhargaPesanan = itemView.findViewById(R.id.totalhargaPesanan);
         }
     }
 }

@@ -73,7 +73,8 @@ public class AkunFragment extends Fragment {
     FirebaseAuth firebaseAuth;
     FirebaseAuth.AuthStateListener authStateListener;
     FirebaseUser currentUser;
-    ConstraintLayout lengkapiData;
+    ConstraintLayout lengkapiTelp;
+    View viewProfile;
 
     public AkunFragment() {
         // Required empty public constructor
@@ -136,10 +137,9 @@ public class AkunFragment extends Fragment {
         kirimEmailVerifikasi = view.findViewById(R.id.kirimEmailVerifikasi);
         uiFragmentAkun = view.findViewById(R.id.uiFragmentAkun);
         progressBarAkunFragment = view.findViewById(R.id.progressBarAkunFragment);
-        lihatBelumDibayar = view.findViewById(R.id.lihatBelumDibayar);
-        lihatDikemas = view.findViewById(R.id.lihatDikemas);
         lihatProfile = view.findViewById(R.id.lihatProfile);
-        lengkapiData = view.findViewById(R.id.lengkapiData);
+        lengkapiTelp = view.findViewById(R.id.lengkapiTelp);
+        viewProfile = view.findViewById(R.id.view);
 
         // Perbarui tampilan
         authStateListener = firebaseAuth -> {
@@ -163,22 +163,22 @@ public class AkunFragment extends Fragment {
                                         try {
                                             String noTelp = snapshot.child("noTelp").getValue(String.class);
                                             if (noTelp != null) {
-                                                lengkapiData.setVisibility(View.GONE);
+                                                lengkapiTelp.setVisibility(View.GONE);
                                             } else {
-                                                lengkapiData.setVisibility(View.VISIBLE);
+                                                lengkapiTelp.setVisibility(View.VISIBLE);
                                             }
                                         } catch (Exception e) {
                                             Log.e("Akun Fragment", "error: " + e.getMessage());
                                         }
 
                                     } else {
-                                        lengkapiData.setVisibility(View.VISIBLE);
+                                        lengkapiTelp.setVisibility(View.VISIBLE);
                                     }
                                 }
 
                                 @Override
                                 public void onCancelled(@NonNull DatabaseError error) {
-                                    lengkapiData.setVisibility(View.VISIBLE);
+                                    lengkapiTelp.setVisibility(View.VISIBLE);
                                 }
                             });
                         }
@@ -243,58 +243,16 @@ public class AkunFragment extends Fragment {
             alertDialog.show();
         });
 
-        clickToNavigate();
-
-    }
-
-    // Cek status user apakah sudah login dan terautentikasi
-    private void clickToNavigate() {
-        // Belum dibayar
-        if (lihatBelumDibayar != null && lihatDikemas != null && lihatProfile != null) {
-            lihatBelumDibayar.setOnClickListener(v -> {
-                if (currentUser != null) {
-                    if (currentUser.isEmailVerified()) {
-                        Toast.makeText(requireContext(), "User terautentikasi", Toast.LENGTH_LONG).show();
-                    } else {
-                        Toast.makeText(requireContext(), "Silakan verifikasi email Anda terlebih dahulu", Toast.LENGTH_LONG).show();
-                    }
-                } else {
-                    Toast.makeText(requireContext(), "Silakan login terlebih dahulu", Toast.LENGTH_SHORT).show();
-                }
-            });
-
-            lihatDikemas.setOnClickListener(v -> {
-                if (currentUser != null) {
-                    if (currentUser.isEmailVerified()) {
-                        Toast.makeText(requireContext(), "User terautentikasi", Toast.LENGTH_LONG).show();
-                    } else {
-                        Toast.makeText(requireContext(), "Silakan verifikasi email Anda terlebih dahulu", Toast.LENGTH_LONG).show();
-                    }
-                } else {
-                    Toast.makeText(requireContext(), "Silakan login terlebih dahulu", Toast.LENGTH_SHORT).show();
-                }
-            });
-
+        if (lihatProfile != null) {
             lihatProfile.setOnClickListener(v -> {
-                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-                if (currentUser != null) {
-                    if (currentUser.isEmailVerified()) {
-                        Intent intent = new Intent(requireContext(), ProfileActivity.class);
-                        startActivity(intent);
-                    } else {
-                        Toast.makeText(requireContext(), "Silakan verifikasi email Anda terlebih dahulu", Toast.LENGTH_LONG).show();
-                    }
-                } else {
-                    Toast.makeText(requireContext(), "Silakan login terlebih dahulu", Toast.LENGTH_SHORT).show();
-                }
+                Intent intent = new Intent(requireContext(), ProfileActivity.class);
+                startActivity(intent);
             });
         } else {
             Log.e("Akun Fragment", "Dari btnGotoKeranjang, btn goto keranjang gagal dimuat atau bernilai null");
         }
 
-
     }
-
 
     // Perbarui tampilan
     private void updateUI(FirebaseUser currentUser) {
@@ -304,7 +262,9 @@ public class AkunFragment extends Fragment {
             sharedPreferences.edit().putBoolean("isLoggedIn", true).apply();
             btnMasuk.setVisibility(View.GONE);
             btnKeluar.setVisibility(View.VISIBLE);
-            lengkapiData.setVisibility(View.GONE);
+            lengkapiTelp.setVisibility(View.GONE);
+            viewProfile.setVisibility(View.VISIBLE);
+            lihatProfile.setVisibility(View.VISIBLE);
 
             // Memperoleh data akunnya
             String email = currentUser.getEmail();
@@ -331,8 +291,10 @@ public class AkunFragment extends Fragment {
             btnKeluar.setVisibility(View.GONE);
             layoutVerifikasiEmail.setVisibility(View.GONE);
             emailTerverifikasi.setText("Silakan masuk untuk akses semua fitur!");
-            lengkapiData.setVisibility(View.GONE);
+            lengkapiTelp.setVisibility(View.GONE);
             imgEmailChecked.setVisibility(View.GONE);
+            lihatProfile.setVisibility(View.GONE);
+            viewProfile.setVisibility(View.GONE);
         }
     }
 

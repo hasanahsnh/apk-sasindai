@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -254,7 +255,11 @@ public class DetailProdukActivity extends AppCompatActivity {
 
         Window window = dialog.getWindow();
         if (window != null) {
-            window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            DisplayMetrics displayMetrics = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+            int halfHeight = displayMetrics.heightPixels / 2;
+
+            window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, halfHeight);
             window.setGravity(Gravity.BOTTOM);
         }
 
@@ -328,7 +333,11 @@ public class DetailProdukActivity extends AppCompatActivity {
 
         Window window = dialog.getWindow();
         if (window != null) {
-            window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            DisplayMetrics displayMetrics = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+            int halfHeight = displayMetrics.heightPixels / 2;
+
+            window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, halfHeight);
             window.setGravity(Gravity.BOTTOM);
         }
 

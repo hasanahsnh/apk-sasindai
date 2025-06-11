@@ -1,7 +1,13 @@
 package com.example.sasindai;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
+import android.view.View;
 import android.view.Window;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -15,6 +21,8 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.airbnb.lottie.LottieAnimationView;
+import com.airbnb.lottie.LottieDrawable;
 import com.example.sasindai.adapter.TransaksiAdapter;
 import com.example.sasindai.model.OrdersData;
 import com.google.firebase.auth.FirebaseAuth;
@@ -30,11 +38,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TransaksiActivity extends AppCompatActivity {
-    TextView tvTest;
+    FrameLayout frameDataOrders;
     RecyclerView recyclerViewRiwayatTransaksi;
     TransaksiAdapter adapter;
     List<OrdersData> ordersData = new ArrayList<>();
-
+    LinearLayout layoutProgressBarRiwayatPesananNotFound, progressBarRiwayatPesanan;
+    LottieAnimationView progressBarRiwayatPesananNotFound;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +56,10 @@ public class TransaksiActivity extends AppCompatActivity {
         window.setNavigationBarColor(ContextCompat.getColor(this, R.color.black)); // Set warna nav bar
 
         recyclerViewRiwayatTransaksi = findViewById(R.id.recyclerViewRiwayatTransaksi);
+        layoutProgressBarRiwayatPesananNotFound = findViewById(R.id.layoutProgressBarRiwayatPesananNotFound);
+        progressBarRiwayatPesanan = findViewById(R.id.progressBarRiwayatPesanan);
+        frameDataOrders = findViewById(R.id.frameDataOrders);
+        progressBarRiwayatPesananNotFound = findViewById(R.id.progressBarRiwayatPesananNotFound);
 
         recyclerViewRiwayatTransaksi.setLayoutManager(new LinearLayoutManager(this));
         adapter = new TransaksiAdapter(this, ordersData);
@@ -80,13 +93,41 @@ public class TransaksiActivity extends AppCompatActivity {
                     }
                 }
 
-                adapter.notifyDataSetChanged();
+                progressBarRiwayatPesanan.setVisibility(View.GONE);
+
+                if (!ordersData.isEmpty()) {
+                    frameDataOrders.setVisibility(View.VISIBLE);
+                    progressBarRiwayatPesananNotFound.setVisibility(View.GONE);
+                } else {
+                    frameDataOrders.setVisibility(View.GONE);
+                    layoutProgressBarRiwayatPesananNotFound.setVisibility(View.VISIBLE);
+                    progressBarRiwayatPesananNotFound.setVisibility(View.VISIBLE);
+                    progressBarRiwayatPesananNotFound.setRepeatCount(LottieDrawable.INFINITE);
+                    progressBarRiwayatPesananNotFound.playAnimation();
+                }
+
+                if (recyclerViewRiwayatTransaksi.getAdapter() != null) {
+                    adapter.notifyDataSetChanged();
+                }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                Log.e("Firebase", "Gagal mengambil data riwayat pesanan: " + error.getMessage());
+                progressBarRiwayatPesanan.setVisibility(View.GONE);
+                frameDataOrders.setVisibility(View.GONE);
+                progressBarRiwayatPesananNotFound.setVisibility(View.VISIBLE);
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        progressBarRiwayatPesanan.setVisibility(View.VISIBLE);
+        frameDataOrders.setVisibility(View.GONE);
+        progressBarRiwayatPesananNotFound.setVisibility(View.GONE);
+
+        new Handler().postDelayed(this::ambilDaftarRiwayatTransasksiUser, 2000);
     }
 }

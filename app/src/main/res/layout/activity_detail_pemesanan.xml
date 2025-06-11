@@ -464,16 +464,17 @@
             android:id="@+id/btnCheckoutOrder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Sandbox"
+            android:text="Bayar sekarang"
             android:textSize="12sp"
             android:textColor="@color/putih"
             android:fontFamily="@font/poppins_bold"
-            android:padding="15dp"
+            android:paddingTop="15dp"
+            android:paddingBottom="15dp"
             android:background="@drawable/frame_bg_btn_checkout"
             android:gravity="center"
             android:layout_weight="1"/>
 
-        <TextView
+        <!-- <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Bayar"
@@ -484,7 +485,7 @@
             android:background="@drawable/frame_bg_btn_checkout"
             android:gravity="center"
             android:layout_weight="1"
-            android:layout_marginStart="6dp"/>
+            android:layout_marginStart="6dp"/> -->
 
     </LinearLayout>
 

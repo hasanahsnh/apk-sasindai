@@ -72,7 +72,7 @@ public class BerandaFragment extends Fragment {
     private ShimmerFrameLayout shimmerFrameLayout, shimmerProduk;
     private LinearLayout layoutFiturKaPasaran, fiturAR;
     private TextView tvLihatProduk;
-    private ImageView btnGotoKeranjang, btnGotoOrders;
+    private ImageView btnGotoKeranjang, btnGotoPesanan;
     private SharedPreferences sharedPreferences;
     private FirebaseUser currentUser;
 
@@ -121,7 +121,7 @@ public class BerandaFragment extends Fragment {
         shimmerPreviewRilisMedia = view.findViewById(R.id.shimmerPreviewRilisMedia);
         btnGotoKeranjang = view.findViewById(R.id.btnGotoKeranjang);
         fiturAR = view.findViewById(R.id.fiturAR);
-        btnGotoOrders = view.findViewById(R.id.btnGotoOrders);
+        btnGotoPesanan = view.findViewById(R.id.btnGotoRiwayatPesanan);
         // End inisial
 
         // Navigate to
@@ -373,14 +373,23 @@ public class BerandaFragment extends Fragment {
         }
 
         // Ke actv orders
-        if (btnGotoOrders != null) {
-            btnGotoOrders.setOnClickListener(v -> {
-                Intent intent = new Intent(requireContext(), TransaksiActivity.class);
-                startActivity(intent);
+        if (btnGotoPesanan != null) {
+            btnGotoPesanan.setOnClickListener(v -> {
+                currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                if (currentUser != null) {
+                    Intent intent = new Intent(requireContext(), TransaksiActivity.class);
+                    startActivity(intent);
+                } else {
+                    Intent intent = new Intent(requireContext(), AuthHostActivity.class);
+                    startActivity(intent);
+                    Toast.makeText(requireContext(), "Silakan login terlebih dahulu", Toast.LENGTH_SHORT).show();
+                }
             });
         } else {
             Log.e("Beranda Fragment", "tv btn Goto orders gagal dimuat atau bernilai null!");
         }
+
+
     }
 
     @Override

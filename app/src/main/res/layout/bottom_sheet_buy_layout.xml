@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:text="Pilih Varian"
         android:textSize="14sp"
+        android:layout_marginStart="8dp"
         android:textColor="@color/maroon"
         android:fontFamily="@font/poppins_bold"/>
 
@@ -19,7 +20,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fillViewport="true"
-        android:layout_marginTop="8dp"
         android:layout_weight="1">
 
         <LinearLayout
@@ -33,68 +33,7 @@
                 android:layout_height="wrap_content"
                 android:nestedScrollingEnabled="false"
                 android:overScrollMode="never"
-                android:maxHeight="300dp"
-                android:layout_marginTop="10dp"
                 app:spanCount="3"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="15dp">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_weight="1">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/black"
-                        android:text="Kuantitas"
-                        android:textSize="12sp"
-                        android:fontFamily="@font/poppins_regular"/>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_weight="1"
-                    android:gravity="end">
-
-                    <ImageView
-                        android:id="@+id/btnMinusBuy"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:padding="10dp"
-                        android:src="@drawable/ic_minus"/>
-
-                    <TextView
-                        android:id="@+id/tvQuantityBuy"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="20dp"
-                        android:layout_marginEnd="20dp"
-                        android:text="1"
-                        android:textSize="16sp"
-                        android:textColor="@color/black"
-                        android:fontFamily="@font/poppins_medium"
-                        android:layout_gravity="center"/>
-
-                    <ImageView
-                        android:id="@+id/btnPlusBuy"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:padding="10dp"
-                        android:src="@drawable/ic_plus"/>
-
-                </LinearLayout>
-
-            </LinearLayout>
 
         </LinearLayout>
 
@@ -104,8 +43,67 @@
         android:id="@+id/btnBeliProduk"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="15dp">
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp"
+            android:gravity="center">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_weight="1">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:text="Kuantitas"
+                    android:textSize="12sp"
+                    android:fontFamily="@font/poppins_regular"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_weight="1"
+                android:gravity="end">
+
+                <ImageView
+                    android:id="@+id/btnMinusBuy"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:padding="10dp"
+                    android:src="@drawable/ic_minus"/>
+
+                <TextView
+                    android:id="@+id/tvQuantityBuy"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:text="1"
+                    android:textSize="16sp"
+                    android:textColor="@color/black"
+                    android:fontFamily="@font/poppins_medium"
+                    android:layout_gravity="center"/>
+
+                <ImageView
+                    android:id="@+id/btnPlusBuy"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:padding="10dp"
+                    android:src="@drawable/ic_plus"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
 
         <TextView
             android:layout_width="match_parent"

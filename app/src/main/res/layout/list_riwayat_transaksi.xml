@@ -2,8 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:padding="6dp"
+    android:orientation="vertical"
     android:layout_marginStart="5dp"
     android:layout_marginEnd="5dp"
     android:layout_marginTop="5dp"
@@ -11,90 +10,173 @@
     android:gravity="center_vertical"
     android:background="@drawable/frame_produk">
 
-    <!-- Gambar produk -->
-    <com.makeramen.roundedimageview.RoundedImageView
-        android:id="@+id/imageProdukRiwayat"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_marginStart="8dp"
-        android:scaleType="centerCrop"/>
-
-    <!-- Info produk -->
     <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="6dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ID Pesanan: "
+            android:textSize="12sp"
+            android:fontFamily="@font/poppins_medium"
+            android:textColor="@color/maroon"/>
+
+        <TextView
+            android:id="@+id/idPesanan"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ID Pesanan"
+            android:textSize="12sp"
+            android:fontFamily="@font/poppins_medium"
+            android:layout_weight="1"
+            android:layout_marginEnd="45dp"
+            android:maxLines="1"
+            android:ellipsize="end"/>
+
+        <TextView
+            android:id="@+id/statusPembayaran"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pending"
+            android:layout_marginEnd="4dp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/poppins_bold"
+            android:textSize="12sp"
+            android:gravity="end"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <!-- Gambar produk -->
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/imageProdukRiwayat"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_marginStart="8dp"
+            android:scaleType="centerCrop"/>
+
+        <!-- Info produk -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/tvNamaProdukRiwayat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_medium"
+                android:text="Nama Produk"
+                android:textColor="@color/maroon"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tvVarianRiwayat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Varian: Merah"
+                android:textSize="12sp"
+                android:fontFamily="@font/poppins_regular"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="x"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/tvQtyRiwayat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" 1"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textSize="13sp" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvHargaProdukRiwayat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Rp20.000"
+                android:textColor="@color/maroon"
+                android:fontFamily="@font/poppins_regular"
+                android:textSize="13sp" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/btnBeliProduk"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginStart="8dp"
-        android:layout_weight="1">
-
-        <TextView
-            android:id="@+id/tvNamaProdukRiwayat"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/poppins_medium"
-            android:text="Nama Produk"
-            android:textColor="@color/maroon"
-            android:textSize="12sp" />
-
-        <TextView
-            android:id="@+id/tvVarianRiwayat"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Varian: Merah"
-            android:textSize="12sp"
-            android:fontFamily="@font/poppins_regular"/>
+        android:gravity="end">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="8dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="x"
+                android:text="Total"
+                android:layout_marginEnd="4dp"
+                android:textColor="@color/black"
                 android:fontFamily="@font/poppins_regular"
-                android:textSize="13sp" />
+                android:textSize="12sp"/>
 
             <TextView
-                android:id="@+id/tvQtyRiwayat"
+                android:id="@+id/countTotalPesanan"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="1"
+                android:text="2"
+                android:layout_marginEnd="4dp"
+                android:textColor="@color/black"
                 android:fontFamily="@font/poppins_regular"
-                android:textSize="13sp" />
+                android:textSize="12sp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="produk: "
+                android:textColor="@color/black"
+                android:fontFamily="@font/poppins_regular"
+                android:textSize="12sp"/>
+
+            <TextView
+                android:id="@+id/totalhargaPesanan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Rp 150000"
+                android:textColor="@color/black"
+                android:fontFamily="@font/poppins_regular"
+                android:textSize="12sp"/>
 
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/tvHargaProdukRiwayat"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Rp20.000"
-            android:textColor="@color/maroon"
-            android:fontFamily="@font/poppins_regular"
-            android:textSize="13sp" />
     </LinearLayout>
-
-    <!-- Kontrol jumlah -->
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginEnd="8dp"
-        android:padding="6dp"
-        android:gravity="center_horizontal">
-
-        <TextView
-            android:id="@+id/statusTransaksi"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Lihat detail >"
-            android:textSize="12sp"
-            android:fontFamily="@font/poppins_regular"
-            android:textColor="@color/maroon"/>
-    </LinearLayout>
-
-
 
 </LinearLayout>

@@ -36,7 +36,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <ImageView
-                    android:id="@+id/btnGotoOrders"
+                    android:id="@+id/btnGotoRiwayatPesanan"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:src="@drawable/img_orders"
