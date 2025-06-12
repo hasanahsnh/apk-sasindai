@@ -11,19 +11,29 @@ import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.sasindai.adapter.DaftarItemRiwayatPesananAdapter;
 import com.example.sasindai.model.ItemProdukOrderData;
+import com.example.sasindai.model.OrderItemWrapper;
 import com.example.sasindai.model.OrdersData;
 import com.example.sasindai.model.ProdukData;
+import com.example.sasindai.theme.ThemeActivity;
 import com.google.gson.Gson;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 public class DetailPesananActivity extends AppCompatActivity {
     TextView detailIdPesanan, detailTelp, detailAlamat, detailJasaPengiriman,
             detailChannelPayment, detailTotalHargaProduk, detailHargaOngkir;
     OrdersData ordersData;
+    RecyclerView itemPesanan;
+    DaftarItemRiwayatPesananAdapter adapter;
+    List<OrderItemWrapper> orderItemWrappers = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,10 +41,9 @@ public class DetailPesananActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_detail_pesanan);
 
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO); // Set default mode gelap
-        Window window = getWindow(); // Mendapatkan objek window
-        window.setStatusBarColor(ContextCompat.getColor(this, R.color.putih)); // Set warna status bar
-        window.setNavigationBarColor(ContextCompat.getColor(this, R.color.black)); // Set warna nav bar
+        // import tema
+        ThemeActivity.applyTheme(this);
+        // end import tema
 
         detailIdPesanan = findViewById(R.id.detailIdPesanan);
         detailTelp = findViewById(R.id.detailTelp);
@@ -43,6 +52,11 @@ public class DetailPesananActivity extends AppCompatActivity {
         detailChannelPayment = findViewById(R.id.detailChannelPayment);
         detailTotalHargaProduk = findViewById(R.id.detailTotalHargaProduk);
         detailHargaOngkir = findViewById(R.id.detailHargaOngkir);
+        itemPesanan = findViewById(R.id.itemPesanan);
+
+        itemPesanan.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new DaftarItemRiwayatPesananAdapter(this, orderItemWrappers);
+        itemPesanan.setAdapter(adapter);
 
         detailPesanan();
 
@@ -57,6 +71,16 @@ public class DetailPesananActivity extends AppCompatActivity {
         String produkJson = getIntent().getStringExtra("detailPesanan");
         ordersData = new Gson().fromJson(produkJson, OrdersData.class);
         NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+
+        if (ordersData != null && ordersData.getProduk() != null) {
+            orderItemWrappers.clear();
+
+            for (ItemProdukOrderData item : ordersData.getProduk()) {
+                orderItemWrappers.add(new OrderItemWrapper(item, ordersData));
+            }
+
+            adapter.notifyDataSetChanged();
+        }
 
         if (ordersData.getOrder_id() != null && detailIdPesanan != null) {
             detailIdPesanan.setText(ordersData.getOrder_id());

@@ -36,38 +36,41 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:orientation="vertical">
 
-            <!-- Alamat Lengkap -->
-            <TextView
-                android:text="Alamat Lengkap"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="12sp"
-                android:fontFamily="@font/poppins_bold"
-                android:textColor="@color/maroon"
-                android:layout_marginBottom="8dp"/>
+                android:orientation="vertical"
+                android:padding="16dp">
 
-            <!-- Kode Pos -->
-            <EditText
-                android:id="@+id/etAlamatLengkap"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:background="@drawable/frame_selected_item"
-                android:fontFamily="@font/poppins_regular"
-                android:hint="Masukkan alamat"
-                android:padding="15dp"
-                android:textColor="@color/black"
-                android:textSize="12sp" />
+                <!-- Alamat Lengkap -->
+                <TextView
+                    android:text="Alamat Lengkap"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:fontFamily="@font/poppins_bold"
+                    android:textColor="@color/maroon"
+                    android:layout_marginBottom="8dp"/>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/alamatTersimpan"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                <!-- Kode Pos -->
+                <EditText
+                    android:id="@+id/etAlamatLengkap"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/frame_selected_item"
+                    android:fontFamily="@font/poppins_regular"
+                    android:hint="Masukkan alamat"
+                    android:padding="15dp"
+                    android:textColor="@color/black"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
 
         </LinearLayout>
+
     </androidx.core.widget.NestedScrollView>
 
     <TextView

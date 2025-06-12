@@ -25,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.sasindai.adapter.KurirListAdapter;
 import com.example.sasindai.model.DaftarKurirData;
+import com.example.sasindai.theme.ThemeActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -57,10 +58,9 @@ public class PilihKurirActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_pilih_kurir);
 
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO); // Set default mode gelap
-        Window window = getWindow(); // Mendapatkan objek window
-        window.setStatusBarColor(ContextCompat.getColor(this, R.color.putih)); // Set warna status bar
-        window.setNavigationBarColor(ContextCompat.getColor(this, R.color.black)); // Set warna nav bar
+        // import tema
+        ThemeActivity.applyTheme(this);
+        // end import tema
 
         etKodePos = findViewById(R.id.etKodePos);
         tvOngkir = findViewById(R.id.tvOngkir);

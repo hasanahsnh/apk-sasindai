@@ -19,6 +19,7 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.sasindai.adapter.KaPasaranPagerAdapter;
+import com.example.sasindai.theme.ThemeActivity;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.firebase.auth.FirebaseAuth;
@@ -38,10 +39,9 @@ public class KaPasaranHostActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_ka_pasaran_host);
 
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO); // Set default mode gelap
-        Window window = getWindow(); // Mendapatkan objek window
-        window.setStatusBarColor(ContextCompat.getColor(this, R.color.putih)); // Set warna status bar
-        window.setNavigationBarColor(ContextCompat.getColor(this, R.color.black)); // Set warna nav bar
+        // import tema
+        ThemeActivity.applyTheme(this);
+        // end import tema
 
         // SharedPrefs
         sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);

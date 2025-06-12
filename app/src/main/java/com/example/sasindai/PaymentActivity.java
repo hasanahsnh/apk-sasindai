@@ -19,6 +19,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.sasindai.model.KeranjangData;
 import com.example.sasindai.model.ProdukData;
 import com.example.sasindai.model.VarianProduk;
+import com.example.sasindai.theme.ThemeActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -46,10 +47,9 @@ public class PaymentActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_payment);
 
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO); // Set default mode gelap
-        Window window = getWindow(); // Mendapatkan objek window
-        window.setStatusBarColor(ContextCompat.getColor(this, R.color.putih)); // Set warna status bar
-        window.setNavigationBarColor(ContextCompat.getColor(this, R.color.black)); // Set warna nav bar
+        // import tema
+        ThemeActivity.applyTheme(this);
+        // end import tema
 
         webView = findViewById(R.id.webviewPayment);
 

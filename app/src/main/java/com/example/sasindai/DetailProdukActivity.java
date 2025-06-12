@@ -35,6 +35,7 @@ import com.example.sasindai.adapter.UkuranListAdapter;
 import com.example.sasindai.model.KeranjangData;
 import com.example.sasindai.model.ProdukData;
 import com.example.sasindai.model.VarianProduk;
+import com.example.sasindai.theme.ThemeActivity;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -74,10 +75,9 @@ public class DetailProdukActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_detail_produk);
 
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO); // Set default mode gelap
-        Window window = getWindow(); // Mendapatkan objek window
-        window.setStatusBarColor(ContextCompat.getColor(this, R.color.putih)); // Set warna status bar
-        window.setNavigationBarColor(ContextCompat.getColor(this, R.color.black)); // Set warna nav bar
+        // import tema
+        ThemeActivity.applyTheme(this);
+        // end import tema
 
         // Inisialisasi widget
         sliderGambarProduk = findViewById(R.id.recyclerViewSliderGambarProduk);

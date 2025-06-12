@@ -19,6 +19,7 @@ import com.example.sasindai.fragment.AkunFragment;
 import com.example.sasindai.fragment.BerandaFragment;
 import com.example.sasindai.fragment.KatalogMotifFragment;
 import com.example.sasindai.fragment.NotificationFragment;
+import com.example.sasindai.theme.ThemeActivity;
 import com.ismaeldivita.chipnavigation.ChipNavigationBar;
 
 public class MainHostActivity extends AppCompatActivity {
@@ -32,9 +33,9 @@ public class MainHostActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main_host);
 
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO); // Set default mode gelap
-        Window window = getWindow(); // Mendapatkan objek window
-        window.setNavigationBarColor(ContextCompat.getColor(this, R.color.black)); // Set warna nav bar
+        // import tema
+        ThemeActivity.applyTheme(this);
+        // end import tema
 
         // Inisialisasi widget
         chipNavigationBar = findViewById(R.id.bottom_nav);

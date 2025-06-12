@@ -33,6 +33,7 @@ import com.example.sasindai.adapter.DetailPemesananAdapter;
 import com.example.sasindai.model.KeranjangData;
 import com.example.sasindai.model.ProdukData;
 import com.example.sasindai.model.VarianProduk;
+import com.example.sasindai.theme.ThemeActivity;
 import com.google.common.reflect.TypeToken;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -89,12 +90,8 @@ public class DetailPemesananActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_detail_pemesanan);
 
-        // Set tema windows
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO); // Set default mode gelap
-        Window window = getWindow(); // Mendapatkan objek window
-        window.setStatusBarColor(ContextCompat.getColor(this, R.color.putih)); // Set warna status bar
-        window.setNavigationBarColor(ContextCompat.getColor(this, R.color.black)); // Set warna nav bar
-        // End set tema
+        // import tema
+        ThemeActivity.applyTheme(this);
 
         // Inisialisasi widget
         recyclerSelectedItems = findViewById(R.id.recyclerSelectedItems);

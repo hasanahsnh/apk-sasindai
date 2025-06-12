@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.sasindai.adapter.Objek3DAdapter;
 import com.example.sasindai.model.Objek3DData;
+import com.example.sasindai.theme.ThemeActivity;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.ar.core.Anchor;
 import com.google.ar.sceneform.AnchorNode;
@@ -53,10 +54,9 @@ public class SceneActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_scene);
 
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO); // Set default mode gelap
-        Window window = getWindow(); // Mendapatkan objek window
-        window.setStatusBarColor(ContextCompat.getColor(this, R.color.maroon)); // Set warna status bar
-        window.setNavigationBarColor(ContextCompat.getColor(this, R.color.black)); // Set warna nav bar
+        // import tema
+        ThemeActivity.applyTheme(this);
+        // end import tema
 
         arSceneView = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.arSceneView);
         recyclerViewProduk = findViewById(R.id.recyclerViewObjek3D);

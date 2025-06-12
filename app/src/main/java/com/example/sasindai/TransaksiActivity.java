@@ -25,6 +25,7 @@ import com.airbnb.lottie.LottieAnimationView;
 import com.airbnb.lottie.LottieDrawable;
 import com.example.sasindai.adapter.TransaksiAdapter;
 import com.example.sasindai.model.OrdersData;
+import com.example.sasindai.theme.ThemeActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -50,10 +51,9 @@ public class TransaksiActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_transaksi);
 
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO); // Set default mode gelap
-        Window window = getWindow(); // Mendapatkan objek window
-        window.setStatusBarColor(ContextCompat.getColor(this, R.color.putih)); // Set warna status bar
-        window.setNavigationBarColor(ContextCompat.getColor(this, R.color.black)); // Set warna nav bar
+        // import tema
+        ThemeActivity.applyTheme(this);
+        // end import tema
 
         recyclerViewRiwayatTransaksi = findViewById(R.id.recyclerViewRiwayatTransaksi);
         layoutProgressBarRiwayatPesananNotFound = findViewById(R.id.layoutProgressBarRiwayatPesananNotFound);
