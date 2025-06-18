@@ -12,8 +12,16 @@
     <!-- Menu Katalog motif -->
     <item
         android:id="@+id/nav_katalog"
-        android:title="Ketalog Motif"
+        android:title="Katalog Motif"
         android:icon="@drawable/ic_motif_29"
+        app:cnb_backgroundColor="@color/maroon"
+        app:cnb_iconColor="@color/putih"/>
+
+    <!-- Menu rilis media -->
+    <item
+        android:id="@+id/rilis_media"
+        android:title="Rilis Media"
+        android:icon="@drawable/ic_news_29"
         app:cnb_backgroundColor="@color/maroon"
         app:cnb_iconColor="@color/putih"/>
 

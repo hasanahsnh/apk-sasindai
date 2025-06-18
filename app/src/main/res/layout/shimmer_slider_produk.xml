@@ -1,34 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    android:layout_width="200dp"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:layout_margin="2dp"
     android:background="@drawable/frame_produk">
 
-    <ImageView
-        android:id="@+id/imgListProduk"
+    <!-- Img Produk -->
+    <TextView
+        android:id="@+id/imgListProdukPreview"
         android:layout_width="match_parent"
-        android:layout_height="160dp"
-        android:layout_marginBottom="8dp"
-        android:background="@color/abu_terang"
-        android:scaleType="centerCrop"
-        android:contentDescription="TODO" />
-
-    <ImageView
-        android:id="@+id/layoutItem_1"
-        android:layout_width="70dp"
-        android:layout_height="50dp"
-        android:orientation="vertical"
+        android:layout_height="150dp"
         android:layout_margin="8dp"
+        android:scaleType="centerCrop"
         android:background="@color/abu_terang"/>
 
-    <ImageView
+    <!-- Linear Layout 1 -->
+    <LinearLayout
+        android:id="@+id/layoutItem_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp">
+
+        <!-- Nama Produk -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_bold"
+            android:background="@color/abu_terang"
+            android:textColor="@color/maroon"
+            android:textSize="12sp" />
+
+        <!-- Harga -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_bold"
+            android:background="@color/abu_terang"
+            android:textColor="@color/maroon"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+    <!-- End linear layout 1 -->
+
+    <!-- Linear Layout 2 -->
+    <LinearLayout
         android:id="@+id/layoutItem_2"
-        android:layout_width="70dp"
-        android:layout_height="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_margin="8dp"
-        android:background="@color/abu_terang"/>
+        android:background="@color/abu_terang">
+
+        <!-- Total terjual -->
+        <TextView
+            android:id="@+id/tvTotalProdukTerjualPreview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:fontFamily="@font/poppins_regular"
+            android:textColor="@color/black"/>
+
+        <!-- Terjual -->
+        <TextView
+            android:id="@+id/tvProdukTerjual"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:fontFamily="@font/poppins_regular"
+            android:textColor="@color/black"
+            android:layout_marginStart="4dp"/>
+
+    </LinearLayout>
+    <!-- End linear layout 2 -->
 
 </LinearLayout>

@@ -60,7 +60,7 @@ public class TransaksiAdapter extends RecyclerView.Adapter<TransaksiAdapter.Tran
         if (data.getProduk() != null && !data.getProduk().isEmpty()) {
             ItemProdukOrderData item = data.getProduk().get(0); // hanya produk ke-0
 
-            holder.tvNamaProdukRiwayat.setText(item.getNama_varian());
+            holder.tvNamaProdukRiwayat.setText(item.getNamaVarian());
             holder.tvQtyRiwayat.setText(String.valueOf(item.getQty()));
             holder.tvHargaProdukRiwayat.setText(formatter.format(item.getHarga()).replace("Rp", "Rp "));
         } else {
@@ -76,7 +76,7 @@ public class TransaksiAdapter extends RecyclerView.Adapter<TransaksiAdapter.Tran
 
         // Ambil gambar dari ProdukData berdasarkan id_produk dari item pertama
         if (!data.getProduk().isEmpty()) {
-            String idProduk = data.getProduk().get(0).getId_produk();
+            String idProduk = data.getProduk().get(0).getIdProduk();
 
             DatabaseReference produkRef = FirebaseDatabase.getInstance().getReference("produk").child(idProduk);
             produkRef.addListenerForSingleValueEvent(new ValueEventListener() {

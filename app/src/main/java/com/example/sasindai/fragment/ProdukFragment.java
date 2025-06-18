@@ -26,8 +26,12 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.checkerframework.checker.units.qual.A;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -78,6 +82,16 @@ public class ProdukFragment extends Fragment {
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
+
+            if (mParam1 != null) {
+                kategori = mParam1.toLowerCase();
+                Log.d("Produk Fragment", "Kategori diterima: " + kategori);
+            }
+        }
+
+        if (mParam1 != null) {
+            kategori = mParam1.toLowerCase(); // ← ini kunci penting
+            Log.d("Produk Fragment", "Kategori diterima: " + kategori);
         }
     }
 
@@ -152,24 +166,22 @@ public class ProdukFragment extends Fragment {
                     kategori = "populer";
                 }
                 String lowerCase = kategori.toLowerCase();
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
 
                 switch (lowerCase) {
                     case "terbaru":
-                        lists.sort((a, b) -> b.getCreateAt().compareTo(a.getCreateAt()));
+                        lists.sort((a, b) -> {
+                            try {
+                                Date dateA = sdf.parse(a.getCreateAt());
+                                Date dateB = sdf.parse(b.getCreateAt());
+                                return dateB.compareTo(dateA); // descending (terbaru)
+                            } catch (ParseException e) {
+                                return 0;
+                            }
+                        });
                         break;
                     case "terlaris":
                         lists.sort((a, b) -> Integer.compare(b.getTerjual(), a.getTerjual()));
-                        break;
-                    case "harga":
-                        lists.sort((a, b) -> {
-                            int hargaA = a.getVarian().get(0).getHarga();
-                            int hargaB = b.getVarian().get(0).getHarga();
-                            return Integer.compare(hargaA, hargaB);
-                        });
-                        break;
-                    case "populer":
-                    default:
-                        lists.sort((a, b) -> Integer.compare(b.getTerjual(), a.getTerjual())); // Atau logika khusus jika punya view count
                         break;
                 }
 

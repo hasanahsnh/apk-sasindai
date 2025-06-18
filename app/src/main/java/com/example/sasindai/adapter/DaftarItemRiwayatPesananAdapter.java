@@ -40,8 +40,9 @@ public class DaftarItemRiwayatPesananAdapter extends RecyclerView.Adapter<Daftar
         OrderItemWrapper item = dataList.get(position);
         ItemProdukOrderData produk = item.getProduk();
 
-        holder.tvNamaProdukOrder.setText(produk.getNama_produk());
-        holder.tvVarianOrder.setText(produk.getNama_varian());
+
+        holder.tvNamaProdukOrder.setText(produk.getNamaProduk());
+        holder.tvVarianOrder.setText(produk.getNamaVarian());
         holder.tvQtyOrder.setText(String.valueOf(produk.getQty()));
 
         String hargaFormatted = NumberFormat.getCurrencyInstance(new Locale("in", "ID"))

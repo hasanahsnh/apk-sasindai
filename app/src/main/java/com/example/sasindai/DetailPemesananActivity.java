@@ -1,5 +1,6 @@
 package com.example.sasindai;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -83,6 +84,7 @@ public class DetailPemesananActivity extends AppCompatActivity {
     String selectedPayment = null;
     String orderId;
     private boolean isCheckingStatus = false;
+    private ActivityResultLauncher<Intent> launcher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +110,29 @@ public class DetailPemesananActivity extends AppCompatActivity {
         radioGroup = findViewById(R.id.radioGroupMetode);
         radioShopee = findViewById(R.id.radioShopeePay);
         // End inisial
+
+        launcher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent data = result.getData();
+                        if (data != null) {
+                            String status = data.getStringExtra("resultStatus");
+                            String statusMessage = data.getStringExtra("resultMessage");
+                            String transactionId = data.getStringExtra("transactionId");
+                            Log.d("MIDTRANS", "Status: " + status);
+                            Log.d("MIDTRANS", "Message: " + statusMessage);
+                            Log.d("MIDTRANS", "Transaction ID: " + transactionId);
+
+                            // TODO: Tangani sesuai status transaksi, misal update UI, simpan data dll
+                            Toast.makeText(this, "Pembayaran: " + statusMessage, Toast.LENGTH_LONG).show();
+                        }
+                    } else {
+                        Log.d("MIDTRANS", "Payment canceled or failed");
+                        Toast.makeText(this, "Pembayaran dibatalkan", Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
 
         radioShopee.setOnClickListener(v -> {
             radioShopee.setChecked(true);
@@ -296,8 +321,6 @@ public class DetailPemesananActivity extends AppCompatActivity {
 
     private void lanjutkanPembayaran() {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        assert currentUser != null;
-        String uid = currentUser.getUid();
 
         if (currentUser == null) {
             Toast.makeText(this, "User belum login", Toast.LENGTH_SHORT).show();
@@ -334,17 +357,18 @@ public class DetailPemesananActivity extends AppCompatActivity {
             try {
                 json.put("total", totalBayar);
                 json.put("ongkir", ongkir);
-                json.put("harga_produk", totalHarga);
+                json.put("hargaProduk", totalHarga);
                 json.put("alamat", alamatLengkap);
                 json.put("kurir", kurirPrefs.getString("kurir_nama", ""));
                 json.put("layanan", kurirPrefs.getString("kurir_service", ""));
                 JSONArray produkArray = getProdukArray();
-                json.put("produk_dipesan", produkArray);
-                json.put("metode_pembayaran", selectedPayment);
-                json.put("uid", uid);
+                json.put("produkDipesan", produkArray);
+                json.put("metodePembayaran", selectedPayment);
+                json.put("uid", currentUser.getUid());
 
             } catch (JSONException e) {
                 e.printStackTrace();
+                Toast.makeText(this, "Gagal membuat data checkout", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -356,7 +380,7 @@ public class DetailPemesananActivity extends AppCompatActivity {
             );
 
             Request request = new Request.Builder()
-                    .url("http://192.168.130.173:8000/api/checkout")
+                    .url("http://192.168.227.173:8000/api/checkout")
                     .addHeader("Authorization", "Bearer " + idToken)
                     .addHeader("Accept", "application/json")
                     .post(body)
@@ -368,7 +392,7 @@ public class DetailPemesananActivity extends AppCompatActivity {
                         String responseBody = response.body().string();
                         JSONObject responseJson = new JSONObject(responseBody);
                         String snapToken = responseJson.getString("snap_token");
-                        orderId = responseJson.getString("order_id");
+                        String orderId = responseJson.getString("order_id");
 
                         runOnUiThread(() -> {
                             Log.d("CHECKOUT", "Order ID: " + orderId);
@@ -376,13 +400,15 @@ public class DetailPemesananActivity extends AppCompatActivity {
 
                             UiKitApi uiKitApi = new UiKitApi.Builder()
                                     .withMerchantClientKey("SB-Mid-client-LtKp1sBGtb5Kkf8i")
-                                    .withContext(DetailPemesananActivity.this)
-                                    .withMerchantUrl("http://192.168.152.173:8000/api/checkout/")
+                                    .withContext(this)
+                                    .withMerchantUrl("http://192.168.227.173:8000/api/checkout/")
                                     .enableLog(true)
                                     .build();
 
                             setLocaleNew("id");
-                            //uiKitApi.startPaymentUiFlow(DetailPemesananActivity.this, launcher, snapToken);
+
+                            // Mulai proses pembayaran Midtrans Snap dengan launcher
+                            uiKitApi.startPaymentUiFlow(this, launcher, snapToken);
                         });
                     } else {
                         Log.e("CHECKOUT", "Gagal Checkout: " + response.code());
@@ -469,7 +495,7 @@ public class DetailPemesananActivity extends AppCompatActivity {
                 json.put("produk_dipesan", produkArray);
                 json.put("metode_pembayaran", selectedPayment);
                 json.put("uid", uid);
-                json.put("uid_penjual", uidPenjual);
+                json.put("uidPenjual", uidPenjual);
                 json.put("statusPesanan", "menunggu pembayaran");
                 json.put("tipe_checkout", tipeCheckout);
 
@@ -493,7 +519,7 @@ public class DetailPemesananActivity extends AppCompatActivity {
             );
 
             Request request = new Request.Builder()
-                    .url("http://192.168.152.173:8000/api/cpl_checkout")
+                    .url("http://192.168.227.173:8000/api/cpl_checkout")
                     .addHeader("Authorization", "Bearer " + idToken)
                     .addHeader("Accept", "application/json")
                     .post(body)
@@ -545,56 +571,6 @@ public class DetailPemesananActivity extends AppCompatActivity {
         });
     }
 
-    private void checkoutManual() {
-        currentUser.getIdToken(true).addOnSuccessListener(result -> {
-            String idToken = result.getToken();
-            Log.d("AUTH", "ID Token: " + idToken);
-
-            int totalHarga = keranjangPrefs.getInt("total_harga", 0);
-            int ongkir = kurirPrefs.getInt("kurir_harga", 0);
-            int totalBayar = totalHarga + ongkir;
-
-            String alamat = alamatPrefs.getString("alamat", "");
-            String kelurahan = alamatPrefs.getString("subdistrict", "Kelurahan tidak ditemukan");
-            String kecamatan = alamatPrefs.getString("district", "Kecamatan tidak ditemukan");
-            String kota = alamatPrefs.getString("city", "Kota tidak ditemukan");
-            String provinsi = alamatPrefs.getString("province", "Provinsi tidak ditemukan");
-            String kodePos = alamatPrefs.getString("kode_pos", "Kodepos tidak ditemukan");
-
-            String alamatLengkap = alamat + ", "
-                    + kelurahan + ", "
-                    + kecamatan + ", "
-                    + kota + ", "
-                    + provinsi + ", "
-                    + kodePos;
-
-            Log.d("CHECKOUT", "Harga Produk: " + totalHarga);
-            Log.d("CHECKOUT", "Ongkir: " + ongkir);
-            Log.d("CHECKOUT", "Total Bayar: " + totalBayar);
-
-            JSONObject json = new JSONObject();
-            try {
-                json.put("total", totalBayar);
-                json.put("ongkir", ongkir);
-                json.put("harga_produk", totalHarga);
-                json.put("alamat", alamatLengkap);
-                json.put("kurir", kurirPrefs.getString("kurir_nama", ""));
-                json.put("layanan", kurirPrefs.getString("kurir_service", ""));
-                JSONArray produkArray = getProdukArray();
-                json.put("produk_dipesan", produkArray);
-                json.put("metode_pembayaran", selectedPayment);
-                json.put("uid", uid); // uid users
-                // tambahkan uid penjual
-
-
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-                return;
-            }
-        });
-    }
-
     @NonNull
     private JSONArray getProdukArray() throws JSONException {
         String json = getIntent().getStringExtra("selectedItems");
@@ -606,9 +582,9 @@ public class DetailPemesananActivity extends AppCompatActivity {
 
             for (KeranjangData item : selectedItems) {
                 JSONObject produkJson = new JSONObject();
-                produkJson.put("id_produk", item.getIdProduk());
-                produkJson.put("nama_produk", item.getNamaProduk());
-                produkJson.put("nama_varian", item.getNamaVarian());
+                produkJson.put("idProduk", item.getIdProduk());
+                produkJson.put("namaProduk", item.getNamaProduk());
+                produkJson.put("namaVarian", item.getNamaVarian());
                 produkJson.put("harga", item.getHarga());
                 produkJson.put("qty", item.getQty());
                 produkArray.put(produkJson);

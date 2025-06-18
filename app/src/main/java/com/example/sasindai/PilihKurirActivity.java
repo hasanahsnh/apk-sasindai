@@ -176,7 +176,7 @@ public class PilihKurirActivity extends AppCompatActivity {
 
         OkHttpClient client = new OkHttpClient();
 
-        HttpUrl url = HttpUrl.parse("http://192.168.152.173:8000/api/ekspedisi")
+        HttpUrl url = HttpUrl.parse("http://192.168.227.173:8000/api/ekspedisi")
                 .newBuilder()
                 .addQueryParameter("shipper_destination_id", WAREHOUSE_ID)
                 .addQueryParameter("receiver_destination_id", destinationId)
@@ -193,7 +193,7 @@ public class PilihKurirActivity extends AppCompatActivity {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                Toast.makeText(PilihKurirActivity.this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                runOnUiThread(() -> Toast.makeText(PilihKurirActivity.this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show());
             }
 
             @Override
@@ -243,7 +243,7 @@ public class PilihKurirActivity extends AppCompatActivity {
 
         OkHttpClient client = new OkHttpClient();
 
-        HttpUrl url = HttpUrl.parse("http://192.168.152.173:8000/api/rincian-kodepos")
+        HttpUrl url = HttpUrl.parse("http://192.168.227.173:8000/api/rincian-kodepos")
                 .newBuilder()
                 .addQueryParameter("keyword", kodePos)
                 .build();

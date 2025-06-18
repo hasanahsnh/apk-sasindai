@@ -46,38 +46,6 @@ public class OrdersData {
         this.tipeCheckout = tipeCheckout;
     }
 
-    public String getTipeCheckout() {
-        return tipeCheckout;
-    }
-
-    public void setTipeCheckout(String tipeCheckout) {
-        this.tipeCheckout = tipeCheckout;
-    }
-
-    public int getBiayaOngkir() {
-        return biayaOngkir;
-    }
-
-    public void setBiayaOngkir(int biayaOngkir) {
-        this.biayaOngkir = biayaOngkir;
-    }
-
-    public String getStatusPesanan() {
-        return statusPesanan;
-    }
-
-    public void setStatusPesanan(String statusPesanan) {
-        this.statusPesanan = statusPesanan;
-    }
-
-    public String getUidPenjual() {
-        return uidPenjual;
-    }
-
-    public void setUidPenjual(String uidPenjual) {
-        this.uidPenjual = uidPenjual;
-    }
-
     public String getAlamat() {
         return alamat;
     }
@@ -188,5 +156,37 @@ public class OrdersData {
 
     public void setUpdated_at(String updated_at) {
         this.updated_at = updated_at;
+    }
+
+    public String getUidPenjual() {
+        return uidPenjual;
+    }
+
+    public void setUidPenjual(String uidPenjual) {
+        this.uidPenjual = uidPenjual;
+    }
+
+    public String getStatusPesanan() {
+        return statusPesanan;
+    }
+
+    public void setStatusPesanan(String statusPesanan) {
+        this.statusPesanan = statusPesanan;
+    }
+
+    public int getBiayaOngkir() {
+        return biayaOngkir;
+    }
+
+    public void setBiayaOngkir(int biayaOngkir) {
+        this.biayaOngkir = biayaOngkir;
+    }
+
+    public String getTipeCheckout() {
+        return tipeCheckout;
+    }
+
+    public void setTipeCheckout(String tipeCheckout) {
+        this.tipeCheckout = tipeCheckout;
     }
 }

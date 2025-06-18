@@ -29,7 +29,8 @@ import java.util.Locale;
 
 public class DetailPesananActivity extends AppCompatActivity {
     TextView detailIdPesanan, detailTelp, detailAlamat, detailJasaPengiriman,
-            detailChannelPayment, detailTotalHargaProduk, detailHargaOngkir;
+            detailChannelPayment, detailTotalHargaProduk, detailHargaOngkir,
+            tvNamaPembeli;
     OrdersData ordersData;
     RecyclerView itemPesanan;
     DaftarItemRiwayatPesananAdapter adapter;
@@ -53,6 +54,7 @@ public class DetailPesananActivity extends AppCompatActivity {
         detailTotalHargaProduk = findViewById(R.id.detailTotalHargaProduk);
         detailHargaOngkir = findViewById(R.id.detailHargaOngkir);
         itemPesanan = findViewById(R.id.itemPesanan);
+        tvNamaPembeli = findViewById(R.id.tvNamaPembeli);
 
         itemPesanan.setLayoutManager(new LinearLayoutManager(this));
         adapter = new DaftarItemRiwayatPesananAdapter(this, orderItemWrappers);
@@ -71,6 +73,13 @@ public class DetailPesananActivity extends AppCompatActivity {
         String produkJson = getIntent().getStringExtra("detailPesanan");
         ordersData = new Gson().fromJson(produkJson, OrdersData.class);
         NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+
+        if (ordersData != null && ordersData.getNamaLengkap() != null) {
+            tvNamaPembeli.setText(ordersData.getNamaLengkap());
+        } else {
+            assert tvNamaPembeli != null;
+            tvNamaPembeli.setText("-");
+        }
 
         if (ordersData != null && ordersData.getProduk() != null) {
             orderItemWrappers.clear();
