@@ -210,13 +210,6 @@ public class DetailPemesananActivity extends AppCompatActivity {
             startActivity(intent);
         });
         // end proses
-
-        // Click btn mengisi jasa pengiriman (ekspedisi)
-        jasaPengiriman.setOnClickListener(v -> {
-            Intent intent = new Intent(DetailPemesananActivity.this, PilihKurirActivity.class);
-            startActivity(intent);
-        });
-        // end proses
     }
 
     private void loadUserData() {
@@ -609,7 +602,7 @@ public class DetailPemesananActivity extends AppCompatActivity {
         String serviceKurir = kurirPrefs.getString("kurir_service", "");
 
         if (namaKurir.isEmpty() && serviceKurir.isEmpty()) {
-            jasaPengiriman.setText("Tentukan kurir");
+            jasaPengiriman.setText("Kurir");
         } else {
             String namaLayananLengkap = namaKurir + " - " + serviceKurir;
             jasaPengiriman.setText(namaLayananLengkap);

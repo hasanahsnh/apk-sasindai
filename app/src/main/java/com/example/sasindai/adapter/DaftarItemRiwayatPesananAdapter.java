@@ -60,7 +60,6 @@ public class DaftarItemRiwayatPesananAdapter extends RecyclerView.Adapter<Daftar
         TextView tvNamaProdukOrder, tvVarianOrder, tvHargaOrder, tvQtyOrder;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            imageItem = itemView.findViewById(R.id.imagePesanan);
             tvNamaProdukOrder = itemView.findViewById(R.id.tvNamaProdukPesanan);
             tvVarianOrder = itemView.findViewById(R.id.tvVarianPesanan);
             tvHargaOrder = itemView.findViewById(R.id.tvHargaPesanan);

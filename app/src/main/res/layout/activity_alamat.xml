@@ -40,32 +40,166 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-                <!-- Alamat Lengkap -->
-                <TextView
-                    android:text="Alamat Lengkap"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="12sp"
-                    android:fontFamily="@font/poppins_bold"
-                    android:textColor="@color/maroon"
-                    android:layout_marginBottom="8dp"/>
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:paddingTop="16dp">
 
-                <!-- Kode Pos -->
-                <EditText
-                    android:id="@+id/etAlamatLengkap"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:background="@drawable/frame_selected_item"
-                    android:fontFamily="@font/poppins_regular"
-                    android:hint="Masukkan alamat"
-                    android:padding="15dp"
-                    android:textColor="@color/black"
-                    android:textSize="12sp" />
+                    <!-- Alamat Lengkap -->
+                    <TextView
+                        android:text="Alamat Lengkap"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:fontFamily="@font/poppins_bold"
+                        android:textColor="@color/maroon"
+                        android:layout_marginBottom="8dp"/>
+
+                    <!-- Kode Pos -->
+                    <EditText
+                        android:id="@+id/etAlamatLengkap"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/frame_selected_item"
+                        android:fontFamily="@font/poppins_regular"
+                        android:hint="Masukkan alamat"
+                        android:padding="15dp"
+                        android:textColor="@color/black"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:text="Kode Pos"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:fontFamily="@font/poppins_bold"
+                        android:textColor="@color/maroon"
+                        android:layout_marginBottom="8dp"/>
+
+                    <!--- kode pos -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <EditText
+                            android:id="@+id/etKodePos"
+                            android:digits="0123456789"
+                            android:hint="Kode Pos"
+                            android:inputType="number"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_regular"
+                            android:textColor="@color/black"
+                            android:textSize="12sp"
+                            android:background="@drawable/frame_selected_item"
+                            android:padding="15dp"
+                            android:layout_marginBottom="16dp"
+                            android:layout_weight="1"/>
+
+                        <TextView
+                            android:id="@+id/btnCariKurir"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Cari"
+                            android:textColor="@color/putih"
+                            android:gravity="center"
+                            android:padding="15dp"
+                            android:background="@drawable/frame_bg_btn_checkout"
+                            android:fontFamily="@font/poppins_bold"
+                            android:textSize="12sp"
+                            android:layout_weight="1"
+                            android:layout_marginStart="10dp"/>
+
+                    </LinearLayout>
+
+                    <!-- rincian kode pos -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginBottom="16dp">
+
+                        <TextView
+                            android:text="Rincian Kode Pos"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="12sp"
+                            android:fontFamily="@font/poppins_bold"
+                            android:textColor="@color/maroon"/>
+
+                        <TextView
+                            android:id="@+id/tvRincianKodePos"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="12sp"
+                            android:fontFamily="@font/poppins_regular"
+                            android:textColor="@color/black"
+                            android:layout_marginTop="8dp"
+                            android:background="@drawable/frame_selected_item"
+                            android:padding="15dp"
+                            android:text="Rincian"/>
+
+                    </LinearLayout>
+
+                    <!-- Total Ongkir -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tvOngkir"
+                            android:text="Jasa Pengiriman Tersedia:"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="12sp"
+                            android:fontFamily="@font/poppins_regular"
+                            android:textColor="@color/black"
+                            android:gravity="top"/>
+
+                        <LinearLayout
+                            android:id="@+id/progressBarKurir"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:visibility="gone">
+
+                            <ProgressBar
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                android:indeterminate="true"
+                                android:indeterminateTint="@color/maroon" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Sedang memuat data"
+                                android:textSize="11sp"
+                                android:fontFamily="@font/poppins_regular"
+                                android:textColor="@color/maroon" />
+                        </LinearLayout>
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/jasaPengirimanTersedia"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scrollbars="none"
+                            tools:listitem="@layout/list_kurir"
+                            android:visibility="gone"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
 
             </LinearLayout>
 

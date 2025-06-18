@@ -17,16 +17,31 @@
         android:background="@color/putih"
         android:elevation="4dp">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Riwayat Transaksi"
-            android:textSize="18sp"
-            android:fontFamily="@font/poppins_bold"
-            android:textColor="@color/maroon"
-            android:paddingStart="8dp"
-            android:padding="12dp"
-            android:layout_weight="1"/>
+            android:layout_marginEnd="20dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Riwayat Pesanan"
+                android:textSize="18sp"
+                android:fontFamily="@font/poppins_bold"
+                android:textColor="@color/maroon"
+                android:paddingStart="8dp"
+                android:padding="12dp"
+                android:layout_weight="1"/>
+
+            <ImageView
+                android:id="@+id/imgFilterStatusPesanan"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/img_filter" />
+
+        </LinearLayout>
 
     </androidx.appcompat.widget.Toolbar>
 

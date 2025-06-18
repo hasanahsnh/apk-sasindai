@@ -9,14 +9,6 @@
     android:gravity="center_vertical"
     android:background="@drawable/frame_produk">
 
-    <!-- Gambar produk -->
-    <com.makeramen.roundedimageview.RoundedImageView
-        android:id="@+id/imagePesanan"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_marginStart="8dp"
-        android:scaleType="centerCrop"/>
-
     <!-- Info produk -->
     <LinearLayout
         android:layout_width="0dp"

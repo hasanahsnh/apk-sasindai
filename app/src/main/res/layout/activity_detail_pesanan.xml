@@ -372,45 +372,4 @@
 
     </androidx.core.widget.NestedScrollView>
 
-    <!-- Btn Checkout -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:padding="15dp"
-        android:background="@color/putih">
-
-        <TextView
-            android:id="@+id/btnCheckoutOrder"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Bayar sekarang"
-            android:textSize="12sp"
-            android:textColor="@color/putih"
-            android:fontFamily="@font/poppins_bold"
-            android:paddingTop="15dp"
-            android:paddingBottom="15dp"
-            android:background="@drawable/frame_bg_btn_checkout"
-            android:gravity="center"
-            android:layout_weight="1"/>
-
-        <!-- <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Bayar"
-            android:textSize="12sp"
-            android:textColor="@color/putih"
-            android:fontFamily="@font/poppins_bold"
-            android:padding="15dp"
-            android:background="@drawable/frame_bg_btn_checkout"
-            android:gravity="center"
-            android:layout_weight="1"
-            android:layout_marginStart="6dp"/> -->
-
-    </LinearLayout>
-
-
 </LinearLayout>

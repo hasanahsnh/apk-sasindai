@@ -301,6 +301,7 @@
                             android:orientation="horizontal">
 
                             <include layout="@layout/shimmer_slider_produk"/>
+                            <include layout="@layout/shimmer_slider_produk"/>
 
                         </LinearLayout>
 

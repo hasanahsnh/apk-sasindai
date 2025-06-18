@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -45,6 +46,7 @@ public class TransaksiActivity extends AppCompatActivity {
     List<OrdersData> ordersData = new ArrayList<>();
     LinearLayout layoutProgressBarRiwayatPesananNotFound, progressBarRiwayatPesanan;
     LottieAnimationView progressBarRiwayatPesananNotFound;
+    ImageView imgFilterStatusPesanan;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,6 +62,7 @@ public class TransaksiActivity extends AppCompatActivity {
         progressBarRiwayatPesanan = findViewById(R.id.progressBarRiwayatPesanan);
         frameDataOrders = findViewById(R.id.frameDataOrders);
         progressBarRiwayatPesananNotFound = findViewById(R.id.progressBarRiwayatPesananNotFound);
+        imgFilterStatusPesanan = findViewById(R.id.imgFilterStatusPesanan);
 
         recyclerViewRiwayatTransaksi.setLayoutManager(new LinearLayoutManager(this));
         adapter = new TransaksiAdapter(this, ordersData);

@@ -204,15 +204,6 @@
                         android:gravity="end"
                         android:layout_weight="1"/>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text=" >"
-                        android:textColor="@color/black"
-                        android:fontFamily="@font/poppins_regular"
-                        android:textSize="12sp"
-                        android:gravity="end"/>
-
                 </LinearLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>

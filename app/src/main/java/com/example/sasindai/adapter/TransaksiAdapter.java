@@ -51,7 +51,7 @@ public class TransaksiAdapter extends RecyclerView.Adapter<TransaksiAdapter.Tran
     public void onBindViewHolder(@NonNull TransaksiAdapter.TransaksiViewHolder holder, int position) {
         OrdersData data = ordersData.get(position);
 
-        String status = data.getStatus();
+        String status = data.getStatusPesanan();
         NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
 
         totalPesanan = data.getProduk() != null ? data.getProduk().size() : 0;
@@ -69,7 +69,7 @@ public class TransaksiAdapter extends RecyclerView.Adapter<TransaksiAdapter.Tran
             holder.tvHargaProdukRiwayat.setText("-");
         }
 
-        holder.statusPembayaran.setText(status);
+        holder.statusPesanan.setText(status);
         holder.idPesanan.setText(data.getOrder_id());
         holder.countTotalPesanan.setText(String.valueOf(totalPesanan));
         holder.totalhargaPesanan.setText(formatter.format(data.getTotal()).replace("Rp", "Rp "));
@@ -116,7 +116,7 @@ public class TransaksiAdapter extends RecyclerView.Adapter<TransaksiAdapter.Tran
         RoundedImageView imageProdukRiwayat;
         TextView tvNamaProdukRiwayat, tvVarianRiwayat,
                 tvQtyRiwayat, tvHargaProdukRiwayat,
-                idPesanan, statusPembayaran, countTotalPesanan, totalhargaPesanan;
+                idPesanan, statusPesanan, countTotalPesanan, totalhargaPesanan;
         LinearLayout framePesanan;
         public TransaksiViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -126,7 +126,7 @@ public class TransaksiAdapter extends RecyclerView.Adapter<TransaksiAdapter.Tran
             tvVarianRiwayat = itemView.findViewById(R.id.tvVarianRiwayat);
             tvHargaProdukRiwayat = itemView.findViewById(R.id.tvHargaProdukRiwayat);
             idPesanan = itemView.findViewById(R.id.idPesanan);
-            statusPembayaran = itemView.findViewById(R.id.statusPembayaran);
+            statusPesanan = itemView.findViewById(R.id.statusPesanan);
             countTotalPesanan = itemView.findViewById(R.id.countTotalPesanan);
             totalhargaPesanan = itemView.findViewById(R.id.totalhargaPesanan);
             framePesanan = itemView.findViewById(R.id.framePesanan);

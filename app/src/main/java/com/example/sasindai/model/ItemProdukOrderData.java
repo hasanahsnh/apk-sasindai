@@ -6,16 +6,26 @@ public class ItemProdukOrderData {
     private String namaVarian;
     private int harga;
     private int qty;
+    private String varianUrl;
 
     public ItemProdukOrderData() {
     }
 
-    public ItemProdukOrderData(String idProduk, String namaProduk, String namaVarian, int harga, int qty) {
+    public ItemProdukOrderData(String varianUrl, String idProduk, String namaProduk, String namaVarian, int harga, int qty) {
         this.idProduk = idProduk;
         this.namaProduk = namaProduk;
         this.namaVarian = namaVarian;
         this.harga = harga;
         this.qty = qty;
+        this.varianUrl = varianUrl;
+    }
+
+    public String getVarianUrl() {
+        return varianUrl;
+    }
+
+    public void setVarianUrl(String varianUrl) {
+        this.varianUrl = varianUrl;
     }
 
     public String getIdProduk() {
