@@ -312,7 +312,7 @@ public class DetailPemesananActivity extends AppCompatActivity {
         return value == null || value.trim().isEmpty();
     }
 
-    private void lanjutkanPembayaran() {
+    /*private void lanjutkanPembayaran() {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
         if (currentUser == null) {
@@ -373,7 +373,7 @@ public class DetailPemesananActivity extends AppCompatActivity {
             );
 
             Request request = new Request.Builder()
-                    .url("http://192.168.227.173:8000/api/checkout")
+                    .url("https://sasindai.sascode.my.id/api/checkout")
                     .addHeader("Authorization", "Bearer " + idToken)
                     .addHeader("Accept", "application/json")
                     .post(body)
@@ -394,7 +394,7 @@ public class DetailPemesananActivity extends AppCompatActivity {
                             UiKitApi uiKitApi = new UiKitApi.Builder()
                                     .withMerchantClientKey("SB-Mid-client-LtKp1sBGtb5Kkf8i")
                                     .withContext(this)
-                                    .withMerchantUrl("http://192.168.227.173:8000/api/checkout/")
+                                    .withMerchantUrl("https://sasindai.sascode.my.id/api/checkout/")
                                     .enableLog(true)
                                     .build();
 
@@ -421,7 +421,7 @@ public class DetailPemesananActivity extends AppCompatActivity {
             Toast.makeText(this, "Gagal mendapatkan token autentikasi", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         });
-    }
+    }*/
 
     private void cplCheckout() {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -484,7 +484,7 @@ public class DetailPemesananActivity extends AppCompatActivity {
                 json.put("alamat", alamatLengkap);
                 json.put("kurir", kurirPrefs.getString("kurir_nama", ""));
                 json.put("layanan", kurirPrefs.getString("kurir_service", ""));
-                JSONArray produkArray = getProdukArray();
+                JSONObject produkArray = getProdukArray();
                 json.put("produk_dipesan", produkArray);
                 json.put("metode_pembayaran", selectedPayment);
                 json.put("uid", uid);
@@ -512,7 +512,7 @@ public class DetailPemesananActivity extends AppCompatActivity {
             );
 
             Request request = new Request.Builder()
-                    .url("http://192.168.227.173:8000/api/cpl_checkout")
+                    .url("https://sasindai.sascode.my.id/api/cpl_checkout")
                     .addHeader("Authorization", "Bearer " + idToken)
                     .addHeader("Accept", "application/json")
                     .post(body)
@@ -565,9 +565,9 @@ public class DetailPemesananActivity extends AppCompatActivity {
     }
 
     @NonNull
-    private JSONArray getProdukArray() throws JSONException {
+    private JSONObject getProdukArray() throws JSONException {
         String json = getIntent().getStringExtra("selectedItems");
-        JSONArray produkArray = new JSONArray();
+        JSONObject produkObject = new JSONObject();
 
         if (json != null) {
             Type type = new TypeToken<List<KeranjangData>>(){}.getType();
@@ -577,13 +577,14 @@ public class DetailPemesananActivity extends AppCompatActivity {
                 JSONObject produkJson = new JSONObject();
                 produkJson.put("idProduk", item.getIdProduk());
                 produkJson.put("namaProduk", item.getNamaProduk());
+                produkJson.put("idVarian", item.getIdVarian());
                 produkJson.put("namaVarian", item.getNamaVarian());
                 produkJson.put("harga", item.getHarga());
                 produkJson.put("qty", item.getQty());
-                produkArray.put(produkJson);
+                produkObject.put(item.getIdVarian(), produkJson);
             }
         }
-        return produkArray;
+        return produkObject;
     }
 
     private void totalRincian() {

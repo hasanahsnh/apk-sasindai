@@ -2,22 +2,26 @@ package com.example.sasindai.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.sasindai.PaymentActivity;
 import com.example.sasindai.R;
 import com.example.sasindai.model.ItemProdukOrderData;
 import com.example.sasindai.model.OrdersData;
 import com.example.sasindai.model.ProdukData;
 import com.example.sasindai.DetailPesananActivity;
+import com.example.sasindai.model.VarianProduk;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -29,6 +33,7 @@ import com.makeramen.roundedimageview.RoundedImageView;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class TransaksiAdapter extends RecyclerView.Adapter<TransaksiAdapter.TransaksiViewHolder> {
     private final Context context;
@@ -58,15 +63,17 @@ public class TransaksiAdapter extends RecyclerView.Adapter<TransaksiAdapter.Tran
 
         // Cek apakah list produk tidak kosong
         if (data.getProduk() != null && !data.getProduk().isEmpty()) {
-            ItemProdukOrderData item = data.getProduk().get(0); // hanya produk ke-0
+            ItemProdukOrderData item = data.getProduk().values().iterator().next(); // hanya produk ke-0
 
             holder.tvNamaProdukRiwayat.setText(item.getNamaVarian());
             holder.tvQtyRiwayat.setText(String.valueOf(item.getQty()));
             holder.tvHargaProdukRiwayat.setText(formatter.format(item.getHarga()).replace("Rp", "Rp "));
+            holder.tvVarianRiwayat.setText(item.getNamaVarian());
         } else {
             holder.tvNamaProdukRiwayat.setText("-");
             holder.tvQtyRiwayat.setText("-");
             holder.tvHargaProdukRiwayat.setText("-");
+            holder.tvVarianRiwayat.setText("-");
         }
 
         holder.statusPesanan.setText(status);
@@ -76,19 +83,29 @@ public class TransaksiAdapter extends RecyclerView.Adapter<TransaksiAdapter.Tran
 
         // Ambil gambar dari ProdukData berdasarkan id_produk dari item pertama
         if (!data.getProduk().isEmpty()) {
-            String idProduk = data.getProduk().get(0).getIdProduk();
+            ItemProdukOrderData itemProdukOrderData = data.getProduk().values().iterator().next();
+            String idProduk = itemProdukOrderData.getIdProduk();
+            String namaVarian = itemProdukOrderData.getNamaVarian();
 
             DatabaseReference produkRef = FirebaseDatabase.getInstance().getReference("produk").child(idProduk);
             produkRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     ProdukData produk = snapshot.getValue(ProdukData.class);
-                    if (produk != null && produk.getUrlFotoProduk() != null && !produk.getUrlFotoProduk().isEmpty()) {
-                        String urlFoto = produk.getUrlFotoProduk().get(0);
+                    if (produk != null && produk.getVarian() != null) {
+                        for (Map.Entry<String, VarianProduk> entry : produk.getVarian().entrySet()) {
+                            VarianProduk varian = entry.getValue();
+                            if (varian.getIdVarian().equals(itemProdukOrderData.getIdVarian())) {
+                                String gambar = varian.getGambar();
+                                itemProdukOrderData.setVarianUrl(gambar);
+                                itemProdukOrderData.setNamaVarian(namaVarian);// ✅ simpan ke model
 
-                        Glide.with(holder.itemView.getContext())
-                                .load(urlFoto)
-                                .into(holder.imageProdukRiwayat);
+                                Glide.with(holder.itemView.getContext())
+                                        .load(gambar)
+                                        .into(holder.imageProdukRiwayat);
+                                break;
+                            }
+                        }
                     }
                 }
 
@@ -98,6 +115,61 @@ public class TransaksiAdapter extends RecyclerView.Adapter<TransaksiAdapter.Tran
                 }
             });
         }
+
+        // updateUI per status pesanan
+        String statusPembayaran = data.getStatusPesanan();
+        holder.btnHubungiPenjual.setVisibility(View.VISIBLE);
+
+        switch (statusPembayaran.toLowerCase()) {
+            case "menunggu pembayaran" :
+                holder.btnBayarSekarang.setVisibility(View.VISIBLE);
+                holder.btnPesananDiterima.setVisibility(View.GONE);
+                holder.btnAjukanPembatalan.setVisibility(View.GONE);
+                break;
+            case "kadaluarsa" :
+            case "dibatalkan" :
+            case "pesanan diterima" :
+                holder.btnBayarSekarang.setVisibility(View.GONE);
+                holder.btnPesananDiterima.setVisibility(View.GONE);
+                holder.btnAjukanPembatalan.setVisibility(View.GONE);
+                break;
+            case "dikirim" :
+                holder.btnBayarSekarang.setVisibility(View.GONE);
+                holder.btnPesananDiterima.setVisibility(View.VISIBLE);
+                holder.btnAjukanPembatalan.setVisibility(View.GONE);
+                break;
+            case "dikemas" :
+                holder.btnAjukanPembatalan.setVisibility(View.VISIBLE);
+                holder.btnBayarSekarang.setVisibility(View.GONE);
+                holder.btnPesananDiterima.setVisibility(View.GONE);
+        }
+
+        // hubungi penjual arahkan ke apk wa nomor +6282251356040
+        holder.btnHubungiPenjual.setOnClickListener(v -> {
+            String idPesanan = data.getOrder_id();
+            String pesanDefault = "Permisi, ada yang ingin saya tanyakan mengenai pesanan ini, " + idPesanan;
+
+            String nomor = "6282251356040"; // tanpa tanda +
+            String url = "https://wa.me/" + nomor + "?text=" + Uri.encode(pesanDefault);
+
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(url));
+            context.startActivity(intent);
+        });
+
+        holder.btnBayarSekarang.setOnClickListener(v -> {
+            String paymentLink = data.getPayment_url();
+            if (paymentLink != null && !paymentLink.isEmpty()) {
+                Intent intent = new Intent(context, PaymentActivity.class);
+                intent.putExtra("payment_url", paymentLink);
+                // optional: jika mau bawa tipe_checkout dan selectedItems juga
+                intent.putExtra("tipe_checkout", data.getTipeCheckout());
+                intent.putExtra("selectedItems", new Gson().toJson(data.getProduk()));
+                context.startActivity(intent);
+            } else {
+                Toast.makeText(context, "Link pembayaran tidak tersedia", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         holder.framePesanan.setOnClickListener(v -> {
             Intent intent = new Intent(context, DetailPesananActivity.class);
@@ -116,7 +188,8 @@ public class TransaksiAdapter extends RecyclerView.Adapter<TransaksiAdapter.Tran
         RoundedImageView imageProdukRiwayat;
         TextView tvNamaProdukRiwayat, tvVarianRiwayat,
                 tvQtyRiwayat, tvHargaProdukRiwayat,
-                idPesanan, statusPesanan, countTotalPesanan, totalhargaPesanan;
+                idPesanan, statusPesanan, countTotalPesanan, totalhargaPesanan,
+                btnBayarSekarang, btnPesananDiterima, btnHubungiPenjual, btnAjukanPembatalan;
         LinearLayout framePesanan;
         public TransaksiViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -130,6 +203,10 @@ public class TransaksiAdapter extends RecyclerView.Adapter<TransaksiAdapter.Tran
             countTotalPesanan = itemView.findViewById(R.id.countTotalPesanan);
             totalhargaPesanan = itemView.findViewById(R.id.totalhargaPesanan);
             framePesanan = itemView.findViewById(R.id.framePesanan);
+            btnBayarSekarang = itemView.findViewById(R.id.btnBayarSekarang);
+            btnPesananDiterima = itemView.findViewById(R.id.btnPesananDiterima);
+            btnHubungiPenjual = itemView.findViewById(R.id.btnHubungiPenjual);
+            btnAjukanPembatalan = itemView.findViewById(R.id.btnAjukanPembatalan);
         }
     }
 }

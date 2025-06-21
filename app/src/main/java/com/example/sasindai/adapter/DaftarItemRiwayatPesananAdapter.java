@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.sasindai.R;
 import com.example.sasindai.model.ItemProdukOrderData;
 import com.example.sasindai.model.OrderItemWrapper;
@@ -40,7 +41,6 @@ public class DaftarItemRiwayatPesananAdapter extends RecyclerView.Adapter<Daftar
         OrderItemWrapper item = dataList.get(position);
         ItemProdukOrderData produk = item.getProduk();
 
-
         holder.tvNamaProdukOrder.setText(produk.getNamaProduk());
         holder.tvVarianOrder.setText(produk.getNamaVarian());
         holder.tvQtyOrder.setText(String.valueOf(produk.getQty()));
@@ -48,6 +48,14 @@ public class DaftarItemRiwayatPesananAdapter extends RecyclerView.Adapter<Daftar
         String hargaFormatted = NumberFormat.getCurrencyInstance(new Locale("in", "ID"))
                 .format(produk.getHarga());
         holder.tvHargaOrder.setText(hargaFormatted);
+
+        // muat gambar per varian
+        String gambarVarian = produk.getVarianUrl();
+        if (gambarVarian != null && !gambarVarian.isEmpty()) {
+            Glide.with(holder.itemView.getContext())
+                    .load(gambarVarian)
+                    .into(holder.imageItem);
+        }
     }
 
     @Override
@@ -64,6 +72,7 @@ public class DaftarItemRiwayatPesananAdapter extends RecyclerView.Adapter<Daftar
             tvVarianOrder = itemView.findViewById(R.id.tvVarianPesanan);
             tvHargaOrder = itemView.findViewById(R.id.tvHargaPesanan);
             tvQtyOrder = itemView.findViewById(R.id.tvQtyPesanan);
+            imageItem = itemView.findViewById(R.id.imageItemVarian);
         }
     }
 }

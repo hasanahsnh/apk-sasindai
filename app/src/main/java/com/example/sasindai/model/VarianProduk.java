@@ -2,12 +2,13 @@ package com.example.sasindai.model;
 
 public class VarianProduk {
     private String
-        gambar,
-        nama,
-        size;
+            idVarian,
+            gambar,
+            nama,
+            size;
     private int
-        harga,
-        stok;
+            harga,
+            stok;
 
     private float berat;
 
@@ -16,16 +17,26 @@ public class VarianProduk {
     }
 
     // Gen constructor
-    public VarianProduk(String gambar, String nama, String size, int harga, int stok, float berat) {
+    public VarianProduk(String idVarian, String gambar, String nama, String size, int harga, int stok, float berat) {
         this.gambar = gambar;
         this.nama = nama;
         this.size = size;
         this.harga = harga;
         this.stok = stok;
         this.berat = berat;
+        this.idVarian = idVarian;
     }
 
     // Gen getter, setter
+
+
+    public String getIdVarian() {
+        return idVarian;
+    }
+
+    public void setIdVarian(String idVarian) {
+        this.idVarian = idVarian;
+    }
 
     public String getGambar() {
         return gambar;

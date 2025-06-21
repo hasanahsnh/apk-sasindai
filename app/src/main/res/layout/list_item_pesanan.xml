@@ -2,12 +2,21 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     android:padding="6dp"
     android:layout_marginTop="2dp"
     android:layout_marginBottom="2dp"
     android:gravity="center_vertical"
     android:background="@drawable/frame_produk">
+
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:id="@+id/imageItemVarian"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginStart="8dp"
+        android:scaleType="centerCrop"
+        app:riv_corner_radius="8dp"/>
 
     <!-- Info produk -->
     <LinearLayout
@@ -30,7 +39,7 @@
             android:id="@+id/tvVarianPesanan"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Varian: Merah"
+            android:text="varian"
             android:textSize="12sp"
             android:fontFamily="@font/poppins_regular"/>
 

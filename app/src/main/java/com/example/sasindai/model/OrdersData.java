@@ -1,6 +1,7 @@
 package com.example.sasindai.model;
 
 import java.util.List;
+import java.util.Map;
 
 public class OrdersData {
     private String alamat;
@@ -12,7 +13,7 @@ public class OrdersData {
     private String no_telp;
     private String order_id;
     private String payment_url;
-    private List<ItemProdukOrderData> produk;
+    private Map<String, ItemProdukOrderData> produk;
     private String status;
     private int total;
     private String uid;
@@ -25,7 +26,7 @@ public class OrdersData {
     public OrdersData() {
     }
 
-    public OrdersData(String alamat, String created_at, String kurir, String layanan, String metode_pembayaran, String namaLengkap, String no_telp, String order_id, String payment_url, List<ItemProdukOrderData> produk, String status, int total, String uid, String updated_at, String uidPenjual, String statusPesanan, int biayaOngkir, String tipeCheckout) {
+    public OrdersData(String alamat, String created_at, String kurir, String layanan, String metode_pembayaran, String namaLengkap, String no_telp, String order_id, String payment_url, Map<String, ItemProdukOrderData> produk, String status, int total, String uid, String updated_at, String uidPenjual, String statusPesanan, int biayaOngkir, String tipeCheckout) {
         this.alamat = alamat;
         this.created_at = created_at;
         this.kurir = kurir;
@@ -118,11 +119,11 @@ public class OrdersData {
         this.payment_url = payment_url;
     }
 
-    public List<ItemProdukOrderData> getProduk() {
+    public Map<String, ItemProdukOrderData> getProduk() {
         return produk;
     }
 
-    public void setProduk(List<ItemProdukOrderData> produk) {
+    public void setProduk(Map<String, ItemProdukOrderData> produk) {
         this.produk = produk;
     }
 

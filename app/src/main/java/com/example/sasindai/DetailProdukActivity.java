@@ -208,6 +208,7 @@ public class DetailProdukActivity extends AppCompatActivity {
                 KeranjangData beliLangsung = new KeranjangData();
                 beliLangsung.setIdProduk(produkData.getIdProduk());
                 beliLangsung.setNamaProduk(produkData.getNamaProduk());
+                beliLangsung.setIdVarian(selectedVarian[0].getIdVarian());
                 beliLangsung.setNamaVarian(selectedVarian[0].getNama());
                 beliLangsung.setHarga(selectedVarian[0].getHarga());
                 beliLangsung.setQty(jumlahTambah);
@@ -360,18 +361,19 @@ public class DetailProdukActivity extends AppCompatActivity {
 
         String uid = user.getUid(); // ambil uid pembeli
         String idProduk = produkData.getIdProduk();
-        String namaVarian = varianProduk.getNama();
+        String idVarian = varianProduk.getIdVarian();
         String createAt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
 
         DatabaseReference keranjangRef = FirebaseDatabase.getInstance()
                 .getReference("keranjang")
                 .child(uid)
                 .child(idProduk)
-                .child(namaVarian);
+                .child(idVarian);
 
         Map<String, Object> cartItem = new HashMap<>();
         cartItem.put("idProduk", idProduk);
         cartItem.put("namaProduk", produkData.getNamaProduk());
+        cartItem.put("idVarian", varianProduk.getIdVarian());
         cartItem.put("namaVarian", varianProduk.getNama());
         cartItem.put("harga", varianProduk.getHarga());
         cartItem.put("gambarVarian", varianProduk.getGambar());
@@ -420,7 +422,7 @@ public class DetailProdukActivity extends AppCompatActivity {
             gambarProduk.addAll(produkData.getUrlFotoProduk());
         }
         if (produkData.getVarian() != null) {
-            for (VarianProduk varianProduk : produkData.getVarian()) {
+            for (VarianProduk varianProduk : produkData.getVarian().values()) {
                 if (varianProduk.getGambar() != null && !varianProduk.getGambar().isEmpty()) {
                     gambarProduk.add(varianProduk.getGambar());
                 }
@@ -438,7 +440,7 @@ public class DetailProdukActivity extends AppCompatActivity {
         // Ukuran
         if (produkData.getVarian() != null && recyclerViewUkuranVarian != null) {
             ukuranData.clear();
-            for (VarianProduk ukuran : produkData.getVarian()) {
+            for (VarianProduk ukuran : produkData.getVarian().values()) {
                 if (ukuran.getSize() != null && !ukuran.getSize().isEmpty()) {
                     ukuranData.add(ukuran);
                 }
@@ -461,7 +463,7 @@ public class DetailProdukActivity extends AppCompatActivity {
             int hargaTermurah = Integer.MAX_VALUE;
             int hargaTermahal = Integer.MIN_VALUE;
 
-            for (VarianProduk hargaProduk : produkData.getVarian()) {
+            for (VarianProduk hargaProduk : produkData.getVarian().values()) {
                 int harga = hargaProduk.getHarga();
 
                 if (harga < hargaTermurah) {

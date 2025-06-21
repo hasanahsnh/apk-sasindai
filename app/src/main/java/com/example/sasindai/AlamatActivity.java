@@ -210,7 +210,7 @@ public class AlamatActivity extends AppCompatActivity {
 
         OkHttpClient client = new OkHttpClient();
 
-        HttpUrl url = HttpUrl.parse("http://192.168.227.173:8000/api/ekspedisi")
+        HttpUrl url = HttpUrl.parse("https://sasindai.sascode.my.id/api/ekspedisi")
                 .newBuilder()
                 .addQueryParameter("shipper_destination_id", WAREHOUSE_ID)
                 .addQueryParameter("receiver_destination_id", destinationId)
@@ -277,7 +277,7 @@ public class AlamatActivity extends AppCompatActivity {
 
         OkHttpClient client = new OkHttpClient();
 
-        HttpUrl url = HttpUrl.parse("http://192.168.227.173:8000/api/rincian-kodepos")
+        HttpUrl url = HttpUrl.parse("https://sasindai.sascode.my.id/api/rincian-kodepos")
                 .newBuilder()
                 .addQueryParameter("keyword", kodePos)
                 .build();

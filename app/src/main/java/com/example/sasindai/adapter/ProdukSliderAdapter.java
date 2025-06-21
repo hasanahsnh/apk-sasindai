@@ -32,6 +32,7 @@ import com.google.gson.Gson;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class ProdukSliderAdapter extends RecyclerView.Adapter<ProdukSliderAdapter.ProdukSliderViewHolder> {
     private final Context context;
@@ -57,10 +58,10 @@ public class ProdukSliderAdapter extends RecyclerView.Adapter<ProdukSliderAdapte
         holder.tvTotalProdukTerjual.setText(String.valueOf(data.getTerjual()));
 
         // Array; mendapat akn data varian; data produk -> varian -> harga
-        List<VarianProduk> varian = data.getVarian();
+        Map<String, VarianProduk> varian = data.getVarian();
         if (varian != null && !varian.isEmpty()) {
             int totalHarga = 0;
-            for (VarianProduk varianProduk : varian) {
+            for (VarianProduk varianProduk : varian.values()) {
                 totalHarga += varianProduk.getHarga();
             }
             int averageHarga = totalHarga / varian.size();

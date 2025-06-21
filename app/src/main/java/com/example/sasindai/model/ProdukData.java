@@ -1,6 +1,7 @@
 package com.example.sasindai.model;
 
 import java.util.List;
+import java.util.Map;
 
 public class ProdukData {
     private String
@@ -14,14 +15,14 @@ public class ProdukData {
         sisaStok,
         terjual;
     private List<String> urlFotoProduk;
-    private List<VarianProduk> varian;
+    private Map<String, VarianProduk> varian;
 
     public ProdukData() {
         // Diperlukan untuk firebase
     }
 
     // Gen constructor
-    public ProdukData(String createAt, String deskripsiProduk, String idProduk, String namaProduk, String uid, String updateAt, int sisaStok, int terjual, List<String> urlFotoProduk, List<VarianProduk> varian) {
+    public ProdukData(String createAt, String deskripsiProduk, String idProduk, String namaProduk, String uid, String updateAt, int sisaStok, int terjual, List<String> urlFotoProduk, Map<String, VarianProduk> varian) {
         this.createAt = createAt;
         this.deskripsiProduk = deskripsiProduk;
         this.idProduk = idProduk;
@@ -108,11 +109,11 @@ public class ProdukData {
         this.urlFotoProduk = urlFotoProduk;
     }
 
-    public List<VarianProduk> getVarian() {
+    public Map<String, VarianProduk> getVarian() {
         return varian;
     }
 
-    public void setVarian(List<VarianProduk> varian) {
+    public void setVarian(Map<String, VarianProduk> varian) {
         this.varian = varian;
     }
 }

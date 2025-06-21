@@ -42,8 +42,7 @@
             android:text="Nama Produk"
             android:textSize="14sp"
             android:fontFamily="@font/poppins_regular"
-            android:textColor="@color/black"
-            android:layout_weight="1"/>
+            android:textColor="@color/black"/>
 
     </LinearLayout>
     <!-- End linear layout 1 -->

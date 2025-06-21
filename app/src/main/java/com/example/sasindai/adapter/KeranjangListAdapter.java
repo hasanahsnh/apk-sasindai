@@ -199,11 +199,12 @@ public class KeranjangListAdapter extends RecyclerView.Adapter<KeranjangListAdap
             String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
             String idProduk = data.getIdProduk();
             String namaVarian = data.getNamaVarian();
+            String idVarian = data.getIdVarian();
 
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference("keranjang")
                     .child(userId)
                     .child(idProduk)
-                    .child(namaVarian);
+                    .child(idVarian);
 
             ref.removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
@@ -233,22 +234,14 @@ public class KeranjangListAdapter extends RecyclerView.Adapter<KeranjangListAdap
 
         DatabaseReference varianRef = FirebaseDatabase.getInstance().getReference("produk")
                 .child(data.getIdProduk())
-                .child("varian");
+                .child("varian")
+                .child(data.getIdVarian());
 
         varianRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                boolean isVarianHabis = false;
-                for (DataSnapshot varianSnap : snapshot.getChildren()) {
-                    String namaVarianDb = varianSnap.child("nama").getValue(String.class);
-                    if (namaVarianDb != null && namaVarianDb.equals(data.getNamaVarian())) {
-                        Long stok = varianSnap.child("stok").getValue(Long.class);
-                        if (stok != null && stok == 0) {
-                            isVarianHabis = true;
-                        }
-                        break;
-                    }
-                }
+                Long stok = snapshot.child("stok").getValue(Long.class);
+                boolean isVarianHabis = stok != null && stok == 0;
 
                 if (isVarianHabis) {
                     holder.checkBoxItem.setEnabled(false);
@@ -258,13 +251,10 @@ public class KeranjangListAdapter extends RecyclerView.Adapter<KeranjangListAdap
                     holder.checkBoxItem.setEnabled(true);
                     holder.checkBoxItem.setAlpha(1.0f);
                 }
-
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
+            public void onCancelled(@NonNull DatabaseError error) { }
         });
 
         Glide.with(context)

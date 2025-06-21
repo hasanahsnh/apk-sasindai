@@ -181,9 +181,16 @@ public class KeranjangActivity extends AppCompatActivity {
                 adapter.clearSelections();
 
                 for (DataSnapshot produkSnapshot : snapshot.getChildren()) {
+                    String idProduk = produkSnapshot.getKey(); // Misalnya AU50_pouch_xxx
+
                     for (DataSnapshot varianSnapshot : produkSnapshot.getChildren()) {
                         KeranjangData data = varianSnapshot.getValue(KeranjangData.class);
+
                         if (data != null) {
+                            String idVarian = varianSnapshot.getKey(); // UUID varian
+                            data.setIdProduk(idProduk); // ← penting juga diset kalau belum
+                            data.setIdVarian(idVarian); // ← ini yang mencegah child(null)
+
                             keranjangData.add(data);
                         }
                     }

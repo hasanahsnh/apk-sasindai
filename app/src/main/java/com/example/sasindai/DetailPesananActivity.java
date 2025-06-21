@@ -84,7 +84,7 @@ public class DetailPesananActivity extends AppCompatActivity {
         if (ordersData != null && ordersData.getProduk() != null) {
             orderItemWrappers.clear();
 
-            for (ItemProdukOrderData item : ordersData.getProduk()) {
+            for (ItemProdukOrderData item : ordersData.getProduk().values()) {
                 orderItemWrappers.add(new OrderItemWrapper(item, ordersData));
             }
 
@@ -129,7 +129,7 @@ public class DetailPesananActivity extends AppCompatActivity {
         if (ordersData != null && ordersData.getProduk() != null) {
             int totalHarga = 0;
 
-            for (ItemProdukOrderData item : ordersData.getProduk()) {
+            for (ItemProdukOrderData item : ordersData.getProduk().values()) {
                 int harga = item.getHarga();
                 int jumlah = item.getQty();
                 totalHarga += harga * jumlah;

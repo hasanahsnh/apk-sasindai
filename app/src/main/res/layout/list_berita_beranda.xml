@@ -23,8 +23,8 @@
             android:fontFamily="@font/poppins_bold"
             android:paddingStart="15dp"
             android:paddingEnd="15dp"
-            android:paddingTop="7dp"
-            android:paddingBottom="7dp"/>
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"/>
     </LinearLayout>
 
     <LinearLayout
