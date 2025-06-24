@@ -11,7 +11,6 @@
 
     <!-- Toolbar -->
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbarKatalog"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/putih"
@@ -34,12 +33,6 @@
                 android:paddingStart="8dp"
                 android:padding="12dp"
                 android:layout_weight="1"/>
-
-            <ImageView
-                android:id="@+id/imgFilterStatusPesanan"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:src="@drawable/img_filter" />
 
         </LinearLayout>
 

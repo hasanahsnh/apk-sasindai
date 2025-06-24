@@ -24,6 +24,7 @@ import com.example.sasindai.fragment.AkunFragment;
 import com.example.sasindai.fragment.BerandaFragment;
 import com.example.sasindai.fragment.KatalogMotifFragment;
 import com.example.sasindai.fragment.NotificationFragment;
+import com.example.sasindai.fragment.RilisMediaFragment;
 import com.example.sasindai.theme.ThemeActivity;
 import com.ismaeldivita.chipnavigation.ChipNavigationBar;
 
@@ -108,6 +109,8 @@ public class MainHostActivity extends AppCompatActivity {
             selectedFragment = new KatalogMotifFragment();
         } else if (item == R.id.nav_akun) {
             selectedFragment = new AkunFragment();
+        } else if (item == R.id.nav_rilis_media) {
+            selectedFragment = new RilisMediaFragment();
         } else {
             Log.w("Main Host Activity", "Gagal menghandle nav yang dipilih:" + item);
         }

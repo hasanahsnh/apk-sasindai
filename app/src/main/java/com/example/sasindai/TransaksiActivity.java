@@ -62,7 +62,6 @@ public class TransaksiActivity extends AppCompatActivity {
         progressBarRiwayatPesanan = findViewById(R.id.progressBarRiwayatPesanan);
         frameDataOrders = findViewById(R.id.frameDataOrders);
         progressBarRiwayatPesananNotFound = findViewById(R.id.progressBarRiwayatPesananNotFound);
-        imgFilterStatusPesanan = findViewById(R.id.imgFilterStatusPesanan);
 
         recyclerViewRiwayatTransaksi.setLayoutManager(new LinearLayoutManager(this));
         adapter = new TransaksiAdapter(this, ordersData);

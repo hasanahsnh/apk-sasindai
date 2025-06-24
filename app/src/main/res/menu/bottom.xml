@@ -19,7 +19,7 @@
 
     <!-- Menu rilis media -->
     <item
-        android:id="@+id/rilis_media"
+        android:id="@+id/nav_rilis_media"
         android:title="Rilis Media"
         android:icon="@drawable/ic_news_29"
         app:cnb_backgroundColor="@color/maroon"

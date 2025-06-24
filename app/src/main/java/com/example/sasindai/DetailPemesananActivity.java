@@ -100,7 +100,7 @@ public class DetailPemesananActivity extends AppCompatActivity {
         btnCheckoutOrder = findViewById(R.id.btnCheckoutOrder);
         radioGroup = findViewById(R.id.radioGroupMetode);
         radioShopee = findViewById(R.id.radioShopeePay);
-        radioQris = findViewById(R.id.radioQris);
+        //radioQris = findViewById(R.id.radioQris);
         // End inisial
 
         launcher = registerForActivityResult(
@@ -126,20 +126,20 @@ public class DetailPemesananActivity extends AppCompatActivity {
                 }
         );
 
-        radioQris.setChecked(true);
-        String[] selectedPayment = { "qris" };
+        radioShopee.setChecked(true);
+        String[] selectedPayment = { "shopeepay" };
 
         radioShopee.setOnClickListener(v -> {
             radioShopee.setChecked(true);
-            radioQris.setChecked(false);
+            //radioQris.setChecked(false);
             selectedPayment[0] = "shopeepay";
         });
 
-        radioQris.setOnClickListener(v -> {
+        /*radioQris.setOnClickListener(v -> {
             radioQris.setChecked(true);
             radioShopee.setChecked(false);
             selectedPayment[0] = "qris";
-        });
+        });*/
 
         // get prefs
         sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);

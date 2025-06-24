@@ -5,6 +5,74 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".DetailRilisMediaActivity">
+    tools:context=".DetailRilisMediaActivity"
+    android:layout_margin="16dp">
+
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:id="@+id/imgDetailFoto"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:scaleType="centerCrop"
+        android:contentDescription="Foto berita"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:riv_corner_radius="6dp"/>
+
+    <TextView
+        android:id="@+id/tvDetailJudul"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Judul Artikel"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="#000000"
+        android:fontFamily="@font/poppins_bold"
+        app:layout_constraintTop_toBottomOf="@+id/imgDetailFoto"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp" />
+
+    <TextView
+        android:id="@+id/tvDetailTanggal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="28 Mei 2025 | Jurnalis: Hasanah"
+        android:textSize="12sp"
+        android:textColor="#888888"
+        android:fontFamily="@font/poppins_regular"
+        app:layout_constraintTop_toBottomOf="@+id/tvDetailJudul"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="4dp" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="#DDDDDD"
+        app:layout_constraintTop_toBottomOf="@+id/tvDetailTanggal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp" />
+
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@+id/tvDetailTanggal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp">
+
+        <TextView
+            android:id="@+id/tvDetailKonten"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Konten lengkap dari berita akan tampil di sini..."
+            android:textSize="14sp"
+            android:textColor="#333333"
+            android:fontFamily="@font/poppins_regular"
+            android:lineSpacingExtra="4dp" />
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
