@@ -38,6 +38,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -275,27 +276,40 @@ public class RegisterFragment extends Fragment {
         DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("users");
         String uid = user.getUid();
         String email = user.getEmail() != null ? user.getEmail() : "Tamu";
-        String phone = user.getPhoneNumber() != null ? user.getPhoneNumber() : "Nomor telepon tidak ditemukan";
         String role = "ROLE_REGULER";
+        boolean emailVerified = user.isEmailVerified();
 
         // Debug
         Log.d("Simpan User", "Mengambil uid user: " + uid);
 
-        // Simpan hanya field yang perlu diperbarui
-        Map<String, Object> updateData = new HashMap<>();
-        updateData.put("uid", uid);
-        updateData.put("email", email);
-        updateData.put("namaLengkap", namaLengkap);
-        updateData.put("authMethod", "google");
-        updateData.put("role", role);
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        Log.w("FCM Token", "Gagal ambil token", task.getException());
+                        return;
+                    }
 
-        usersRef.child(uid).updateChildren(updateData).addOnCompleteListener(task -> {
-           if (task.isSuccessful()) {
-               Log.d("Firebase", "User berhasil disimpan dengan role: " + role);
-           } else {
-               Log.e("Firebase", "Gagal menyimpan user ke tabel users", task.getException());
-           }
-        });
+                    String fcmToken = task.getResult();
+                    Log.d("FCM Token", "Token FCM: " + fcmToken);
+
+                    // Simpan semua data ke Firebase Realtime Database
+                    Map<String, Object> updateData = new HashMap<>();
+                    updateData.put("uid", uid);
+                    updateData.put("email", email);
+                    updateData.put("emailIsVerified", emailVerified);
+                    updateData.put("namaLengkap", namaLengkap);
+                    updateData.put("authMethod", authMethod); // sesuai parameter
+                    updateData.put("role", role);
+                    updateData.put("device_token", fcmToken); // disimpan di sini
+
+                    usersRef.child(uid).updateChildren(updateData).addOnCompleteListener(saveTask -> {
+                        if (saveTask.isSuccessful()) {
+                            Log.d("Firebase", "User berhasil disimpan dengan role: " + role);
+                        } else {
+                            Log.e("Firebase", "Gagal menyimpan user ke tabel users", saveTask.getException());
+                        }
+                    });
+                });
 
     }
 

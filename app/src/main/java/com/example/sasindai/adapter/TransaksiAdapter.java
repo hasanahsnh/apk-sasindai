@@ -2,19 +2,26 @@ package com.example.sasindai.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.sasindai.KonfirmasiPesananActivity;
 import com.example.sasindai.PaymentActivity;
 import com.example.sasindai.R;
 import com.example.sasindai.model.ItemProdukOrderData;
@@ -82,38 +89,19 @@ public class TransaksiAdapter extends RecyclerView.Adapter<TransaksiAdapter.Tran
         holder.totalhargaPesanan.setText(formatter.format(data.getTotal()).replace("Rp", "Rp "));
 
         // Ambil gambar dari ProdukData berdasarkan id_produk dari item pertama
-        if (!data.getProduk().isEmpty()) {
+        try {
             ItemProdukOrderData itemProdukOrderData = data.getProduk().values().iterator().next();
-            String idProduk = itemProdukOrderData.getIdProduk();
-            String namaVarian = itemProdukOrderData.getNamaVarian();
 
-            DatabaseReference produkRef = FirebaseDatabase.getInstance().getReference("produk").child(idProduk);
-            produkRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    ProdukData produk = snapshot.getValue(ProdukData.class);
-                    if (produk != null && produk.getVarian() != null) {
-                        for (Map.Entry<String, VarianProduk> entry : produk.getVarian().entrySet()) {
-                            VarianProduk varian = entry.getValue();
-                            if (varian.getIdVarian().equals(itemProdukOrderData.getIdVarian())) {
-                                String gambar = varian.getGambar();
-                                itemProdukOrderData.setVarianUrl(gambar);
-                                itemProdukOrderData.setNamaVarian(namaVarian);// ✅ simpan ke model
+            // Tampilkan gambar langsung dari data yang sudah tersedia
+            String gambarVarian = itemProdukOrderData.getVarianUrl();
+            if (gambarVarian != null && !gambarVarian.isEmpty()) {
+                Glide.with(holder.itemView.getContext())
+                        .load(gambarVarian)
+                        .into(holder.imageProdukRiwayat);
+            }
 
-                                Glide.with(holder.itemView.getContext())
-                                        .load(gambar)
-                                        .into(holder.imageProdukRiwayat);
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-                    Log.e("Firebase", "Gagal ambil gambar produk: " + error.getMessage());
-                }
-            });
+        } catch (Exception e) {
+            Log.e("Memuat gambar preview riwayat", "itemProdukOrderData tidak ditemukan: " + e.getMessage());
         }
 
         // updateUI per status pesanan
@@ -144,10 +132,73 @@ public class TransaksiAdapter extends RecyclerView.Adapter<TransaksiAdapter.Tran
                 holder.btnPesananDiterima.setVisibility(View.GONE);
         }
 
+        /* btn yang dialihkan ke actv transaksi
+        * - btn pesanan diterima*/
+
+        String idPesanan = data.getOrder_id();
+        holder.btnPesananDiterima.setOnClickListener(v -> {
+            // ambil idpesanan alihkan ke actv beri penilaian
+            Intent intent = new Intent(context, KonfirmasiPesananActivity.class);
+            intent.putExtra("order_id", idPesanan);
+
+            // Kirim data produk ke activity
+            String jsonProduk = new Gson().toJson(data.getProduk());
+            intent.putExtra("produk_dipesan", jsonProduk);
+
+            context.startActivity(intent);
+        });
+
+        holder.btnAjukanPembatalan.setOnClickListener(v -> {
+            String pesanPengajuan = "Halo, saya ingin mengajukan pembatalan pesanan.\n\n" +
+                    "ID Pesanan: " + idPesanan + "\n" +
+                    "Alasan pembatalan: [Tulis alasan Anda di sini]\n\n" +
+                    "Mohon tindak lanjutnya. Terima kasih.";
+
+            String nomorAdmin = "6282251356040";
+            String url = "https://wa.me/" + nomorAdmin + "?text=" + Uri.encode(pesanPengajuan);
+
+            AlertDialog alertDialog = new AlertDialog.Builder(context)
+                    .setMessage("Ajukan pembatalan pesanan?")
+                    .setPositiveButton("Ya", (dialog, which) -> {
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        intent.setData(Uri.parse(url));
+                        context.startActivity(intent);
+                    })
+                    .setNegativeButton("Batal", (dialog, which) -> dialog.dismiss())
+                    .create();
+
+            alertDialog.setOnShowListener(dialog -> {
+                Typeface font = ResourcesCompat.getFont(context, R.font.poppins_medium);
+                Typeface fontReguler = ResourcesCompat.getFont(context, R.font.poppins_bold);
+                TextView messageView = alertDialog.findViewById(android.R.id.message);
+                Button positiveBtn = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                Button negativeBtn = alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+
+                if (positiveBtn != null) {
+                    positiveBtn.setTextColor(ContextCompat.getColor(context, R.color.maroon));
+                    positiveBtn.setTypeface(font);
+                }
+
+                if (negativeBtn != null) {
+                    negativeBtn.setTextColor(ContextCompat.getColor(context, R.color.maroon));
+                    negativeBtn.setTypeface(font);
+                }
+
+                if (messageView != null) {
+                    messageView.setTypeface(fontReguler);
+                    messageView.setTextColor(ContextCompat.getColor(context, R.color.black));
+                    messageView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+                }
+            });
+
+            alertDialog.show();
+        });
+
         // hubungi penjual arahkan ke apk wa nomor +6282251356040
         holder.btnHubungiPenjual.setOnClickListener(v -> {
-            String idPesanan = data.getOrder_id();
-            String pesanDefault = "Permisi, ada yang ingin saya tanyakan mengenai pesanan ini, " + idPesanan;
+            String pesanDefault = "Halo, saya ingin menanyakan sesuatu terkait pesanan berikut:\n\n" +
+                    "ID Pesanan: " + idPesanan + "\n\n" +
+                    "Mohon bantuannya, terima kasih";
 
             String nomor = "6282251356040"; // tanpa tanda +
             String url = "https://wa.me/" + nomor + "?text=" + Uri.encode(pesanDefault);

@@ -174,7 +174,7 @@ public class KeranjangActivity extends AppCompatActivity {
     public void AmbilProdukUser() {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("keranjang").child(userUid);
 
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+        ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 keranjangData.clear();

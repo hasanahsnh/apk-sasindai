@@ -83,7 +83,7 @@ public class TransaksiActivity extends AppCompatActivity {
                 .orderByChild("uid")
                 .equalTo(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
+        query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 ordersData.clear();

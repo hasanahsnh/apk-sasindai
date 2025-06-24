@@ -85,7 +85,7 @@ public class DetailPesananActivity extends AppCompatActivity {
             orderItemWrappers.clear();
 
             for (ItemProdukOrderData item : ordersData.getProduk().values()) {
-                orderItemWrappers.add(new OrderItemWrapper(item, ordersData));
+                orderItemWrappers.add(new OrderItemWrapper(item, ordersData, 0f, "", ""));
             }
 
             adapter.notifyDataSetChanged();

@@ -32,6 +32,7 @@ import com.example.sasindai.adapter.BottomSheetProdukAdapter;
 import com.example.sasindai.adapter.KeranjangListAdapter;
 import com.example.sasindai.adapter.ProdukFotoSliderAdapter;
 import com.example.sasindai.adapter.UkuranListAdapter;
+import com.example.sasindai.isLayanan.IsLayanan;
 import com.example.sasindai.model.KeranjangData;
 import com.example.sasindai.model.ProdukData;
 import com.example.sasindai.model.VarianProduk;
@@ -57,6 +58,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 public class DetailProdukActivity extends AppCompatActivity {
     private RecyclerView sliderGambarProduk, recyclerViewUkuranVarian;
@@ -192,66 +194,82 @@ public class DetailProdukActivity extends AppCompatActivity {
                 return;
             }
 
-            int jumlahTambah;
-            try {
-                jumlahTambah = Integer.parseInt(tvQuantity.getText().toString());
-            } catch (NumberFormatException e) {
-                Toast.makeText(this, "Jumlah tidak valid!", Toast.LENGTH_SHORT).show();
-                return;
-            }
+            IsLayanan.kaPasaran(this, isAktif -> {
+                if (!isAktif) {
+                    Toast.makeText(this, "Fitur Ka Pasaran sedang tidak aktif", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
-            int stokTersedia = selectedVarian[0].getStok();
+                int jumlahTambah;
+                try {
+                    jumlahTambah = Integer.parseInt(tvQuantity.getText().toString());
+                } catch (NumberFormatException e) {
+                    Toast.makeText(this, "Jumlah tidak valid!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
-            if (jumlahTambah > stokTersedia) {
-                Toast.makeText(this, "Jumlah melebihi stok tersedia: " + stokTersedia, Toast.LENGTH_SHORT).show();
-            } else {
-                KeranjangData beliLangsung = new KeranjangData();
-                beliLangsung.setIdProduk(produkData.getIdProduk());
-                beliLangsung.setNamaProduk(produkData.getNamaProduk());
-                beliLangsung.setIdVarian(selectedVarian[0].getIdVarian());
-                beliLangsung.setNamaVarian(selectedVarian[0].getNama());
-                beliLangsung.setHarga(selectedVarian[0].getHarga());
-                beliLangsung.setQty(jumlahTambah);
-                beliLangsung.setSize(selectedVarian[0].getSize());
-                beliLangsung.setGambarVarian(selectedVarian[0].getGambar());
-                beliLangsung.setBerat(selectedVarian[0].getBerat());
-                beliLangsung.setVarian(ukuranData);
-                beliLangsung.setUidPenjual(produkData.getUid());
+                int stokTersedia = selectedVarian[0].getStok();
 
-                // Convert ke JSON
-                List<KeranjangData> listProduk = new ArrayList<>();
-                listProduk.add(beliLangsung);
-                String jsonProduk = new Gson().toJson(listProduk);
+                if (jumlahTambah > stokTersedia) {
+                    Toast.makeText(this, "Jumlah melebihi stok tersedia: " + stokTersedia, Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
-                int totalHarga = selectedVarian[0].getHarga() * jumlahTambah;
-                float totalBerat = selectedVarian[0].getBerat() * jumlahTambah;
+                try {
+                    KeranjangData beliLangsung = new KeranjangData();
+                    beliLangsung.setIdProduk(produkData.getIdProduk());
+                    beliLangsung.setNamaProduk(produkData.getNamaProduk());
+                    beliLangsung.setIdVarian(selectedVarian[0].getIdVarian());
+                    beliLangsung.setNamaVarian(selectedVarian[0].getNama());
+                    beliLangsung.setHarga(selectedVarian[0].getHarga());
+                    beliLangsung.setQty(jumlahTambah);
+                    beliLangsung.setSize(selectedVarian[0].getSize());
+                    beliLangsung.setGambarVarian(selectedVarian[0].getGambar());
+                    beliLangsung.setBerat(selectedVarian[0].getBerat());
+                    beliLangsung.setVarian(ukuranData);
+                    beliLangsung.setUidPenjual(produkData.getUid());
 
-                // Simpan total harga ke SharedPreferences
-                SharedPreferences.Editor editor = getSharedPreferences("ProdukKeranjang", MODE_PRIVATE).edit();
-                editor.putString("produk_beli_langsung", jsonProduk);
-                editor.putInt("total_harga", totalHarga);
-                editor.putFloat("total_berat", totalBerat);
-                editor.apply();
+                    // Convert ke JSON
+                    List<KeranjangData> listProduk = new ArrayList<>();
+                    listProduk.add(beliLangsung);
+                    String jsonProduk = new Gson().toJson(listProduk);
 
-                // clear pref alamat/rincian kodepos dari pref tersedia
-                SharedPreferences alamat = getSharedPreferences("AlamatPrefs", Context.MODE_PRIVATE);
-                SharedPreferences.Editor editorAlamatDanKurir = alamat.edit();
-                editorAlamatDanKurir.clear();
-                editorAlamatDanKurir.apply();
+                    int totalHarga = selectedVarian[0].getHarga() * jumlahTambah;
+                    float totalBerat = selectedVarian[0].getBerat() * jumlahTambah;
 
-                // clear ekspedisi dipilih sebelumnya
-                SharedPreferences kurirPrefs = getSharedPreferences("KurirPrefs", Context.MODE_PRIVATE);
-                SharedPreferences.Editor editorKurir = kurirPrefs.edit();
-                editorKurir.clear();
-                editorKurir.apply();
+                    // Simpan total harga ke SharedPreferences
+                    SharedPreferences.Editor editor = getSharedPreferences("ProdukKeranjang", MODE_PRIVATE).edit();
+                    editor.putString("produk_beli_langsung", jsonProduk);
+                    editor.putInt("total_harga", totalHarga);
+                    editor.putFloat("total_berat", totalBerat);
+                    editor.apply();
 
-                // Pindah actv
-                Intent intent = new Intent(DetailProdukActivity.this, DetailPemesananActivity.class);
-                intent.putExtra("tipe_checkout", "beli_sekarang");
-                intent.putExtra("selectedItems", jsonProduk);
-                startActivity(intent);
-            }
-            dialog.dismiss();
+                    // clear pref alamat/rincian kodepos dari pref tersedia
+                    SharedPreferences alamat = getSharedPreferences("AlamatPrefs", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editorAlamatDanKurir = alamat.edit();
+                    editorAlamatDanKurir.clear();
+                    editorAlamatDanKurir.apply();
+
+                    // clear ekspedisi dipilih sebelumnya
+                    SharedPreferences kurirPrefs = getSharedPreferences("KurirPrefs", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editorKurir = kurirPrefs.edit();
+                    editorKurir.clear();
+                    editorKurir.apply();
+
+                    // Pindah actv
+                    Intent intent = new Intent(DetailProdukActivity.this, DetailPemesananActivity.class);
+                    intent.putExtra("tipe_checkout", "beli_sekarang");
+                    intent.putExtra("selectedItems", jsonProduk);
+                    startActivity(intent);
+
+                    dialog.dismiss();
+
+                } catch (Exception e) {
+                    Log.e("DetailProdukActivity", "Gagal saat beli langsung: " + e.getMessage());
+                    Toast.makeText(this, "Terjadi kesalahan, coba lagi", Toast.LENGTH_SHORT).show();
+                }
+
+            });
         });
 
         Window window = dialog.getWindow();

@@ -30,6 +30,7 @@ import com.example.sasindai.adapter.HeroSliderAdapter;
 import com.example.sasindai.adapter.ProdukSliderAdapter;
 import com.example.sasindai.adapter.RilisMediaListAdapter;
 import com.example.sasindai.adapter.ShimmerRilisMediaAdapter;
+import com.example.sasindai.isLayanan.IsLayanan;
 import com.example.sasindai.model.ProdukData;
 import com.example.sasindai.model.RilisMediaData;
 import com.facebook.shimmer.ShimmerFrameLayout;
@@ -75,6 +76,7 @@ public class BerandaFragment extends Fragment {
     private ImageView btnGotoKeranjang, btnGotoPesanan;
     private SharedPreferences sharedPreferences;
     private FirebaseUser currentUser;
+    boolean isLayananAktif = false;
 
     public BerandaFragment() {
         // Required empty public constructor
@@ -323,8 +325,14 @@ public class BerandaFragment extends Fragment {
         // Arahkan ke activity host ka pasaran
         if (layoutFiturKaPasaran != null) {
             layoutFiturKaPasaran.setOnClickListener(v -> {
-                Intent intent = new Intent(requireContext(), KaPasaranHostActivity.class);
-                startActivity(intent);
+                IsLayanan.kaPasaran(requireContext(), isAktif -> {
+                    if (!isAktif) {
+                        Toast.makeText(requireContext(), "Fitur Ka Pasaran sedang tidak aktif", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    Intent intent = new Intent(requireContext(), KaPasaranHostActivity.class);
+                    startActivity(intent);
+                });
             });
         } else {
             Log.e("Beranda Fragment", "layout fitur kapasaran bernilai null, gagal dimuat");
@@ -344,19 +352,33 @@ public class BerandaFragment extends Fragment {
         if (btnGotoKeranjang != null) {
             btnGotoKeranjang.setOnClickListener(v -> {
                 currentUser = FirebaseAuth.getInstance().getCurrentUser();
-
-                if (currentUser != null) {
-                    if (currentUser.isEmailVerified()) {
-                        Intent intent = new Intent(requireContext(), KeranjangActivity.class);
-                        startActivity(intent);
-                    } else {
-                        Toast.makeText(requireContext(), "Silakan verifikasi email Anda terlebih dahulu", Toast.LENGTH_LONG).show();
-                    }
-                } else {
+                if (currentUser == null) {
                     Intent intent = new Intent(requireContext(), AuthHostActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                     Toast.makeText(requireContext(), "Silakan login terlebih dahulu", Toast.LENGTH_SHORT).show();
+                    return;
                 }
+
+                IsLayanan.kaPasaran(requireContext(), isAktif -> {
+                    if (!isAktif) {
+                        Toast.makeText(requireContext(), "Fitur Ka Pasaran sedang tidak aktif", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    try {
+                        if (currentUser.isEmailVerified()) {
+                            Intent intent = new Intent(requireContext(), KeranjangActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                        } else {
+                            Toast.makeText(requireContext(), "Silakan verifikasi email Anda terlebih dahulu", Toast.LENGTH_LONG).show();
+                        }
+                    } catch (Exception e) {
+                        Log.e("Beranda fr", "User tidak ditemukan " + e.getMessage());
+                        Toast.makeText(requireContext(), "Terjadi kesalahan, coba lagi", Toast.LENGTH_SHORT).show();
+                    }
+                });
             });
         } else {
             Log.e("Beranda Fragment", "Dari btnGotoKeranjang, btn goto keranjang gagal dimuat atau bernilai null");
@@ -376,14 +398,28 @@ public class BerandaFragment extends Fragment {
         if (btnGotoPesanan != null) {
             btnGotoPesanan.setOnClickListener(v -> {
                 currentUser = FirebaseAuth.getInstance().getCurrentUser();
-                if (currentUser != null) {
-                    Intent intent = new Intent(requireContext(), TransaksiActivity.class);
-                    startActivity(intent);
-                } else {
+                if (currentUser == null) {
                     Intent intent = new Intent(requireContext(), AuthHostActivity.class);
                     startActivity(intent);
                     Toast.makeText(requireContext(), "Silakan login terlebih dahulu", Toast.LENGTH_SHORT).show();
+                    return;
                 }
+
+                IsLayanan.kaPasaran(requireContext(), isAktif -> {
+                    if (!isAktif) {
+                        Toast.makeText(requireContext(), "Fitur Ka Pasaran sedang tidak aktif", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    try {
+                        Intent intent = new Intent(requireContext(), TransaksiActivity.class);
+                        startActivity(intent);
+                    } catch (Exception e) {
+                        Log.e("Beranda fr", "User tidak ditemukan " + e.getMessage());
+                        Toast.makeText(requireContext(), "Terjadi kesalahan, coba lagi", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
             });
         } else {
             Log.e("Beranda Fragment", "tv btn Goto orders gagal dimuat atau bernilai null!");

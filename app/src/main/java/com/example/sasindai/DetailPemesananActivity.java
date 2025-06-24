@@ -4,11 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -21,7 +19,6 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
-import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.os.LocaleListCompat;
 import androidx.core.view.ViewCompat;
@@ -32,8 +29,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.sasindai.adapter.DetailPemesananAdapter;
 import com.example.sasindai.model.KeranjangData;
-import com.example.sasindai.model.ProdukData;
-import com.example.sasindai.model.VarianProduk;
 import com.example.sasindai.theme.ThemeActivity;
 import com.google.common.reflect.TypeToken;
 import com.google.firebase.auth.FirebaseAuth;
@@ -44,11 +39,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
-import com.midtrans.sdk.uikit.api.model.TransactionResult;
-import com.midtrans.sdk.uikit.external.UiKitApi;
-import com.midtrans.sdk.uikit.internal.util.UiKitConstants;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -81,7 +72,7 @@ public class DetailPemesananActivity extends AppCompatActivity {
     RadioGroup radioGroup;
     RadioButton radioQris, radioShopee;
     int selectedId;
-    String selectedPayment = null;
+    String[] selectedPayment = {"shopeepay"};
     String orderId;
     private boolean isCheckingStatus = false;
     private ActivityResultLauncher<Intent> launcher;
@@ -109,6 +100,7 @@ public class DetailPemesananActivity extends AppCompatActivity {
         btnCheckoutOrder = findViewById(R.id.btnCheckoutOrder);
         radioGroup = findViewById(R.id.radioGroupMetode);
         radioShopee = findViewById(R.id.radioShopeePay);
+        radioQris = findViewById(R.id.radioQris);
         // End inisial
 
         launcher = registerForActivityResult(
@@ -134,9 +126,19 @@ public class DetailPemesananActivity extends AppCompatActivity {
                 }
         );
 
+        radioQris.setChecked(true);
+        String[] selectedPayment = { "qris" };
+
         radioShopee.setOnClickListener(v -> {
             radioShopee.setChecked(true);
-            selectedPayment = "shopeepay";
+            radioQris.setChecked(false);
+            selectedPayment[0] = "shopeepay";
+        });
+
+        radioQris.setOnClickListener(v -> {
+            radioQris.setChecked(true);
+            radioShopee.setChecked(false);
+            selectedPayment[0] = "qris";
         });
 
         // get prefs
@@ -300,8 +302,8 @@ public class DetailPemesananActivity extends AppCompatActivity {
             isValid = false;
         }
 
-        if (selectedPayment == null) {
-            Toast.makeText(this, "Silakan pilih metode pembayaran", Toast.LENGTH_SHORT).show();
+        if (selectedPayment[0] == null || selectedPayment[0].isEmpty()) {
+            Toast.makeText(this, "Pilih metode pembayaran terlebih dahulu", Toast.LENGTH_SHORT).show();
             isValid = false;
         }
 
@@ -486,13 +488,13 @@ public class DetailPemesananActivity extends AppCompatActivity {
                 json.put("layanan", kurirPrefs.getString("kurir_service", ""));
                 JSONObject produkArray = getProdukArray();
                 json.put("produk_dipesan", produkArray);
-                json.put("metode_pembayaran", selectedPayment);
+                json.put("metode_pembayaran", selectedPayment[0]);
                 json.put("uid", uid);
                 json.put("uidPenjual", uidPenjual);
                 json.put("statusPesanan", "menunggu pembayaran");
                 json.put("tipe_checkout", tipeCheckout);
 
-                Log.i("JSON via beli_langsung", "Data " + json.toString());
+                Log.i("JSON Body", "Data " + json);
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -581,6 +583,7 @@ public class DetailPemesananActivity extends AppCompatActivity {
                 produkJson.put("namaVarian", item.getNamaVarian());
                 produkJson.put("harga", item.getHarga());
                 produkJson.put("qty", item.getQty());
+                produkJson.put("varianUrl", item.getGambarVarian());
                 produkObject.put(item.getIdVarian(), produkJson);
             }
         }
