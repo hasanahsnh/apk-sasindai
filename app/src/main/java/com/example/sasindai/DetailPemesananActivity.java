@@ -291,18 +291,10 @@ public class DetailPemesananActivity extends AppCompatActivity {
     private boolean checkOutOrder() {
         boolean isValid = true;
 
-        // Cek nilai alamat dan sub district
-        String alamat = alamatPrefs.getString("alamat", null);
-        String subdistrict = alamatPrefs.getString("subdistrict", null);
-        String district = alamatPrefs.getString("district", null);
-        String city = alamatPrefs.getString("city", null);
-        String province = alamatPrefs.getString("province", null);
-        String kodePos = alamatPrefs.getString("kode_pos", null);
-
-        if (isEmptyOrNull(alamat) || isEmptyOrNull(subdistrict) || isEmptyOrNull(district)
-                || isEmptyOrNull(city) || isEmptyOrNull(province) || isEmptyOrNull(kodePos)) {
-            isValid = false;
-            Toast.makeText(this, "Silakan lengkapi semua data alamat terlebih dahulu!", Toast.LENGTH_SHORT).show();
+        if (btnMasukkanAlamat.getText().toString().isEmpty()) {
+            runOnUiThread(() ->
+                    Toast.makeText(this, "Silakan lengkapi data telepon terlebih dahulu!", Toast.LENGTH_SHORT).show()
+            );
         }
 
         // Cek nilai telepon
@@ -310,7 +302,7 @@ public class DetailPemesananActivity extends AppCompatActivity {
 
         if (nomorTelp.isEmpty() || nomorTelp.contains("belum diisi")) {
             runOnUiThread(() ->
-                    Toast.makeText(this, "Silakan masukkan alamat terlebih dahulu!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Silakan lengkapi data telepon terlebih dahulu!", Toast.LENGTH_SHORT).show()
             );
             isValid = false;
         }
@@ -356,127 +348,149 @@ public class DetailPemesananActivity extends AppCompatActivity {
             int ongkir = kurirPrefs.getInt("kurir_harga", 0);
             int totalBayar = totalHarga + ongkir;
 
-            String alamat = alamatPrefs.getString("alamat", "");
-            String kelurahan = alamatPrefs.getString("subdistrict", "Kelurahan tidak ditemukan");
-            String kecamatan = alamatPrefs.getString("district", "Kecamatan tidak ditemukan");
-            String kota = alamatPrefs.getString("city", "Kota tidak ditemukan");
-            String provinsi = alamatPrefs.getString("province", "Provinsi tidak ditemukan");
-            String kodePos = alamatPrefs.getString("kode_pos", "Kodepos tidak ditemukan");
+            DatabaseReference alamatRef = FirebaseDatabase.getInstance()
+                    .getReference("pembeli")
+                    .child(uid)
+                    .child("alamat");
 
-            String alamatLengkap = alamat + ", "
-                    + kelurahan + ", "
-                    + kecamatan + ", "
-                    + kota + ", "
-                    + provinsi + ", "
-                    + kodePos;
+            alamatRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (snapshot.exists()) {
+                        String alamat = snapshot.child("alamat").getValue(String.class);
+                        String kelurahan = snapshot.child("kelurahan").getValue(String.class);
+                        String kecamatan = snapshot.child("kecamatan").getValue(String.class);
+                        String kota = snapshot.child("kota").getValue(String.class);
+                        String provinsi = snapshot.child("provinsi").getValue(String.class);
+                        String kodePos = snapshot.child("kodePos").getValue(String.class);
 
-            String jsonKeranjang = getIntent().getStringExtra("selectedItems");
-            assert jsonKeranjang != null;
-            Log.d("JSON_KERANJANG_RAW", jsonKeranjang);
-            String uidPenjual = null;
+                        // Format lengkap
+                        String alamatLengkap = alamat + ", " + kelurahan + ", " + kecamatan + ", " +
+                                kota + ", " + provinsi + ", " + kodePos;
 
-            Type type = new TypeToken<List<KeranjangData>>() {
-            }.getType();
-            List<KeranjangData> selectedItems = new Gson().fromJson(jsonKeranjang, type);
+                        try {
+                            String jsonKeranjang = getIntent().getStringExtra("selectedItems");
+                            assert jsonKeranjang != null;
+                            Log.d("JSON_KERANJANG_RAW", jsonKeranjang);
+                            String uidPenjual = null;
 
-            if (!selectedItems.isEmpty()) {
-                uidPenjual = selectedItems.get(0).getUidPenjual();
-            }
+                            Type type = new TypeToken<List<KeranjangData>>() {
+                            }.getType();
+                            List<KeranjangData> selectedItems = new Gson().fromJson(jsonKeranjang, type);
 
-            Log.d("CHECKOUT", "Harga Produk: " + totalHarga);
-            Log.d("CHECKOUT", "Ongkir: " + ongkir);
-            Log.d("CHECKOUT", "Total Bayar: " + totalBayar);
+                            if (!selectedItems.isEmpty()) {
+                                uidPenjual = selectedItems.get(0).getUidPenjual();
+                            }
 
-            String tipeCheckoutIntent = getIntent().getStringExtra("tipe_checkout");
-            SharedPreferences prefss = getSharedPreferences("checkout_data", MODE_PRIVATE);
-            String tipeCheckout = tipeCheckoutIntent != null ? tipeCheckoutIntent : prefss.getString("tipe_checkout", "");
+                            Log.d("CHECKOUT", "Harga Produk: " + totalHarga);
+                            Log.d("CHECKOUT", "Ongkir: " + ongkir);
+                            Log.d("CHECKOUT", "Total Bayar: " + totalBayar);
 
-            JSONObject json = new JSONObject();
-            try {
-                json.put("total", totalBayar);
-                json.put("ongkir", ongkir);
-                json.put("harga_produk", totalHarga);
-                json.put("alamat", alamatLengkap);
-                json.put("kurir", kurirPrefs.getString("kurir_nama", ""));
-                json.put("layanan", kurirPrefs.getString("kurir_service", ""));
-                JSONObject produkArray = getProdukArray();
-                json.put("produk_dipesan", produkArray);
-                json.put("metode_pembayaran", selectedPayment[0]);
-                json.put("uid", uid);
-                json.put("uidPenjual", uidPenjual);
-                json.put("statusPesanan", "menunggu pembayaran");
-                json.put("tipe_checkout", tipeCheckout);
+                            String tipeCheckoutIntent = getIntent().getStringExtra("tipe_checkout");
+                            SharedPreferences prefss = getSharedPreferences("checkout_data", MODE_PRIVATE);
+                            String tipeCheckout = tipeCheckoutIntent != null ? tipeCheckoutIntent : prefss.getString("tipe_checkout", "");
 
-                Log.i("JSON Body", "Data " + json);
+                            JSONObject json = new JSONObject();
+                            json.put("total", totalBayar);
+                            json.put("ongkir", ongkir);
+                            json.put("alamat", alamatLengkap);
+                            json.put("harga_produk", totalHarga);
+                            json.put("kurir", kurirPrefs.getString("kurir_nama", ""));
+                            json.put("layanan", kurirPrefs.getString("kurir_service", ""));
+                            JSONObject produkArray = getProdukArray();
+                            json.put("produk_dipesan", produkArray);
+                            json.put("metode_pembayaran", selectedPayment[0]);
+                            json.put("uid", uid);
+                            json.put("uidPenjual", uidPenjual);
+                            json.put("statusPesanan", "menunggu pembayaran");
+                            json.put("tipe_checkout", tipeCheckout);
 
-            } catch (JSONException e) {
-                e.printStackTrace();
-                return;
-            }
+                            Log.i("JSON Body", "Data " + json);
 
-            // Bersihkan `tipe_checkout` dari SharedPreferences setelah dipakai
-            SharedPreferences.Editor editor = prefss.edit();
-            editor.remove("tipe_checkout");
-            editor.apply();
+                            // Bersihkan `tipe_checkout` dari SharedPreferences setelah dipakai
+                            SharedPreferences.Editor editor = prefss.edit();
+                            editor.remove("tipe_checkout");
+                            editor.apply();
 
-            OkHttpClient client = new OkHttpClient();
+                            kirimCheckout(json, idToken);
 
-            RequestBody body = RequestBody.create(
-                    json.toString(),
-                    MediaType.parse("application/json; charset=utf-8")
-            );
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Log.e("JSON", "Gagal membuat JSON: " + e.getMessage());
+                        }
 
-            Request request = new Request.Builder()
-                    .url("https://sasindai.sascode.my.id/api/cpl_checkout")
-                    .addHeader("Authorization", "Bearer " + idToken)
-                    .addHeader("Accept", "application/json")
-                    .post(body)
-                    .build();
-
-            new Thread(() -> {
-                try (Response response = client.newCall(request).execute()) {
-                    if (response.isSuccessful()) {
-                        String responseBody = response.body().string();
-                        JSONObject responseJson = new JSONObject(responseBody);
-                        String paymentUrl = responseJson.getString("payment_url");
-                        orderId = responseJson.getString("order_id");
-
-                        runOnUiThread(() -> {
-                            Log.d("CHECKOUT", "Order ID: " + orderId);
-                            Log.d("CHECKOUT", "Payment URL: " + paymentUrl);
-
-                            // Buka payment URL di WebView activity (jika kamu buat) atau browser
-                            Intent intent = new Intent(this, PaymentActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            intent.putExtra("payment_url", paymentUrl);
-                            intent.putExtra("order_id", orderId);
-
-                            SharedPreferences prefs = getSharedPreferences("checkout_data", MODE_PRIVATE);
-                            prefs.edit()
-                                    .putString("tipe_checkout", getIntent().getStringExtra("tipe_checkout"))
-                                    .putString("selectedItems", getIntent().getStringExtra("selectedItems"))
-                                    .apply();
-
-                            startActivity(intent);
-                        });
+                        Log.d("AlamatLengkap", alamatLengkap);
                     } else {
-                        Log.e("CHECKOUT", "Gagal Checkout: " + response.code());
-                        runOnUiThread(() ->
-                                Toast.makeText(this, "Checkout gagal: " + response.code(), Toast.LENGTH_SHORT).show()
-                        );
+                        Log.w("Alamat", "Data alamat tidak ditemukan");
                     }
-                } catch (IOException | JSONException e) {
-                    e.printStackTrace();
-                    runOnUiThread(() ->
-                            Toast.makeText(this, "Terjadi kesalahan: " + e.getMessage(), Toast.LENGTH_LONG).show()
-                    );
                 }
-            }).start();
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Log.e("Firebase", "Gagal ambil data alamat: " + error.getMessage());
+                }
+            });
 
         }).addOnFailureListener(e -> {
             Toast.makeText(this, "Gagal mendapatkan token autentikasi", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         });
+    }
+
+    private void kirimCheckout(JSONObject json, String idToken) {
+        OkHttpClient client = new OkHttpClient();
+
+        RequestBody body = RequestBody.create(
+                json.toString(),
+                MediaType.parse("application/json; charset=utf-8")
+        );
+
+        Request request = new Request.Builder()
+                .url("https://sasindai.sascode.my.id/api/cpl_checkout")
+                .addHeader("Authorization", "Bearer " + idToken)
+                .addHeader("Accept", "application/json")
+                .post(body)
+                .build();
+
+        new Thread(() -> {
+            try (Response response = client.newCall(request).execute()) {
+                if (response.isSuccessful()) {
+                    String responseBody = response.body().string();
+                    JSONObject responseJson = new JSONObject(responseBody);
+                    String paymentUrl = responseJson.getString("payment_url");
+                    orderId = responseJson.getString("order_id");
+
+                    runOnUiThread(() -> {
+                        Log.d("CHECKOUT", "Order ID: " + orderId);
+                        Log.d("CHECKOUT", "Payment URL: " + paymentUrl);
+
+                        // Buka payment URL di WebView activity (jika kamu buat) atau browser
+                        Intent intent = new Intent(this, PaymentActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent.putExtra("payment_url", paymentUrl);
+                        intent.putExtra("order_id", orderId);
+
+                        SharedPreferences prefs = getSharedPreferences("checkout_data", MODE_PRIVATE);
+                        prefs.edit()
+                                .putString("tipe_checkout", getIntent().getStringExtra("tipe_checkout"))
+                                .putString("selectedItems", getIntent().getStringExtra("selectedItems"))
+                                .apply();
+
+                        startActivity(intent);
+                    });
+                } else {
+                    Log.e("CHECKOUT", "Gagal Checkout: " + response.code());
+                    runOnUiThread(() ->
+                            Toast.makeText(this, "Checkout gagal: " + response.code(), Toast.LENGTH_SHORT).show()
+                    );
+                }
+            } catch (IOException | JSONException e) {
+                e.printStackTrace();
+                runOnUiThread(() ->
+                        Toast.makeText(this, "Terjadi kesalahan: " + e.getMessage(), Toast.LENGTH_LONG).show()
+                );
+            }
+        }).start();
     }
 
     @NonNull

@@ -19,7 +19,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Masukkan Alamat"
+            android:text="Pilih Kurir"
             android:textSize="18sp"
             android:fontFamily="@font/poppins_bold"
             android:textColor="@color/maroon"

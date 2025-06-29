@@ -135,8 +135,12 @@ public class ProfileActivity extends AppCompatActivity {
 
         if (simpanAlamat != null) {
             simpanAlamat.setOnClickListener(v -> {
-                inputAlamatKosong();
                 String alamat = inputAlamat.getText().toString().trim();
+                if (alamat.isEmpty()) {
+                    Toast.makeText(this, "Isi alamatmu terlebih dahulu!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if (user == null) {
                     Toast.makeText(this, "User belum login", Toast.LENGTH_SHORT).show();
@@ -255,17 +259,6 @@ public class ProfileActivity extends AppCompatActivity {
                 });
             }
         });
-    }
-
-    private void inputAlamatKosong() {
-        if (inputAlamat.getText().toString().isEmpty()) {
-            Toast.makeText(this, "Isi alamatmu terlebih dahulu!", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        if (inputKodePos.getText().toString().isEmpty()) {
-            Toast.makeText(this, "Isi kodepos terlebih dahulu!", Toast.LENGTH_SHORT).show();
-        }
     }
 
     private void profile() {
