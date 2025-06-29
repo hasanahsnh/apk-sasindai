@@ -8,22 +8,21 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Window;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
+import androidx.annotation.NonNull;
 
 import com.example.sasindai.fragment.AkunFragment;
 import com.example.sasindai.fragment.BerandaFragment;
 import com.example.sasindai.fragment.KatalogMotifFragment;
-import com.example.sasindai.fragment.NotificationFragment;
 import com.example.sasindai.fragment.RilisMediaFragment;
 import com.example.sasindai.theme.ThemeActivity;
 import com.ismaeldivita.chipnavigation.ChipNavigationBar;
@@ -39,15 +38,16 @@ public class MainHostActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main_host);
 
+        // Minta izin notifikasi (Android 13+), tapi lanjut render UI
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS)
                     != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this,
                         new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 101);
-                return;
             }
         }
 
+        // Channel notifikasi
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(
                     "notif_channel",
@@ -75,6 +75,11 @@ public class MainHostActivity extends AppCompatActivity {
         aktifkan indikator pertama di nav_beranda, dan
         posisikan sebagai BerandaFragment: */
 
+        if (getIntent().getBooleanExtra("from_broadcast", false)) {
+            // Tampilkan dialog, pindah ke fragment, atau tampilkan toast
+            Toast.makeText(this, "Membuka dari notifikasi broadcast", Toast.LENGTH_SHORT).show();
+        }
+
         if (chipNavigationBar != null) {
             chipNavigationBar.setItemSelected(R.id.nav_beranda, true);
             chipNavigationBar.setOnItemSelectedListener(navListener);
@@ -100,6 +105,20 @@ public class MainHostActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == 101) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Log.d("Permission", "Notifikasi diizinkan");
+                recreate();
+            } else {
+                Log.d("Permission", "Notifikasi ditolak");
+            }
+        }
+    }
+
     private final ChipNavigationBar.OnItemSelectedListener navListener = item -> {
         Fragment selectedFragment = null;
 
@@ -118,6 +137,7 @@ public class MainHostActivity extends AppCompatActivity {
         if (selectedFragment != null) {
             try {
                 getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(R.anim.fade_in, 0)
                         .replace(R.id.main_container, selectedFragment)
                         .commit();
             } catch (Exception e) {

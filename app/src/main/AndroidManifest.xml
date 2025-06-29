@@ -14,28 +14,34 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:hardwareAccelerated="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_launcher_sasindai"
         android:label="@string/app_name"
-        android:networkSecurityConfig="@xml/network_security_config"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_launcher_sasindai_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Sasindai"
-        android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <activity
+            android:name=".DetailMotifActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MasukkanMotifFormActivity"
+            android:exported="false" />
+
         <service
             android:name=".service.MyFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
         <activity
             android:name=".KonfirmasiPesananActivity"
             android:exported="false" />
@@ -49,9 +55,6 @@
             android:name=".PaymentActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan|adjustResize" />
-        <activity
-            android:name=".PilihMetodePembayaranActivity"
-            android:exported="false" />
         <activity
             android:name=".ProfileActivity"
             android:exported="false" />
@@ -90,9 +93,6 @@
         <activity
             android:name=".AuthHostActivity"
             android:exported="true" />
-        <activity
-            android:name=".OnboardingHostActivity"
-            android:exported="false" />
         <activity
             android:name=".MainHostActivity"
             android:exported="true">

@@ -4,37 +4,17 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Window;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.sasindai.model.KeranjangData;
-import com.example.sasindai.model.ProdukData;
-import com.example.sasindai.model.VarianProduk;
 import com.example.sasindai.theme.ThemeActivity;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.MutableData;
-import com.google.firebase.database.Transaction;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import org.checkerframework.checker.nullness.qual.NonNull;
-
-import java.lang.reflect.Type;
-import java.util.List;
 
 public class PaymentActivity extends AppCompatActivity {
     WebView webView;
@@ -53,12 +33,16 @@ public class PaymentActivity extends AppCompatActivity {
 
         webView = findViewById(R.id.webviewPayment);
 
-        webView.getSettings().setJavaScriptEnabled(true);
-        webView.setWebViewClient(new WebViewClient());
-
         String paymentUrl = getIntent().getStringExtra("payment_url");
+        Log.d("PAYMENT_URL", "URL: " + paymentUrl);
+
         if (paymentUrl != null) {
+            webView.getSettings().setJavaScriptEnabled(true);
+            webView.getSettings().setDomStorageEnabled(true);
+            webView.setWebViewClient(new WebViewClient());
             webView.loadUrl(paymentUrl);
+        } else {
+            Toast.makeText(this, "URL pembayaran tidak tersedia", Toast.LENGTH_SHORT).show();
         }
 
         SharedPreferences prefs = getSharedPreferences("checkout_data", MODE_PRIVATE);

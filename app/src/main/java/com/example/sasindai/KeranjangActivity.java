@@ -7,20 +7,15 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.widget.CheckBox;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -31,6 +26,8 @@ import com.airbnb.lottie.LottieAnimationView;
 import com.airbnb.lottie.LottieDrawable;
 import com.example.sasindai.adapter.KeranjangListAdapter;
 import com.example.sasindai.model.KeranjangData;
+import com.example.sasindai.model.ProdukData;
+import com.example.sasindai.model.VarianProduk;
 import com.example.sasindai.theme.ThemeActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -40,11 +37,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -62,6 +58,8 @@ public class KeranjangActivity extends AppCompatActivity {
     LinearLayout progressBarKeranjang, layoutProgressBarKeranjangDataNotFound;
     FrameLayout frameAllProduk;
     LottieAnimationView progressBarKeranjangDataNotFound;
+    DatabaseReference produkRefs, produkUtamaRef;
+    ValueEventListener produkListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,7 +137,12 @@ public class KeranjangActivity extends AppCompatActivity {
                 // clear pref alamat/rincian kodepos dari pref tersedia
                 SharedPreferences alamat = getSharedPreferences("AlamatPrefs", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editorAlamatDanKurir = alamat.edit();
-                editorAlamatDanKurir.clear();
+                Map<String, ?> allEntries = alamat.getAll();
+                for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
+                    if (!entry.getKey().equals("alamat")) {
+                        editorAlamatDanKurir.remove(entry.getKey());
+                    }
+                }
                 editorAlamatDanKurir.apply();
 
                 // clear ekspedisi dipilih sebelumnya
@@ -172,66 +175,132 @@ public class KeranjangActivity extends AppCompatActivity {
     }
 
     public void AmbilProdukUser() {
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("keranjang").child(userUid);
+        progressBarKeranjang.setVisibility(View.VISIBLE); // keep
+        layoutProgressBarKeranjangDataNotFound.setVisibility(View.GONE);
 
-        ref.addValueEventListener(new ValueEventListener() {
+        produkUtamaRef = FirebaseDatabase.getInstance().getReference("produk");
+        produkRefs = FirebaseDatabase.getInstance().getReference("keranjang").child(userUid);
+
+        produkUtamaRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                keranjangData.clear();
-                adapter.clearSelections();
+            public void onDataChange(@NonNull DataSnapshot snapshotProdukPusat) {
+                Map<String, ProdukData> produkPusatMap = new HashMap<>();
 
-                for (DataSnapshot produkSnapshot : snapshot.getChildren()) {
-                    String idProduk = produkSnapshot.getKey(); // Misalnya AU50_pouch_xxx
-
-                    for (DataSnapshot varianSnapshot : produkSnapshot.getChildren()) {
-                        KeranjangData data = varianSnapshot.getValue(KeranjangData.class);
-
-                        if (data != null) {
-                            String idVarian = varianSnapshot.getKey(); // UUID varian
-                            data.setIdProduk(idProduk); // ← penting juga diset kalau belum
-                            data.setIdVarian(idVarian); // ← ini yang mencegah child(null)
-
-                            keranjangData.add(data);
-                        }
+                for (DataSnapshot produkSnapshot : snapshotProdukPusat.getChildren()) {
+                    ProdukData produk = produkSnapshot.getValue(ProdukData.class);
+                    if (produk != null) {
+                        produkPusatMap.put(produkSnapshot.getKey(), produk);
                     }
                 }
 
-                progressBarKeranjang.setVisibility(View.GONE);
+                produkRefs.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshotKeranjang) {
+                        keranjangData.clear();
+                        adapter.clearSelections();
 
-                if (!keranjangData.isEmpty()) {
-                    frameAllProduk.setVisibility(View.VISIBLE);
-                    progressBarKeranjangDataNotFound.setVisibility(View.GONE);
-                } else {
-                    frameAllProduk.setVisibility(View.GONE);
-                    layoutProgressBarKeranjangDataNotFound.setVisibility(View.VISIBLE);
-                    progressBarKeranjangDataNotFound.setVisibility(View.VISIBLE);
-                    progressBarKeranjangDataNotFound.setRepeatCount(LottieDrawable.INFINITE);
-                    progressBarKeranjangDataNotFound.playAnimation();
-                }
+                        if (!snapshotKeranjang.exists()) {
+                            tampilkanKosong();
+                            return;
+                        }
 
-                if (recyclerViewKeranjang.getAdapter() != null)
-                    recyclerViewKeranjang.getAdapter().notifyDataSetChanged();
+                        for (DataSnapshot produkSnapshot : snapshotKeranjang.getChildren()) {
+                            String idProduk = produkSnapshot.getKey();
+
+                            for (DataSnapshot varianSnapshot : produkSnapshot.getChildren()) {
+                                try {
+                                    KeranjangData data = varianSnapshot.getValue(KeranjangData.class);
+                                    if (data != null) {
+                                        String idVarian = varianSnapshot.getKey();
+                                        data.setIdProduk(idProduk);
+                                        data.setIdVarian(idVarian);
+
+                                        ProdukData produkPusat = produkPusatMap.get(idProduk);
+
+                                        if (produkPusat != null) {
+                                            Map<String, VarianProduk> mapVarian = produkPusat.getVarian();
+                                            if (mapVarian != null) {
+                                                VarianProduk varianPusat = mapVarian.get(idVarian);
+                                                if (varianPusat != null) {
+                                                    Log.d("CekPerubahan", "Bandingkan produk: " + data.getNamaProduk() + " vs pusat: " + produkPusat.getNamaProduk());
+                                                    Log.d("CekPerubahan", "Bandingkan harga: " + data.getHarga() + " vs pusat: " + varianPusat.getHarga());
+
+                                                    if (!produkPusat.getNamaProduk().equals(data.getNamaProduk()) || varianPusat.getHarga() != data.getHarga()) {
+                                                        data.setHarga(varianPusat.getHarga());
+                                                        data.setDataBerubah(true);
+                                                    }
+                                                } else {
+                                                    // Varian sudah tidak ada di produk pusat
+                                                    data.setTidakTersedia(true);
+                                                }
+                                            } else {
+                                                // Produk tidak punya varian apapun
+                                                data.setTidakTersedia(true);
+                                            }
+                                        } else {
+                                            // Produk tidak ditemukan
+                                            data.setTidakTersedia(true);
+                                        }
+
+                                        keranjangData.add(data);
+                                    } else {
+                                        Log.w("Keranjang", "Data keranjang null, dilewati");
+                                    }
+                                } catch (Exception e) {
+                                    Log.e("KeranjangParse", "Gagal parsing varian keranjang: " + e.getMessage());
+                                }
+                            }
+
+                            if (!keranjangData.isEmpty()) {
+                                tampilkanProduk();
+                            } else {
+                                tampilkanKosong();
+                            }
+
+                            if (recyclerViewKeranjang.getAdapter() != null) {
+                                recyclerViewKeranjang.getAdapter().notifyDataSetChanged();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        tampilkanKosong();
+                        Log.e("Memuat Keranjang", "Gagal memuat data keranjang, Error: " + error.getMessage());
+                    }
+                });
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                progressBarKeranjang.setVisibility(View.GONE);
-                frameAllProduk.setVisibility(View.GONE);
-                progressBarKeranjangDataNotFound.setVisibility(View.VISIBLE);
-                Log.e("Firebase", "Gagal mengambil data keranjang: " + error.getMessage());
+                tampilkanKosong();
+                Log.e("Memuat Produk Utama", "Gagal memuat data produk, Error: " + error.getMessage());
             }
         });
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        progressBarKeranjang.setVisibility(View.VISIBLE);
-        frameAllProduk.setVisibility(View.GONE);
+    private void tampilkanProduk() {
+        frameAllProduk.setVisibility(View.VISIBLE);
+        progressBarKeranjang.setVisibility(View.GONE);
+        layoutProgressBarKeranjangDataNotFound.setVisibility(View.GONE);
         progressBarKeranjangDataNotFound.setVisibility(View.GONE);
+        progressBarKeranjangDataNotFound.pauseAnimation();
+    }
 
-        checkBoxSelectAll.setChecked(false);
+    private void tampilkanKosong() {
+        frameAllProduk.setVisibility(View.GONE);
+        progressBarKeranjang.setVisibility(View.GONE);
+        layoutProgressBarKeranjangDataNotFound.setVisibility(View.VISIBLE);
+        progressBarKeranjangDataNotFound.setVisibility(View.VISIBLE);
+        progressBarKeranjangDataNotFound.setRepeatCount(LottieDrawable.INFINITE);
+        progressBarKeranjangDataNotFound.playAnimation();
+    }
 
-        new Handler().postDelayed(this::AmbilProdukUser, 5000);
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (produkRefs != null && produkListener != null) {
+            produkRefs.removeEventListener(produkListener);
+        }
     }
 }

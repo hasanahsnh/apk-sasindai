@@ -5,20 +5,18 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Window;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.sasindai.adapter.KaPasaranPagerAdapter;
+import com.example.sasindai.isLayanan.IsLayanan;
 import com.example.sasindai.theme.ThemeActivity;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
@@ -55,8 +53,14 @@ public class KaPasaranHostActivity extends AppCompatActivity {
         if (imgKeranjang != null) {
             imgKeranjang.setOnClickListener(v -> {
                 if (currentUser != null) {
-                    Intent intent = new Intent(this, KeranjangActivity.class);
-                    startActivity(intent);
+                    IsLayanan.kaPasaran(this, isAktif -> {
+                        if (!isAktif) {
+                            Toast.makeText(this, "Fitur Ka Pasaran sedang tidak aktif", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        Intent intent = new Intent(this, KeranjangActivity.class);
+                        startActivity(intent);
+                    });
                 } else {
                     Intent intent = new Intent(this, AuthHostActivity.class);
                     startActivity(intent);

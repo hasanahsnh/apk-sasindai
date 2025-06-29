@@ -210,46 +210,9 @@
                 android:layout_marginEnd="10dp"
                 android:layout_marginTop="8dp"/>
 
-            <!-- btn bantuan -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="8dp">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Bantuan"
-                    android:paddingStart="15dp"
-                    android:fontFamily="@font/poppins_medium"
-                    android:textColor="@color/black"
-                    android:textSize="12sp"
-                    android:layout_weight="1"/>
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text=">"
-                    android:paddingEnd="15dp"
-                    android:fontFamily="@font/poppins_medium"
-                    android:textColor="@color/black"
-                    android:textSize="12sp"
-                    android:layout_weight="1"
-                    android:gravity="end"/>
-
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#888888"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginTop="8dp"/>
-
             <!-- btn kritik dan saran -->
             <LinearLayout
+                android:id="@+id/btnIsiKuesionerKepuasan"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -258,7 +221,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Kritik dan Saran"
+                    android:text="Kuesioner Kepuasan Pegguna"
                     android:paddingStart="15dp"
                     android:fontFamily="@font/poppins_medium"
                     android:textColor="@color/black"
@@ -266,14 +229,13 @@
                     android:layout_weight="1"/>
 
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text=">"
                     android:paddingEnd="15dp"
                     android:fontFamily="@font/poppins_medium"
                     android:textColor="@color/black"
                     android:textSize="12sp"
-                    android:layout_weight="1"
                     android:gravity="end"/>
 
             </LinearLayout>

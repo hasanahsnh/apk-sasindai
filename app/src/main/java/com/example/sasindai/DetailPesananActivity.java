@@ -1,13 +1,10 @@
 package com.example.sasindai;
 
 import android.os.Bundle;
-import android.view.Window;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -18,7 +15,6 @@ import com.example.sasindai.adapter.DaftarItemRiwayatPesananAdapter;
 import com.example.sasindai.model.ItemProdukOrderData;
 import com.example.sasindai.model.OrderItemWrapper;
 import com.example.sasindai.model.OrdersData;
-import com.example.sasindai.model.ProdukData;
 import com.example.sasindai.theme.ThemeActivity;
 import com.google.gson.Gson;
 

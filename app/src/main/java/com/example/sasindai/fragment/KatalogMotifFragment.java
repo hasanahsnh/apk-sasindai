@@ -1,5 +1,7 @@
 package com.example.sasindai.fragment;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -12,11 +14,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.airbnb.lottie.LottieDrawable;
+import com.example.sasindai.MasukkanMotifFormActivity;
 import com.example.sasindai.R;
 import com.example.sasindai.adapter.KatalogMotifListAdapter;
 import com.example.sasindai.model.KatalogMotifData;
@@ -49,6 +53,10 @@ public class KatalogMotifFragment extends Fragment {
     private StaggeredGridLayoutManager staggeredGridLayoutManager;
     private ProgressBar progressBar;
     private LottieAnimationView animDataNotFound;
+    private ImageView btnMasukkanMotif;
+    private DatabaseReference db;
+    private ValueEventListener dbEventListener;
+    Context context = getContext();
 
     public KatalogMotifFragment() {
         // Required empty public constructor
@@ -96,6 +104,7 @@ public class KatalogMotifFragment extends Fragment {
 
         recyclerViewKatalogMotif = view.findViewById(R.id.recyclerViewKatalogMotif);
         progressBar = view.findViewById(R.id.progressBar);
+        btnMasukkanMotif = view.findViewById(R.id.btnMasukkanMotif);
 
         adapter = new KatalogMotifListAdapter(requireContext(), new ArrayList<>());
         recyclerViewKatalogMotif.setAdapter(adapter);
@@ -103,6 +112,19 @@ public class KatalogMotifFragment extends Fragment {
         staggeredGridLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         staggeredGridLayoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS);
         recyclerViewKatalogMotif.setLayoutManager(staggeredGridLayoutManager);
+
+        if (btnMasukkanMotif != null) {
+            btnMasukkanMotif.setOnClickListener(v -> {
+                String url = "https://form.typeform.com/to/am6kHsIO";
+                String judul = "Pendapatmu soal motif";
+                Intent intent = new Intent(requireContext(), MasukkanMotifFormActivity.class);
+                intent.putExtra("url", url);
+                intent.putExtra("judul", judul);
+                startActivity(intent);
+            });
+        } else {
+            Log.w("Katalog Motif", "Btn saran masukkan motif tidak ditemukan");
+        }
 
         LoadDatabase();
 
@@ -114,8 +136,8 @@ public class KatalogMotifFragment extends Fragment {
             return;
         }
 
-        DatabaseReference db = FirebaseDatabase.getInstance().getReference("katalog");
-        db.addValueEventListener(new ValueEventListener() {
+        db = FirebaseDatabase.getInstance().getReference("katalog");
+        dbEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (!isAdded()) {
@@ -140,8 +162,21 @@ public class KatalogMotifFragment extends Fragment {
                     }
                 }
 
-                adapter.setData(data);
-                adapter.notifyDataSetChanged();
+                if (!isAdded()) {
+                    return;
+                }
+
+                Context context_ = getContext();
+                try {
+                    if (context_ != null) {
+                        adapter.setData(data);
+                        adapter.notifyDataSetChanged();
+                    } else {
+                        Log.e("Katalog Fragment", "Gagal memuat adapter");
+                    }
+                } catch (Exception e) {
+                    Log.e("Katalog Fragment", "Adapter error, Error: " + e.getMessage());
+                }
 
                 recyclerViewKatalogMotif.post(() -> {
                     staggeredGridLayoutManager.invalidateSpanAssignments(); // PENTING
@@ -173,20 +208,15 @@ public class KatalogMotifFragment extends Fragment {
                     Toast.makeText(requireContext(), "Gagal Memuat Data", Toast.LENGTH_SHORT).show();
                 }
             }
-        });
-    }
-
-    public void updateData(ArrayList<KatalogMotifData> data) {
-        if (adapter == null) return;
+        };
+        db.addValueEventListener(dbEventListener);
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
+    public void onDestroy() {
+        super.onDestroy();
+        if (db != null && dbEventListener != null) {
+            db.removeEventListener(dbEventListener);
+        }
     }
 }

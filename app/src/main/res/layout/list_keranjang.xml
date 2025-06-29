@@ -17,7 +17,10 @@
         android:id="@+id/checkBoxItem"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:buttonTint="@color/maroon"/>
+        android:buttonTint="@color/maroon"
+        android:padding="0dp"
+        android:minHeight="0dp"
+        android:minWidth="0dp"/>
 
     <!-- Gambar produk -->
     <com.makeramen.roundedimageview.RoundedImageView

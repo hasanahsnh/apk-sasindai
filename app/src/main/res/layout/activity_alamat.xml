@@ -51,119 +51,20 @@
                     android:paddingEnd="16dp"
                     android:paddingTop="16dp">
 
-                    <!-- Alamat Lengkap -->
                     <TextView
-                        android:text="Alamat Lengkap"
+                        android:text="Pengiriman tersedia"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textSize="12sp"
                         android:fontFamily="@font/poppins_bold"
                         android:textColor="@color/maroon"
                         android:layout_marginBottom="8dp"/>
-
-                    <!-- Kode Pos -->
-                    <EditText
-                        android:id="@+id/etAlamatLengkap"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="16dp"
-                        android:background="@drawable/frame_selected_item"
-                        android:fontFamily="@font/poppins_regular"
-                        android:hint="Masukkan alamat"
-                        android:padding="15dp"
-                        android:textColor="@color/black"
-                        android:textSize="12sp" />
-
-                    <TextView
-                        android:text="Kode Pos"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textSize="12sp"
-                        android:fontFamily="@font/poppins_bold"
-                        android:textColor="@color/maroon"
-                        android:layout_marginBottom="8dp"/>
-
-                    <!--- kode pos -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <EditText
-                            android:id="@+id/etKodePos"
-                            android:digits="0123456789"
-                            android:hint="Kode Pos"
-                            android:inputType="number"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/poppins_regular"
-                            android:textColor="@color/black"
-                            android:textSize="12sp"
-                            android:background="@drawable/frame_selected_item"
-                            android:padding="15dp"
-                            android:layout_marginBottom="16dp"
-                            android:layout_weight="1"/>
-
-                        <TextView
-                            android:id="@+id/btnCariKurir"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Cari"
-                            android:textColor="@color/putih"
-                            android:gravity="center"
-                            android:padding="15dp"
-                            android:background="@drawable/frame_bg_btn_checkout"
-                            android:fontFamily="@font/poppins_bold"
-                            android:textSize="12sp"
-                            android:layout_weight="1"
-                            android:layout_marginStart="10dp"/>
-
-                    </LinearLayout>
-
-                    <!-- rincian kode pos -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_marginBottom="16dp">
-
-                        <TextView
-                            android:text="Rincian Kode Pos"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textSize="12sp"
-                            android:fontFamily="@font/poppins_bold"
-                            android:textColor="@color/maroon"/>
-
-                        <TextView
-                            android:id="@+id/tvRincianKodePos"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:textSize="12sp"
-                            android:fontFamily="@font/poppins_regular"
-                            android:textColor="@color/black"
-                            android:layout_marginTop="8dp"
-                            android:background="@drawable/frame_selected_item"
-                            android:padding="15dp"
-                            android:text="Rincian"/>
-
-                    </LinearLayout>
 
                     <!-- Total Ongkir -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/tvOngkir"
-                            android:text="Jasa Pengiriman Tersedia:"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:textSize="12sp"
-                            android:fontFamily="@font/poppins_regular"
-                            android:textColor="@color/black"
-                            android:gravity="top"/>
 
                         <LinearLayout
                             android:id="@+id/progressBarKurir"

@@ -66,7 +66,6 @@ public class DetailPemesananActivity extends AppCompatActivity {
     LinearLayout progressBarDetailPemesanan;
     NestedScrollView containerDetailPemesanan;
     String uid;
-    String namaLengkap = "Nama lengkap tidak ditemukan";
     String noTelp = "No. Telepon tidak ditemukan";
     boolean isTelpValid = false;
     RadioGroup radioGroup;
@@ -74,7 +73,6 @@ public class DetailPemesananActivity extends AppCompatActivity {
     int selectedId;
     String[] selectedPayment = {"shopeepay"};
     String orderId;
-    private boolean isCheckingStatus = false;
     private ActivityResultLauncher<Intent> launcher;
 
     @Override
@@ -102,29 +100,6 @@ public class DetailPemesananActivity extends AppCompatActivity {
         radioShopee = findViewById(R.id.radioShopeePay);
         //radioQris = findViewById(R.id.radioQris);
         // End inisial
-
-        launcher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                        Intent data = result.getData();
-                        if (data != null) {
-                            String status = data.getStringExtra("resultStatus");
-                            String statusMessage = data.getStringExtra("resultMessage");
-                            String transactionId = data.getStringExtra("transactionId");
-                            Log.d("MIDTRANS", "Status: " + status);
-                            Log.d("MIDTRANS", "Message: " + statusMessage);
-                            Log.d("MIDTRANS", "Transaction ID: " + transactionId);
-
-                            // TODO: Tangani sesuai status transaksi, misal update UI, simpan data dll
-                            Toast.makeText(this, "Pembayaran: " + statusMessage, Toast.LENGTH_LONG).show();
-                        }
-                    } else {
-                        Log.d("MIDTRANS", "Payment canceled or failed");
-                        Toast.makeText(this, "Pembayaran dibatalkan", Toast.LENGTH_SHORT).show();
-                    }
-                }
-        );
 
         radioShopee.setChecked(true);
         String[] selectedPayment = { "shopeepay" };
@@ -154,7 +129,6 @@ public class DetailPemesananActivity extends AppCompatActivity {
         // End inisial tabel
 
         loadUserData();
-
         lengkapiData();
 
         // Cek status transaksi untuk update tampilan keranjang:
@@ -163,6 +137,8 @@ public class DetailPemesananActivity extends AppCompatActivity {
         btnCheckoutOrder.setOnClickListener(v -> {
             if (checkOutOrder()) {
                 cplCheckout();
+                progressBarDetailPemesanan.setVisibility(View.VISIBLE);
+                containerDetailPemesanan.setVisibility(View.GONE);
             }
         });
         // end event
@@ -201,8 +177,12 @@ public class DetailPemesananActivity extends AppCompatActivity {
     private void lengkapiData() {
         // Click btn masukkan alamat
         btnMasukkanAlamat.setOnClickListener(v -> {
-            Intent intent = new Intent(DetailPemesananActivity.this, AlamatActivity.class);
+            Intent intent = new Intent(DetailPemesananActivity.this, ProfileActivity.class);
             startActivity(intent);
+        });
+
+        jasaPengiriman.setOnClickListener(v -> {
+            ambilPengirimanTersedia();
         });
         // end proses
 
@@ -212,6 +192,50 @@ public class DetailPemesananActivity extends AppCompatActivity {
             startActivity(intent);
         });
         // end proses
+    }
+
+    private void ambilPengirimanTersedia() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            Toast.makeText(DetailPemesananActivity.this, "User belum login", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String uid = user.getUid();
+        DatabaseReference alamatRef = FirebaseDatabase.getInstance()
+                .getReference("pembeli")
+                .child(uid)
+                .child("alamat");
+
+        alamatRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    String kodePos = snapshot.child("kodePos").getValue(String.class);
+
+                    if (kodePos != null && !kodePos.isEmpty()) {
+                        // Simpan ke SharedPreferences agar bisa diakses di AlamatActivity
+                        SharedPreferences prefs = getSharedPreferences("KurirPrefs", MODE_PRIVATE);
+                        SharedPreferences.Editor editor = prefs.edit();
+                        editor.putString("kode_pos", kodePos);
+                        editor.apply();
+
+                        // Pindah ke AlamatActivity
+                        Intent intent = new Intent(DetailPemesananActivity.this, AlamatActivity.class);
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(DetailPemesananActivity.this, "Kode pos belum tersedia", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(DetailPemesananActivity.this, "Data alamat belum tersedia", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(DetailPemesananActivity.this, "Gagal mengambil alamat: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void loadUserData() {
@@ -313,117 +337,6 @@ public class DetailPemesananActivity extends AppCompatActivity {
     private boolean isEmptyOrNull(String value) {
         return value == null || value.trim().isEmpty();
     }
-
-    /*private void lanjutkanPembayaran() {
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-
-        if (currentUser == null) {
-            Toast.makeText(this, "User belum login", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        currentUser.getIdToken(true).addOnSuccessListener(result -> {
-            String idToken = result.getToken();
-            Log.d("AUTH", "ID Token: " + idToken);
-
-            int totalHarga = keranjangPrefs.getInt("total_harga", 0);
-            int ongkir = kurirPrefs.getInt("kurir_harga", 0);
-            int totalBayar = totalHarga + ongkir;
-
-            String alamat = alamatPrefs.getString("alamat", "");
-            String kelurahan = alamatPrefs.getString("subdistrict", "Kelurahan tidak ditemukan");
-            String kecamatan = alamatPrefs.getString("district", "Kecamatan tidak ditemukan");
-            String kota = alamatPrefs.getString("city", "Kota tidak ditemukan");
-            String provinsi = alamatPrefs.getString("province", "Provinsi tidak ditemukan");
-            String kodePos = alamatPrefs.getString("kode_pos", "Kodepos tidak ditemukan");
-
-            String alamatLengkap = alamat + ", "
-                    + kelurahan + ", "
-                    + kecamatan + ", "
-                    + kota + ", "
-                    + provinsi + ", "
-                    + kodePos;
-
-            Log.d("CHECKOUT", "Harga Produk: " + totalHarga);
-            Log.d("CHECKOUT", "Ongkir: " + ongkir);
-            Log.d("CHECKOUT", "Total Bayar: " + totalBayar);
-
-            JSONObject json = new JSONObject();
-            try {
-                json.put("total", totalBayar);
-                json.put("ongkir", ongkir);
-                json.put("hargaProduk", totalHarga);
-                json.put("alamat", alamatLengkap);
-                json.put("kurir", kurirPrefs.getString("kurir_nama", ""));
-                json.put("layanan", kurirPrefs.getString("kurir_service", ""));
-                JSONArray produkArray = getProdukArray();
-                json.put("produkDipesan", produkArray);
-                json.put("metodePembayaran", selectedPayment);
-                json.put("uid", currentUser.getUid());
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-                Toast.makeText(this, "Gagal membuat data checkout", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            OkHttpClient client = new OkHttpClient();
-
-            RequestBody body = RequestBody.create(
-                    json.toString(),
-                    MediaType.parse("application/json; charset=utf-8")
-            );
-
-            Request request = new Request.Builder()
-                    .url("https://sasindai.sascode.my.id/api/checkout")
-                    .addHeader("Authorization", "Bearer " + idToken)
-                    .addHeader("Accept", "application/json")
-                    .post(body)
-                    .build();
-
-            new Thread(() -> {
-                try (Response response = client.newCall(request).execute()) {
-                    if (response.isSuccessful()) {
-                        String responseBody = response.body().string();
-                        JSONObject responseJson = new JSONObject(responseBody);
-                        String snapToken = responseJson.getString("snap_token");
-                        String orderId = responseJson.getString("order_id");
-
-                        runOnUiThread(() -> {
-                            Log.d("CHECKOUT", "Order ID: " + orderId);
-                            Log.d("CHECKOUT", "Snap token: " + snapToken);
-
-                            UiKitApi uiKitApi = new UiKitApi.Builder()
-                                    .withMerchantClientKey("SB-Mid-client-LtKp1sBGtb5Kkf8i")
-                                    .withContext(this)
-                                    .withMerchantUrl("https://sasindai.sascode.my.id/api/checkout/")
-                                    .enableLog(true)
-                                    .build();
-
-                            setLocaleNew("id");
-
-                            // Mulai proses pembayaran Midtrans Snap dengan launcher
-                            uiKitApi.startPaymentUiFlow(this, launcher, snapToken);
-                        });
-                    } else {
-                        Log.e("CHECKOUT", "Gagal Checkout: " + response.code());
-                        runOnUiThread(() ->
-                                Toast.makeText(this, "Checkout gagal: " + response.code(), Toast.LENGTH_SHORT).show()
-                        );
-                    }
-                } catch (IOException | JSONException e) {
-                    e.printStackTrace();
-                    runOnUiThread(() ->
-                            Toast.makeText(this, "Terjadi kesalahan: " + e.getMessage(), Toast.LENGTH_LONG).show()
-                    );
-                }
-            }).start();
-
-        }).addOnFailureListener(e -> {
-            Toast.makeText(this, "Gagal mendapatkan token autentikasi", Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
-        });
-    }*/
 
     private void cplCheckout() {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -613,21 +526,7 @@ public class DetailPemesananActivity extends AppCompatActivity {
         }
 
         // Rincian alamat
-        String alamat = alamatPrefs.getString("alamat", "");
-        String subdistrict = alamatPrefs.getString("subdistrict", "");
-        String district = alamatPrefs.getString("district", "");
-        String city = alamatPrefs.getString("city", "");
-        String province = alamatPrefs.getString("province", "");
-        String kodePos = alamatPrefs.getString("kode_pos", "");
-
-        if (alamat.isEmpty() && subdistrict.isEmpty() && district.isEmpty()
-                && city.isEmpty() && province.isEmpty() && kodePos.isEmpty()) {
-            btnMasukkanAlamat.setText("Masukkan alamat");
-        } else {
-            String alamatLengkap = alamat + ", " + subdistrict + ", " + district + ", "
-                    + city + ", " + province + ", " + kodePos;
-            btnMasukkanAlamat.setText(alamatLengkap);
-        }
+        tampilkanAlamat();
 
         if (isTelpValid) {
             tvTelpPembeli.setText(noTelp);
@@ -637,6 +536,54 @@ public class DetailPemesananActivity extends AppCompatActivity {
 
         // Total rincian
         tvTotalHarga.setText(formatRupiah.format(rincianHargaBarang + hargaEkspedisi).replace("Rp", "Rp "));
+
+    }
+
+    private void tampilkanAlamat() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            String uid = user.getUid();
+            DatabaseReference alamatRef = FirebaseDatabase.getInstance()
+                    .getReference("pembeli")
+                    .child(uid)
+                    .child("alamat");
+
+            alamatRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (snapshot.exists()) {
+                        String alamat = snapshot.child("alamat").getValue(String.class); // atau "alamat" jika kamu simpan field-nya seperti itu
+                        String kelurahan = snapshot.child("kelurahan").getValue(String.class);
+                        String kecamatan = snapshot.child("kecamatan").getValue(String.class);
+                        String kota = snapshot.child("kota").getValue(String.class);
+                        String provinsi = snapshot.child("provinsi").getValue(String.class);
+                        String kodePos = snapshot.child("kodePos").getValue(String.class);
+
+                        if ((alamat == null || alamat.isEmpty()) &&
+                                (kelurahan == null || kelurahan.isEmpty()) &&
+                                (kecamatan == null || kecamatan.isEmpty()) &&
+                                (kota == null || kota.isEmpty()) &&
+                                (provinsi == null || provinsi.isEmpty()) &&
+                                (kodePos == null || kodePos.isEmpty())) {
+
+                            btnMasukkanAlamat.setText("Masukkan alamat");
+                        } else {
+                            String alamatLengkap = alamat + ", " + kelurahan + ", " + kecamatan + ", "
+                                    + kota + ", " + provinsi + ", " + kodePos;
+                            btnMasukkanAlamat.setText(alamatLengkap);
+                        }
+                    } else {
+                        btnMasukkanAlamat.setText("Masukkan alamat");
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    btnMasukkanAlamat.setText("Gagal memuat alamat");
+                    Log.e("AlamatFirebase", "onCancelled: " + error.getMessage());
+                }
+            });
+        }
 
     }
 

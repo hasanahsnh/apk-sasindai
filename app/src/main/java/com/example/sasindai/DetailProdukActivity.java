@@ -19,8 +19,6 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -29,7 +27,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.sasindai.adapter.BottomSheetProdukAdapter;
-import com.example.sasindai.adapter.KeranjangListAdapter;
 import com.example.sasindai.adapter.ProdukFotoSliderAdapter;
 import com.example.sasindai.adapter.UkuranListAdapter;
 import com.example.sasindai.isLayanan.IsLayanan;
@@ -40,7 +37,7 @@ import com.example.sasindai.theme.ThemeActivity;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -58,7 +55,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 
 public class DetailProdukActivity extends AppCompatActivity {
     private RecyclerView sliderGambarProduk, recyclerViewUkuranVarian;
@@ -70,6 +66,8 @@ public class DetailProdukActivity extends AppCompatActivity {
     private ShimmerFrameLayout shimmerSliderGambarProduk, shimmerNamaProduk, shimmerDeskripsiProduk, shimmerRentangharga, shimmerUkuran;
     private TextView namaProduk, deskripsiProduk, tvAverageHargaProduk, btnTambahProdukDetail, btnBeliSekarang;
     FirebaseUser currentUser;
+    DatabaseReference keranjangRef;
+    FloatingActionButton fabKembaliDetailProduk;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,9 +92,16 @@ public class DetailProdukActivity extends AppCompatActivity {
         shimmerUkuran = findViewById(R.id.shimmerUkuran);
         btnTambahProdukDetail = findViewById(R.id.btnTambahProdukDetail);
         btnBeliSekarang = findViewById(R.id.btnBeliSekarang);
+        fabKembaliDetailProduk = findViewById(R.id.fabKembaliDetailProduk);
         // End inisial
 
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (fabKembaliDetailProduk != null) {
+            fabKembaliDetailProduk.setOnClickListener(v -> {
+                finish();
+            });
+        }
 
         // Show bottom sheet
         btnTambahProdukDetail.setOnClickListener(v -> {
@@ -247,7 +252,12 @@ public class DetailProdukActivity extends AppCompatActivity {
                     // clear pref alamat/rincian kodepos dari pref tersedia
                     SharedPreferences alamat = getSharedPreferences("AlamatPrefs", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editorAlamatDanKurir = alamat.edit();
-                    editorAlamatDanKurir.clear();
+                    Map<String, ?> allEntries = alamat.getAll();
+                    for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
+                        if (!entry.getKey().equals("alamat")) {
+                            editorAlamatDanKurir.remove(entry.getKey());
+                        }
+                    }
                     editorAlamatDanKurir.apply();
 
                     // clear ekspedisi dipilih sebelumnya
@@ -286,7 +296,8 @@ public class DetailProdukActivity extends AppCompatActivity {
     }
     // End tampilkan bottom sheet
 
-    // Tampilkan bottom shet keranjang
+    /* Tampilkan bottom sheet keranjang,
+    sekaligus validasi stok lama dengan stok yang akan ditambah */
     private void bottomSheetKeranjang() {
         Dialog dialog = new Dialog(DetailProdukActivity.this);
         dialog.setContentView(R.layout.bottom_sheet_cart_layout);
@@ -305,6 +316,7 @@ public class DetailProdukActivity extends AppCompatActivity {
         ImageView btnMinus = dialog.findViewById(R.id.btnMinusCart);
         LinearLayout btnTambah = dialog.findViewById(R.id.btnTambahProdukCart);
 
+        // proses lanjutan
         final int[] quantity = {1}; // default qty
         final VarianProduk[] selectedVarian = {null}; // simpan varian yang dipilih
 
@@ -342,12 +354,61 @@ public class DetailProdukActivity extends AppCompatActivity {
 
             int stokTersedia = selectedVarian[0].getStok();
 
-            if (jumlahTambah > stokTersedia) {
-                Toast.makeText(this, "Jumlah melebihi stok tersedia: " + stokTersedia, Toast.LENGTH_SHORT).show();
-            } else {
-                tambahProdukKeDatabase(selectedVarian[0], quantity[0]);
-            }
-            dialog.dismiss();
+            /* keranjang
+            
+            */
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            String uid = user.getUid();
+            String idProduk = produkData.getIdProduk();
+            String idVarian = selectedVarian[0].getIdVarian();
+
+            DatabaseReference keranjangCekRefs = FirebaseDatabase.getInstance().getReference("keranjang")
+                    .child(uid)
+                    .child(idProduk)
+                    .child(idVarian);
+
+            keranjangCekRefs.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    int qtyLama = 0;
+                    if (snapshot.exists()) {
+                        // ambil qty tersedia
+                        Integer existingQty = snapshot.child("qty").getValue(Integer.class);
+                        // cek isNull
+                        if (existingQty != null) {
+                            // set nilai
+                            qtyLama = existingQty;
+                        } else {
+                            Log.w("existing qty", "existing qty tidak ditemukan");
+                        }
+                    } else {
+                        Log.w("Snap keranjang cek refs", "Snap keranjang cek refs tidak tersedia");
+                    }
+
+                    int totalQty = qtyLama + jumlahTambah;
+                    if (totalQty > stokTersedia) {
+                        Toast.makeText(DetailProdukActivity.this,
+                                "Jumlah melebihi stok tersedia. Stok: " + stokTersedia +
+                                        ", di keranjang sudah ada: " + qtyLama,
+                                Toast.LENGTH_LONG).show();
+                    } else {
+                        IsLayanan.kaPasaran(DetailProdukActivity.this, isAktif -> {
+                            if (!isAktif) {
+                                Toast.makeText(DetailProdukActivity.this, "Fitur Ka Pasaran sedang tidak aktif", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+
+                            tambahProdukKeDatabase(selectedVarian[0], jumlahTambah);
+                            dialog.dismiss();
+                        });
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Log.e("Keranjang Cek Refs", "Gagal mengambil data, Error: " + error.getMessage());
+                }
+            });
         });
 
         Window window = dialog.getWindow();
@@ -364,7 +425,7 @@ public class DetailProdukActivity extends AppCompatActivity {
     }
     // End bottom sheet layout
 
-    // Tambah produk ke keranjang
+    // Tambah produk ke keranjang, pas jelas-jelas emg udah bisa
     private void tambahProdukKeDatabase(VarianProduk varianProduk, int i) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
@@ -382,39 +443,54 @@ public class DetailProdukActivity extends AppCompatActivity {
         String idVarian = varianProduk.getIdVarian();
         String createAt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
 
-        DatabaseReference keranjangRef = FirebaseDatabase.getInstance()
+        keranjangRef = FirebaseDatabase.getInstance()
                 .getReference("keranjang")
                 .child(uid)
                 .child(idProduk)
                 .child(idVarian);
 
-        Map<String, Object> cartItem = new HashMap<>();
-        cartItem.put("idProduk", idProduk);
-        cartItem.put("namaProduk", produkData.getNamaProduk());
-        cartItem.put("idVarian", varianProduk.getIdVarian());
-        cartItem.put("namaVarian", varianProduk.getNama());
-        cartItem.put("harga", varianProduk.getHarga());
-        cartItem.put("gambarVarian", varianProduk.getGambar());
-        cartItem.put("size", varianProduk.getSize());
-        cartItem.put("qty", i);
-        cartItem.put("createAt", createAt);
-        cartItem.put("berat", varianProduk.getBerat());
-        cartItem.put("uidPenjual", produkData.getUid());
+        keranjangRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                try {
+                    Map<String, Object> cartItem = new HashMap<>();
+                    cartItem.put("idProduk", idProduk);
+                    cartItem.put("namaProduk", produkData.getNamaProduk());
+                    cartItem.put("idVarian", varianProduk.getIdVarian());
+                    cartItem.put("namaVarian", varianProduk.getNama());
+                    cartItem.put("harga", varianProduk.getHarga());
+                    cartItem.put("gambarVarian", varianProduk.getGambar());
+                    cartItem.put("size", varianProduk.getSize());
+                    cartItem.put("berat", varianProduk.getBerat());
+                    cartItem.put("uidPenjual", produkData.getUid());
 
-        keranjangRef.setValue(cartItem)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
-                        Toast.makeText(DetailProdukActivity.this, "Produk berhasil ditambah!", Toast.LENGTH_SHORT).show();
+                    int qtyBaru = i;
+                    if (snapshot.exists()) {
+                        Integer qtyLama = snapshot.child("qty").getValue(Integer.class);
+                        if (qtyLama != null) {
+                            qtyBaru += qtyLama;
+                        }
                     }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(DetailProdukActivity.this, "Gagal menambah produk!", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                    cartItem.put("qty", qtyBaru);
+                    cartItem.put("createAt", createAt);
 
+                    keranjangRef.setValue(cartItem)
+                            .addOnSuccessListener(unused ->  {
+                                Toast.makeText(DetailProdukActivity.this, "Produk berhasil ditambah!", Toast.LENGTH_SHORT).show();
+                            })
+                            .addOnFailureListener(e ->  {
+                                Toast.makeText(DetailProdukActivity.this, "Gagal menambah produk!", Toast.LENGTH_SHORT).show();
+                            });
+                } catch (Exception e) {
+                    Log.w("Mapping keranjang", "Gagal mengarahkan item di keranjang" + e.getMessage());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(DetailProdukActivity.this, "Terjadi kesalahan!", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
     // End tambah produk ke db
 

@@ -2,10 +2,8 @@ package com.example.sasindai.fragment;
 
 import static android.content.Context.MODE_PRIVATE;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.credentials.ClearCredentialStateRequest;
 import android.graphics.Typeface;
 import android.os.Bundle;
 
@@ -31,8 +29,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.sasindai.AuthHostActivity;
-import com.example.sasindai.KeranjangActivity;
 import com.example.sasindai.MainHostActivity;
+import com.example.sasindai.MasukkanMotifFormActivity;
 import com.example.sasindai.ProfileActivity;
 import com.example.sasindai.R;
 import com.google.firebase.FirebaseTooManyRequestsException;
@@ -44,8 +42,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-import org.checkerframework.checker.units.qual.C;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -66,7 +62,7 @@ public class AkunFragment extends Fragment {
     Button btnMasuk;
     TextView tvSelamatDatang, emailTerverifikasi, kirimEmailVerifikasi;
     ImageView imgEmailChecked;
-    LinearLayout layoutVerifikasiEmail, btnKeluar, lihatBelumDibayar, lihatDikemas, lihatProfile;
+    LinearLayout layoutVerifikasiEmail, btnKeluar, lihatProfile, btnIsiKuesionerKepuasan;
     ScrollView uiFragmentAkun;
     ProgressBar progressBarAkunFragment;
     SharedPreferences sharedPreferences;
@@ -140,6 +136,7 @@ public class AkunFragment extends Fragment {
         lihatProfile = view.findViewById(R.id.lihatProfile);
         lengkapiTelp = view.findViewById(R.id.lengkapiTelp);
         viewProfile = view.findViewById(R.id.view);
+        btnIsiKuesionerKepuasan = view.findViewById(R.id.btnIsiKuesionerKepuasan);
 
         // Perbarui tampilan
         authStateListener = firebaseAuth -> {
@@ -199,6 +196,19 @@ public class AkunFragment extends Fragment {
                 updateUI(null);
             }
         };
+
+        if (btnIsiKuesionerKepuasan != null) {
+            btnIsiKuesionerKepuasan.setOnClickListener(v -> {
+                String url = "https://sasindai.sascode.my.id/form-kepuasan";
+                String judul = "Kuesioner Kepuasan Pengguna";
+                Intent intent = new Intent(requireContext(), MasukkanMotifFormActivity.class);
+                intent.putExtra("url", url);
+                intent.putExtra("judul", judul);
+                startActivity(intent);
+            });
+        } else {
+            Log.w("Katalog Motif", "Btn saran masukkan motif tidak ditemukan");
+        }
 
         btnMasuk.setOnClickListener(v -> {
             Intent intent = new Intent(requireContext(), AuthHostActivity.class);

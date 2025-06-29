@@ -94,22 +94,24 @@
 
                     <TextView
                         android:id="@+id/tvNamaPembeli"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Penerima"
                         android:textColor="@color/maroon"
                         android:fontFamily="@font/poppins_bold"
-                        android:textSize="12sp"/>
+                        android:textSize="12sp"
+                        android:layout_weight="1"
+                        android:maxLines="1"
+                        android:ellipsize="end"/>
 
                     <TextView
                         android:id="@+id/tvTelpPembeli"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="089696210706"
                         android:textColor="@color/maroon"
                         android:fontFamily="@font/poppins_bold"
                         android:textSize="12sp"
-                        android:layout_weight="1"
                         android:gravity="end"/>
 
                     <TextView

@@ -1,6 +1,5 @@
 package com.example.sasindai.fragment;
 
-import static android.app.ProgressDialog.show;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -23,7 +22,7 @@ import android.widget.Toast;
 import com.example.sasindai.AuthHostActivity;
 import com.example.sasindai.MainHostActivity;
 import com.example.sasindai.R;
-import com.example.sasindai.model.UserData;
+import com.example.sasindai.service.FCMUtils;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -38,7 +37,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -282,34 +280,27 @@ public class RegisterFragment extends Fragment {
         // Debug
         Log.d("Simpan User", "Mengambil uid user: " + uid);
 
-        FirebaseMessaging.getInstance().getToken()
-                .addOnCompleteListener(task -> {
-                    if (!task.isSuccessful()) {
-                        Log.w("FCM Token", "Gagal ambil token", task.getException());
-                        return;
-                    }
+        try {
+            // Simpan semua data ke Firebase Realtime Database
+            Map<String, Object> updateData = new HashMap<>();
+            updateData.put("uid", uid);
+            updateData.put("email", email);
+            updateData.put("emailIsVerified", emailVerified);
+            updateData.put("namaLengkap", namaLengkap);
+            updateData.put("authMethod", authMethod); // sesuai parameter
+            updateData.put("role", role);
 
-                    String fcmToken = task.getResult();
-                    Log.d("FCM Token", "Token FCM: " + fcmToken);
-
-                    // Simpan semua data ke Firebase Realtime Database
-                    Map<String, Object> updateData = new HashMap<>();
-                    updateData.put("uid", uid);
-                    updateData.put("email", email);
-                    updateData.put("emailIsVerified", emailVerified);
-                    updateData.put("namaLengkap", namaLengkap);
-                    updateData.put("authMethod", authMethod); // sesuai parameter
-                    updateData.put("role", role);
-                    updateData.put("device_token", fcmToken); // disimpan di sini
-
-                    usersRef.child(uid).updateChildren(updateData).addOnCompleteListener(saveTask -> {
-                        if (saveTask.isSuccessful()) {
-                            Log.d("Firebase", "User berhasil disimpan dengan role: " + role);
-                        } else {
-                            Log.e("Firebase", "Gagal menyimpan user ke tabel users", saveTask.getException());
-                        }
-                    });
-                });
+            usersRef.child(uid).updateChildren(updateData).addOnCompleteListener(saveTask -> {
+                if (saveTask.isSuccessful()) {
+                    Log.d("Firebase", "User berhasil disimpan dengan role: " + role);
+                    FCMUtils.perbaruiTokenFirebase();
+                } else {
+                    Log.e("Firebase", "Gagal menyimpan user ke tabel users", saveTask.getException());
+                }
+            });
+        } catch (Exception e) {
+            Log.w("Register", "Gagal menyimpan data register, Error: " + e.getMessage());
+        }
 
     }
 

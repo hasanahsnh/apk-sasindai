@@ -1,5 +1,6 @@
 package com.example.sasindai.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -12,7 +13,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridView;
 
 import com.example.sasindai.R;
 import com.example.sasindai.adapter.ProdukListAdapter;
@@ -24,12 +24,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import org.checkerframework.checker.units.qual.A;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
 
@@ -53,6 +50,8 @@ public class ProdukFragment extends Fragment {
     private ShimmerProdukAdapter shimmer;
     private RecyclerView recyclerView, recyclerViewShimmerProduk;
     private String kategori;
+    private DatabaseReference produkRefs;
+    private ValueEventListener produkListener;
 
     public ProdukFragment() {
         // Required empty public constructor
@@ -115,9 +114,7 @@ public class ProdukFragment extends Fragment {
         recyclerViewShimmerProduk.setLayoutManager(new GridLayoutManager(requireContext(), 2));
         recyclerViewShimmerProduk.setAdapter(new ShimmerProdukAdapter(6));
 
-        adapter = new ProdukListAdapter(requireContext(), lists);
         recyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 2));
-        recyclerView.setAdapter(adapter);
 
         // Proses pengambilan data dari firebase
         loadDataFromFirebase();
@@ -129,9 +126,9 @@ public class ProdukFragment extends Fragment {
             return;
         }
 
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("produk");
+        produkRefs = FirebaseDatabase.getInstance().getReference("produk");
 
-        databaseReference.addValueEventListener(new ValueEventListener() {
+        produkListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (!isAdded()) {
@@ -153,6 +150,23 @@ public class ProdukFragment extends Fragment {
                     } catch (Exception e) {
                         Log.e("Produk Fragment", "Gagal memuat data produk!" + e.getMessage());
                     }
+                }
+
+                if (!isAdded()) {
+                    return;
+                }
+
+                Context context = getContext();
+                try {
+                    if (context != null) {
+                        adapter = new ProdukListAdapter(requireContext(), lists);
+                        recyclerView.setAdapter(adapter);
+                        adapter.notifyDataSetChanged();
+                    } else {
+                        Log.e("Produk Fragment", "Gagal memuat adapter");
+                    }
+                } catch (Exception e) {
+                    Log.e("Produk Fragment", "Adapter produk error, Error" + e.getMessage());
                 }
 
                 if (!lists.isEmpty()) {
@@ -185,8 +199,6 @@ public class ProdukFragment extends Fragment {
                         break;
                 }
 
-                adapter.notifyDataSetChanged();
-
             }
 
             @Override
@@ -194,16 +206,15 @@ public class ProdukFragment extends Fragment {
                 if (!isAdded()) return;
                 Log.e("Produk Fragmment", "Database error " + error.getMessage());
             }
-        });
+        };
+        produkRefs.addValueEventListener(produkListener);
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
+    public void onDestroy() {
+        super.onDestroy();
+        if (produkRefs != null && produkListener != null) {
+            produkRefs.removeEventListener(produkListener);
+        }
     }
 }

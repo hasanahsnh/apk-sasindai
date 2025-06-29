@@ -4,14 +4,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -48,6 +45,8 @@ public class SceneActivity extends AppCompatActivity {
     Objek3DAdapter adapter;
     String selectedModelUrl = null;
     boolean isModelPlaced = false;
+    DatabaseReference modelRefs;
+    ValueEventListener modelListener;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -129,8 +128,8 @@ public class SceneActivity extends AppCompatActivity {
     }
 
     private void loadDataFromDatabase() {
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("objek3d");
-        databaseReference.addValueEventListener(new ValueEventListener() {
+        modelRefs = FirebaseDatabase.getInstance().getReference("objek3d");
+        modelListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 dataList.clear();
@@ -183,7 +182,8 @@ public class SceneActivity extends AppCompatActivity {
                 Log.e("SceneActivity", "Gagal memuat database" + error.getMessage());
                 Toast.makeText(SceneActivity.this, "Gagal Memuat Data", Toast.LENGTH_SHORT).show();
             }
-        });
+        };
+        modelRefs.addValueEventListener(modelListener);
     }
 
     private void fadeOutAndRemove(Node node, Runnable onFinish) {
@@ -191,5 +191,13 @@ public class SceneActivity extends AppCompatActivity {
         node.setEnabled(false);   // Nonaktifkan node dari scene
         arSceneView.getArSceneView().getScene().removeChild(node); // Hapus node dari scene
         if (onFinish != null) onFinish.run();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (modelRefs != null && modelListener != null) {
+            modelRefs.removeEventListener(modelListener);
+        }
     }
 }

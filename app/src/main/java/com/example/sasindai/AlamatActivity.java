@@ -1,24 +1,19 @@
 package com.example.sasindai;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -27,11 +22,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.sasindai.adapter.KurirListAdapter;
 import com.example.sasindai.model.DaftarKurirData;
-import com.example.sasindai.model.VarianProduk;
 import com.example.sasindai.theme.ThemeActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -50,8 +43,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class AlamatActivity extends AppCompatActivity {
-    EditText etAlamatLengkap, etKodePos;
-    TextView tvOngkir, btnTerapkan, btnCariKurir, tvRincianKodePos;
+    TextView btnTerapkan, tvRincianKodePos;
     SharedPreferences kurirPrefs, prefsKeranjang;
     FirebaseUser currentUser;
     RecyclerView jasaPengirimanTersedia;
@@ -72,38 +64,21 @@ public class AlamatActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         // Inisialisasi EditText
-        etAlamatLengkap = findViewById(R.id.etAlamatLengkap);
         btnTerapkan = findViewById(R.id.btnTerapkan);
-        etKodePos = findViewById(R.id.etKodePos);
-        tvOngkir = findViewById(R.id.tvOngkir);
-        btnCariKurir = findViewById(R.id.btnCariKurir);
-        tvRincianKodePos = findViewById(R.id.tvRincianKodePos);
         jasaPengirimanTersedia = findViewById(R.id.jasaPengirimanTersedia);
         progressBarKurir = findViewById(R.id.progressBarKurir);
 
-        kurirPrefs = getSharedPreferences("AlamatPrefs", Context.MODE_PRIVATE);
+        SharedPreferences prefsKurir = getSharedPreferences("KurirPrefs", MODE_PRIVATE);
+        String kodePos = prefsKurir.getString("kode_pos", "");
         prefsKeranjang = getSharedPreferences("ProdukKeranjang", Context.MODE_PRIVATE);
-
-        btnCariKurir.setOnClickListener(v -> {
-            String kodePos = etKodePos.getText().toString().trim();
-            if (kodePos.isEmpty()) {
-                Toast.makeText(this, "Masukkan kode pos terlebih dahulu!", Toast.LENGTH_SHORT).show();
-            } else if (kodePos.length() < 3) {
-                Toast.makeText(this, "Masukkan minimal 3 karakter!", Toast.LENGTH_SHORT).show();
-            } else if (!kodePos.matches("\\d+")) {
-                Toast.makeText(this, "Masukkan input berupa angka!", Toast.LENGTH_SHORT).show();
-            } else {
-                getRincianKodePos(kodePos);
-            }
-        });
-
-        currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (currentUser != null) {
-            String uid = currentUser.getUid();
+        
+        if (!kodePos.isEmpty()) {
+            loadDestinationIdAndFetchCouriers(kodePos);
+        } else {
+            Toast.makeText(this, "Kode pos tidak ditemukan", Toast.LENGTH_SHORT).show();
         }
 
         btnTerapkan.setOnClickListener(v -> {
-            simpanAlamat();
             simpanKurir();
         });
 
@@ -114,31 +89,60 @@ public class AlamatActivity extends AppCompatActivity {
         });
     }
 
-    private void simpanAlamat() {
-        String alamat = etAlamatLengkap.getText().toString().trim();
-        if (alamat.isEmpty()) {
-            Toast.makeText(AlamatActivity.this, "Isi alamat terlebih dahulu!", Toast.LENGTH_SHORT).show();
-            return;
-        }
+    private void loadDestinationIdAndFetchCouriers(String kodePos) {
+        progressBarKurir.setVisibility(View.VISIBLE);
+        jasaPengirimanTersedia.setVisibility(View.GONE);
 
-        // Simpan ke SharedPreferences
-        SharedPreferences sharedPreferences = getSharedPreferences("AlamatPrefs", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("alamat", alamat);
-        editor.apply();
+        OkHttpClient client = new OkHttpClient();
 
-        Toast.makeText(AlamatActivity.this, "Alamat berhasil disimpan", Toast.LENGTH_SHORT).show();
+        HttpUrl url = HttpUrl.parse("https://sasindai.sascode.my.id/api/rincian-kodepos")
+                .newBuilder()
+                .addQueryParameter("keyword", kodePos)
+                .build();
 
+        Request request = new Request.Builder()
+                .url(url)
+                .get()
+                .addHeader("accept", "application/json")
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                runOnUiThread(() -> Toast.makeText(AlamatActivity.this, "Gagal memuat tujuan: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                String responseBody = response.body().string();
+                runOnUiThread(() -> {
+                    try {
+                        JSONObject json = new JSONObject(responseBody);
+                        JSONArray data = json.getJSONArray("data");
+
+                        if (data.length() > 0) {
+                            String destinationId = data.getJSONObject(0).getString("id");
+
+                            // Simpan ke KurirPrefs
+                            SharedPreferences.Editor editor = getSharedPreferences("KurirPrefs", MODE_PRIVATE).edit();
+                            editor.putString("destination_id", destinationId);
+                            editor.apply();
+
+                            // Langsung muat ekspedisi
+                            getEkspedisiTersedia(destinationId);
+                        } else {
+                            Toast.makeText(AlamatActivity.this, "Tujuan tidak ditemukan untuk kode pos", Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (JSONException e) {
+                        Toast.makeText(AlamatActivity.this, "Data tidak valid", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
     }
 
     // Simpan kurir
     private void simpanKurir() {
-        String kodePos = etKodePos.getText().toString().trim();
-        if (kodePos.isEmpty()) {
-            Toast.makeText(AlamatActivity.this, "Isi kode pos terlebih dahulu!", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
         if (adapter == null) {
             Log.w("Alamat Activity", "Adapter belum diinisialisasikan");
             Toast.makeText(AlamatActivity.this, "Silakan tentukan ekspedisi terlebih dahulu!", Toast.LENGTH_SHORT).show();
@@ -268,86 +272,5 @@ public class AlamatActivity extends AppCompatActivity {
         });
     }
     // End request
-
-    // Dapatkan rincian kode pos
-    private void getRincianKodePos(String kodePos) {
-        tvRincianKodePos.setText("Sedang mencari data...");
-        progressBarKurir.setVisibility(View.VISIBLE);
-        jasaPengirimanTersedia.setVisibility(View.GONE);
-
-        OkHttpClient client = new OkHttpClient();
-
-        HttpUrl url = HttpUrl.parse("https://sasindai.sascode.my.id/api/rincian-kodepos")
-                .newBuilder()
-                .addQueryParameter("keyword", kodePos)
-                .build();
-
-        Request request = new Request.Builder()
-                .url(url)
-                .get()
-                .addHeader("accept", "application/json")
-                .build();
-
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                runOnUiThread(() -> {
-                    tvRincianKodePos.setText("Gagal memuat data");
-                    Toast.makeText(AlamatActivity.this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
-            }
-
-            @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                String responseBody = response.body().string();
-                Log.d("ResponseBody", responseBody);
-                runOnUiThread(() -> {
-                    try {
-                        JSONObject json = new JSONObject(responseBody);
-                        JSONArray data = json.getJSONArray("data");
-                        if (data.length() > 0) {
-                            // Ambil data pertama
-                            JSONObject firstResult = data.getJSONObject(0);
-
-                            String subdistrict = firstResult.getString("subdistrict_name");
-                            String district = firstResult.getString("district_name");
-                            String city = firstResult.getString("city_name");
-                            String province = firstResult.getString("province_name");
-                            String destinationId = firstResult.getString("id");
-
-                            Log.d("Get ID destination", "ID destination:" + destinationId);
-                            getEkspedisiTersedia(destinationId);
-
-                            SharedPreferences prefs = getSharedPreferences("AlamatPrefs", MODE_PRIVATE);
-                            SharedPreferences.Editor editor = prefs.edit();
-                            editor.putString("subdistrict", subdistrict);
-                            editor.putString("district", district);
-                            editor.putString("city", city);
-                            editor.putString("province", province);
-                            editor.putString("destination_id", destinationId);
-                            editor.putString("kode_pos", kodePos);
-                            editor.apply();
-
-                            String resultText = String.format(
-                                    "Kecamatan: %s\nKelurahan: %s\nKota/Kab: %s\nProvinsi: %s",
-                                    subdistrict,
-                                    district,
-                                    city,
-                                    province
-                            );
-
-                            tvRincianKodePos.setText(resultText);
-                        } else {
-                            tvRincianKodePos.setText("Data tidak ditemukan");
-                        }
-                    } catch (JSONException e) {
-                        tvRincianKodePos.setText("Format data tidak valid");
-                        e.printStackTrace();
-                    }
-                });
-            }
-        });
-    }
-    // End rincian kode pos
 
 }

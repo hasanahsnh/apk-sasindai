@@ -16,10 +16,71 @@ import com.example.sasindai.callback.CallbackLayanan.LayananStatusCallback;
 
 public class IsLayanan {
 
+    // Fitur ka pasaran
     public static void kaPasaran(Context context, LayananStatusCallback callback) {
         DatabaseReference layananRef = FirebaseDatabase.getInstance().getReference("layanan");
 
         layananRef.orderByChild("fitur").equalTo("Ka Pasaran")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        boolean isAktif = false;
+
+                        for (DataSnapshot child : snapshot.getChildren()) {
+                            String status = child.child("statusFitur").getValue(String.class);
+                            if ("aktif".equalsIgnoreCase(status)) {
+                                isAktif = true;
+                                break;
+                            }
+                        }
+
+                        callback.onResult(isAktif);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e("Firebase", "Gagal membaca data layanan: " + error.getMessage());
+                        Toast.makeText(context, "Terjadi kesalahan mengambil status layanan", Toast.LENGTH_SHORT).show();
+                        callback.onResult(false);
+                    }
+                });
+    }
+
+    // Fitur AR
+    public static void arProduk(Context context, LayananStatusCallback callback) {
+        DatabaseReference layananRef = FirebaseDatabase.getInstance().getReference("layanan");
+
+        layananRef.orderByChild("fitur").equalTo("AR Produk")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        boolean isAktif = false;
+
+                        for (DataSnapshot child : snapshot.getChildren()) {
+                            String status = child.child("statusFitur").getValue(String.class);
+                            if ("aktif".equalsIgnoreCase(status)) {
+                                isAktif = true;
+                                break;
+                            }
+                        }
+
+                        callback.onResult(isAktif);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e("Firebase", "Gagal membaca data layanan: " + error.getMessage());
+                        Toast.makeText(context, "Terjadi kesalahan mengambil status layanan", Toast.LENGTH_SHORT).show();
+                        callback.onResult(false);
+                    }
+                });
+    }
+
+    // Fitur sejarah
+    public static void sejarah(Context context, LayananStatusCallback callback) {
+        DatabaseReference layananRef = FirebaseDatabase.getInstance().getReference("layanan");
+
+        layananRef.orderByChild("fitur").equalTo("Sejarah Sasirangan")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {

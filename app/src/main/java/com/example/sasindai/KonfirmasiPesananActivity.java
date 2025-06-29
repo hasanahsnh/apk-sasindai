@@ -34,6 +34,7 @@ import com.google.gson.reflect.TypeToken;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class KonfirmasiPesananActivity extends AppCompatActivity {
     RecyclerView rvUlasanVarian;
@@ -105,7 +106,7 @@ public class KonfirmasiPesananActivity extends AppCompatActivity {
     }
 
     private void simpanUlasan() {
-        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String uid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
         rootRef = FirebaseDatabase.getInstance().getReference("produk");
         ordersRef = FirebaseDatabase.getInstance().getReference("orders");
         pengirimanRef = FirebaseDatabase.getInstance().getReference("pengiriman");
@@ -118,7 +119,8 @@ public class KonfirmasiPesananActivity extends AppCompatActivity {
             String idVarian = produk.getIdVarian();
             float rating = item.getRating();
             String komentar = item.getKomentar();
-            String videoUrl = item.getMediaUrl();
+
+            Log.d("ULASAN", "idProduk: " + idProduk + ", idVarian: " + idVarian + ", uid: " + uid);
 
             if (rating > 0) {
                 DatabaseReference ulasanRef = rootRef
@@ -141,6 +143,9 @@ public class KonfirmasiPesananActivity extends AppCompatActivity {
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     for (DataSnapshot child : snapshot.getChildren()) {
                         String idPesanan = child.child("idPesanan").getValue(String.class);
+
+                        Log.d("CEK_PENGIRIMAN", "child key: " + child.getKey());
+                        Log.d("CEK_PENGIRIMAN", "idPesanan dari child: " + child.child("idPesanan").getValue());
 
                         if (orderId.equals(idPesanan)) {
                             // Dapatkan idPengiriman (key node)

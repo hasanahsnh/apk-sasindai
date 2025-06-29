@@ -12,12 +12,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
-import com.airbnb.lottie.L;
+import com.airbnb.lottie.LottieAnimationView;
+import com.airbnb.lottie.LottieDrawable;
 import com.example.sasindai.R;
 import com.example.sasindai.adapter.RilisMediaAdapter;
 import com.example.sasindai.model.RilisMediaData;
-import com.google.firebase.FirebaseException;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -45,7 +46,10 @@ public class RilisMediaFragment extends Fragment {
     private RecyclerView rvRilisMedia;
     private RilisMediaAdapter adapter;
     private final ArrayList<RilisMediaData> data = new ArrayList<>();
-
+    private DatabaseReference rilisMediaRefs;
+    private ValueEventListener rilisMediaListener;
+    private ProgressBar progressBarRilisMedia;
+    private LottieAnimationView animDataNotFoundRilisMedia;
 
     public RilisMediaFragment() {
         // Required empty public constructor
@@ -91,6 +95,8 @@ public class RilisMediaFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         rvRilisMedia = view.findViewById(R.id.rvRilisMedia);
+        progressBarRilisMedia = view.findViewById(R.id.progressBarRilisMedia);
+        animDataNotFoundRilisMedia = view.findViewById(R.id.animDataNotFoundRilisMedia);
 
         adapter = new RilisMediaAdapter(requireContext(), data);
         rvRilisMedia.setAdapter(adapter);
@@ -111,8 +117,8 @@ public class RilisMediaFragment extends Fragment {
             return;
         }
 
-        DatabaseReference db = FirebaseDatabase.getInstance().getReference("berita");
-        db.addValueEventListener(new ValueEventListener() {
+        rilisMediaRefs = FirebaseDatabase.getInstance().getReference("berita");
+        rilisMediaListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 data.clear();
@@ -131,6 +137,17 @@ public class RilisMediaFragment extends Fragment {
                     }
                 }
 
+                if (adapter != null) {
+                    progressBarRilisMedia.setVisibility(View.GONE);
+                    rvRilisMedia.setVisibility(View.VISIBLE);
+                    animDataNotFoundRilisMedia.setVisibility(View.GONE);
+                    animDataNotFoundRilisMedia.pauseAnimation();
+                } else {
+                    progressBarRilisMedia.setVisibility(View.GONE);
+                    rvRilisMedia.setVisibility(View.GONE);
+                    animDataNotFoundRilisMedia.playAnimation();
+                    animDataNotFoundRilisMedia.setRepeatCount(LottieDrawable.INFINITE);
+                }
                 adapter.notifyDataSetChanged();
             }
 
@@ -143,6 +160,16 @@ public class RilisMediaFragment extends Fragment {
 
                 Log.e("Rilis Media Fragment, ", "Error: "  + error.getMessage());
             }
-        });
+        };
+
+        rilisMediaRefs.addValueEventListener(rilisMediaListener);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (rilisMediaRefs != null && rilisMediaListener != null) {
+            rilisMediaRefs.removeEventListener(rilisMediaListener);
+        }
     }
 }

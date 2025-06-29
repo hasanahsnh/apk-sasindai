@@ -1,6 +1,7 @@
 package com.example.sasindai.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Looper;
@@ -28,10 +29,8 @@ import com.bumptech.glide.request.target.Target;
 import com.example.sasindai.KeranjangActivity;
 import com.example.sasindai.R;
 import com.example.sasindai.model.KeranjangData;
-import com.example.sasindai.model.VarianProduk;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.datepicker.OnSelectionChangedListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -179,6 +178,21 @@ public class KeranjangListAdapter extends RecyclerView.Adapter<KeranjangListAdap
 
         holder.tvQtyKeranjang.setText(String.valueOf(data.getQty()));
 
+        if (data.isTidakTersedia()) {
+            holder.checkBoxItem.setEnabled(false);
+            holder.checkBoxItem.setAlpha(0.5f);
+            holder.tvVarianKeranjang.setText("Varian tidak tersedia");
+
+            // Tambahan efek visual (opsional)
+            holder.itemView.setAlpha(0.5f);
+            holder.itemView.setBackgroundColor(Color.parseColor("#EEEEEE")); // abu-abu
+        } else {
+            holder.checkBoxItem.setEnabled(true);
+            holder.checkBoxItem.setAlpha(1.0f);
+
+            holder.itemView.setAlpha(1.0f);
+        }
+
         // Menyimpan item yang dipilih
         holder.checkBoxItem.setOnCheckedChangeListener(null);
         holder.checkBoxItem.setChecked(selectedItems.contains(data));
@@ -198,7 +212,6 @@ public class KeranjangListAdapter extends RecyclerView.Adapter<KeranjangListAdap
         holder.imgTrash.setOnClickListener(v -> {
             String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
             String idProduk = data.getIdProduk();
-            String namaVarian = data.getNamaVarian();
             String idVarian = data.getIdVarian();
 
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference("keranjang")

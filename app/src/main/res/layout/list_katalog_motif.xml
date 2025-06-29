@@ -1,53 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="6dp">
-
-    <com.makeramen.roundedimageview.RoundedImageView
-        android:id="@+id/imgMotif"
+    android:layout_height="wrap_content">
+    <FrameLayout
+        android:id="@+id/frameMotif"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:adjustViewBounds="true"
-        android:scaleType="centerCrop"
-        app:riv_corner_radius="12dp"/>
+        android:layout_margin="6dp">
 
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/imgMotif"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            app:riv_corner_radius="12dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:orientation="vertical"
+            android:layout_gravity="bottom"
+            android:background="@drawable/bg_gradient">
+
+            <TextView
+                android:id="@+id/tvNamaMotif"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Nama motif"
+                android:textColor="@color/putih"
+                android:paddingTop="7dp"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:layout_gravity="bottom"
+                android:textSize="14dp"
+                android:fontFamily="@font/poppins_bold"
+                android:gravity="bottom"
+                android:layout_weight="1"/>
+
+            <TextView
+                android:id="@+id/tvDeskripsiMotif"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Deskripsi motif"
+                android:textColor="@color/putih"
+                android:paddingTop="7dp"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:paddingBottom="15dp"
+                android:layout_gravity="bottom"
+                android:textSize="10dp"
+                android:fontFamily="@font/poppins_medium"
+                android:ellipsize="end"
+                android:maxLines="5"
+                android:gravity="bottom"/>
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <!-- Tombol tiga titik di luar frame, menempel bawah -->
     <LinearLayout
+        android:id="@+id/layoutMore"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_gravity="bottom"
-        android:background="@drawable/bg_gradient">
+        android:layout_below="@id/frameMotif"
+        android:orientation="horizontal"
+        android:gravity="end"
+        android:paddingEnd="15dp"
+        android:paddingStart="15dp">
 
-        <TextView
-            android:id="@+id/tvNamaMotif"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Nama motif"
-            android:textColor="@color/putih"
-            android:paddingTop="7dp"
-            android:paddingStart="15dp"
-            android:paddingEnd="15dp"
-            android:layout_gravity="bottom"
-            android:textSize="14dp"
-            android:fontFamily="@font/poppins_bold"/>
-
-        <TextView
-            android:id="@+id/tvDeskripsiMotif"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Deskripsi motif"
-            android:textColor="@color/putih"
-            android:paddingTop="7dp"
-            android:paddingStart="15dp"
-            android:paddingEnd="15dp"
-            android:paddingBottom="7dp"
-            android:layout_gravity="bottom"
-            android:textSize="10dp"
-            android:fontFamily="@font/poppins_medium"/>
-
+        <ImageView
+            android:id="@+id/imgMore"
+            android:layout_width="27dp"
+            android:layout_height="20dp"
+            android:src="@drawable/img_more"/>
     </LinearLayout>
 
-</FrameLayout>
+</RelativeLayout>

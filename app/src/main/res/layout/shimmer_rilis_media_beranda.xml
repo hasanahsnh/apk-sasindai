@@ -14,7 +14,7 @@
         <TextView
             android:id="@+id/tvHeaderRilisMedia"
             android:layout_width="100dp"
-            android:layout_height="50dp"
+            android:layout_height="20dp"
             android:background="#636363"
             android:padding="12dp"
             android:fontFamily="@font/poppins_bold"
@@ -24,7 +24,7 @@
         <ImageView
             android:id="@+id/layKontenRilisMedia"
             android:layout_width="match_parent"
-            android:layout_height="140dp"
+            android:layout_height="90dp"
             android:orientation="horizontal"
             android:baselineAligned="false"
             android:background="#636363"/>

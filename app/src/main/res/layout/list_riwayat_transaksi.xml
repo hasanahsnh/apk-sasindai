@@ -182,80 +182,87 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/btnLihatSemua"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="end">
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="center_vertical">
 
-        <LinearLayout
+        <!-- Gambar di kiri -->
+        <ImageView
+            android:id="@+id/btnSalinResi"
+            android:layout_width="50dp"
+            android:layout_height="40dp"
+            android:src="@drawable/img_truck"
+            android:layout_marginStart="12dp" />
+
+        <!-- Spacer agar tombol terdorong ke kanan -->
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <!-- Tombol-tombol di kanan -->
+        <TextView
+            android:id="@+id/btnBayarSekarang"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="8dp">
+            android:text="Bayar sekarang"
+            android:layout_marginEnd="4dp"
+            android:textColor="@color/putih"
+            android:fontFamily="@font/poppins_regular"
+            android:textSize="12sp"
+            android:background="@drawable/frame_bg_btn_checkout"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp" />
 
-            <TextView
-                android:id="@+id/btnBayarSekarang"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Bayar sekarang"
-                android:layout_marginEnd="4dp"
-                android:textColor="@color/putih"
-                android:fontFamily="@font/poppins_regular"
-                android:textSize="12sp"
-                android:background="@drawable/frame_bg_btn_checkout"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp"/>
+        <TextView
+            android:id="@+id/btnPesananDiterima"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pesanan diterima"
+            android:layout_marginEnd="4dp"
+            android:textColor="@color/putih"
+            android:fontFamily="@font/poppins_regular"
+            android:textSize="12sp"
+            android:background="@drawable/frame_bg_btn_checkout"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp" />
 
-            <TextView
-                android:id="@+id/btnPesananDiterima"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Pesanan diterima"
-                android:layout_marginEnd="4dp"
-                android:textColor="@color/putih"
-                android:fontFamily="@font/poppins_regular"
-                android:textSize="12sp"
-                android:background="@drawable/frame_bg_btn_checkout"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp"/>
+        <TextView
+            android:id="@+id/btnAjukanPembatalan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Batalkan pesanan"
+            android:layout_marginEnd="4dp"
+            android:textColor="@color/putih"
+            android:fontFamily="@font/poppins_regular"
+            android:textSize="12sp"
+            android:background="@drawable/frame_bg_btn_checkout"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp" />
 
-            <TextView
-                android:id="@+id/btnAjukanPembatalan"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Ajukan pembatalan"
-                android:layout_marginEnd="4dp"
-                android:textColor="@color/putih"
-                android:fontFamily="@font/poppins_regular"
-                android:textSize="12sp"
-                android:background="@drawable/frame_bg_btn_checkout"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp"/>
-
-            <TextView
-                android:id="@+id/btnHubungiPenjual"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Hubungi penjual"
-                android:layout_marginEnd="4dp"
-                android:textColor="@color/putih"
-                android:fontFamily="@font/poppins_regular"
-                android:textSize="12sp"
-                android:background="@drawable/frame_bg_btn_checkout"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp"/>
-        </LinearLayout>
-
+        <TextView
+            android:id="@+id/btnHubungiPenjual"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hubungi penjual"
+            android:layout_marginEnd="12dp"
+            android:textColor="@color/putih"
+            android:fontFamily="@font/poppins_regular"
+            android:textSize="12sp"
+            android:background="@drawable/frame_bg_btn_checkout"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp" />
     </LinearLayout>
 
 </LinearLayout>

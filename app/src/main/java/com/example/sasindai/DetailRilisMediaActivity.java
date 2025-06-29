@@ -12,13 +12,15 @@ import androidx.core.view.WindowInsetsCompat;
 import com.bumptech.glide.Glide;
 import com.example.sasindai.model.RilisMediaData;
 import com.example.sasindai.theme.ThemeActivity;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.makeramen.roundedimageview.RoundedImageView;
 
 public class DetailRilisMediaActivity extends AppCompatActivity {
     RoundedImageView imgDetailFoto;
-    TextView tvDetailJudul, tvDetailTanggal, tvDetailKonten;
+    TextView tvDetailJudul, tvDetailTanggal, tvDetailKonten, tvPenulis;
     RilisMediaData data;
+    FloatingActionButton fabKembaliRilisMedia;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +34,14 @@ public class DetailRilisMediaActivity extends AppCompatActivity {
         tvDetailJudul = findViewById(R.id.tvDetailJudul);
         tvDetailTanggal = findViewById(R.id.tvDetailTanggal);
         tvDetailKonten = findViewById(R.id.tvDetailKonten);
+        tvPenulis = findViewById(R.id.tvPenulis);
+        fabKembaliRilisMedia = findViewById(R.id.fabKembaliRilisMedia);
+
+        if (fabKembaliRilisMedia != null) {
+            fabKembaliRilisMedia.setOnClickListener(v -> {
+                finish();
+            });
+        }
 
         tampilkanDetailRilisMedia();
 
@@ -72,6 +82,13 @@ public class DetailRilisMediaActivity extends AppCompatActivity {
         } else {
             assert tvDetailKonten != null;
             tvDetailKonten.setText("Tanggal Terbit");
+        }
+
+        if (tvPenulis != null && data != null) {
+            tvPenulis.setText(data.getJurnalis());
+        } else {
+            assert tvPenulis != null;
+            tvPenulis.setText("Penulis Artikel");
         }
     }
 }

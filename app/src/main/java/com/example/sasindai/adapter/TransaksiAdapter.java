@@ -1,5 +1,7 @@
 package com.example.sasindai.adapter;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -10,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -66,7 +69,15 @@ public class TransaksiAdapter extends RecyclerView.Adapter<TransaksiAdapter.Tran
         String status = data.getStatusPesanan();
         NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
 
-        totalPesanan = data.getProduk() != null ? data.getProduk().size() : 0;
+        int totalQty = 0;
+        if (data.getProduk() != null) {
+            for (Map.Entry<String, ItemProdukOrderData> entry : data.getProduk().entrySet()) {
+                ItemProdukOrderData item = entry.getValue();
+                if (item != null) {
+                    totalQty += item.getQty();
+                }
+            }
+        }
 
         // Cek apakah list produk tidak kosong
         if (data.getProduk() != null && !data.getProduk().isEmpty()) {
@@ -85,7 +96,7 @@ public class TransaksiAdapter extends RecyclerView.Adapter<TransaksiAdapter.Tran
 
         holder.statusPesanan.setText(status);
         holder.idPesanan.setText(data.getOrder_id());
-        holder.countTotalPesanan.setText(String.valueOf(totalPesanan));
+        holder.countTotalPesanan.setText(String.valueOf(totalQty));
         holder.totalhargaPesanan.setText(formatter.format(data.getTotal()).replace("Rp", "Rp "));
 
         // Ambil gambar dari ProdukData berdasarkan id_produk dari item pertama
@@ -113,29 +124,75 @@ public class TransaksiAdapter extends RecyclerView.Adapter<TransaksiAdapter.Tran
                 holder.btnBayarSekarang.setVisibility(View.VISIBLE);
                 holder.btnPesananDiterima.setVisibility(View.GONE);
                 holder.btnAjukanPembatalan.setVisibility(View.GONE);
+                holder.btnSalinResi.setVisibility(View.GONE);
                 break;
             case "kadaluarsa" :
             case "dibatalkan" :
-            case "pesanan diterima" :
                 holder.btnBayarSekarang.setVisibility(View.GONE);
                 holder.btnPesananDiterima.setVisibility(View.GONE);
                 holder.btnAjukanPembatalan.setVisibility(View.GONE);
+                holder.btnSalinResi.setVisibility(View.GONE);
                 break;
             case "dikirim" :
                 holder.btnBayarSekarang.setVisibility(View.GONE);
                 holder.btnPesananDiterima.setVisibility(View.VISIBLE);
                 holder.btnAjukanPembatalan.setVisibility(View.GONE);
+                holder.btnSalinResi.setVisibility(View.VISIBLE);
                 break;
             case "dikemas" :
                 holder.btnAjukanPembatalan.setVisibility(View.VISIBLE);
                 holder.btnBayarSekarang.setVisibility(View.GONE);
                 holder.btnPesananDiterima.setVisibility(View.GONE);
+                holder.btnSalinResi.setVisibility(View.GONE);
+                break;
+            case "pesanan diterima" :
+                holder.btnBayarSekarang.setVisibility(View.GONE);
+                holder.btnPesananDiterima.setVisibility(View.GONE);
+                holder.btnAjukanPembatalan.setVisibility(View.GONE);
+                holder.btnSalinResi.setVisibility(View.VISIBLE);
+                break;
         }
 
         /* btn yang dialihkan ke actv transaksi
         * - btn pesanan diterima*/
 
         String idPesanan = data.getOrder_id();
+        holder.btnSalinResi.setOnClickListener(v -> {
+            DatabaseReference pengirimanRefs = FirebaseDatabase.getInstance().getReference("pengiriman");
+
+            pengirimanRefs.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    boolean resiDitemukan = false;
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        String pesanan = dataSnapshot.child("idPesanan").getValue(String.class);
+
+                        if (idPesanan.equals(pesanan)) {
+                            String resi = dataSnapshot.child("resiPesanan").getValue(String.class);
+                            if (resi != null && !resi.isEmpty()) {
+                                ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+                                ClipData clip = ClipData.newPlainText("Resi", resi);
+                                clipboard.setPrimaryClip(clip);
+
+                                Toast.makeText(context, "Resi berhasil disalin: " + resi, Toast.LENGTH_SHORT).show();
+                                resiDitemukan = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!resiDitemukan) {
+                        Toast.makeText(context, "Resi tidak ditemukan untuk pesanan ini.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Toast.makeText(context, "Gagal mengambil data resi: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
+
         holder.btnPesananDiterima.setOnClickListener(v -> {
             // ambil idpesanan alihkan ke actv beri penilaian
             Intent intent = new Intent(context, KonfirmasiPesananActivity.class);
@@ -147,6 +204,7 @@ public class TransaksiAdapter extends RecyclerView.Adapter<TransaksiAdapter.Tran
 
             context.startActivity(intent);
         });
+
 
         holder.btnAjukanPembatalan.setOnClickListener(v -> {
             String pesanPengajuan = "Halo, saya ingin mengajukan pembatalan pesanan.\n\n" +
@@ -241,6 +299,7 @@ public class TransaksiAdapter extends RecyclerView.Adapter<TransaksiAdapter.Tran
                 tvQtyRiwayat, tvHargaProdukRiwayat,
                 idPesanan, statusPesanan, countTotalPesanan, totalhargaPesanan,
                 btnBayarSekarang, btnPesananDiterima, btnHubungiPenjual, btnAjukanPembatalan;
+        ImageView btnSalinResi;
         LinearLayout framePesanan;
         public TransaksiViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -258,6 +317,7 @@ public class TransaksiAdapter extends RecyclerView.Adapter<TransaksiAdapter.Tran
             btnPesananDiterima = itemView.findViewById(R.id.btnPesananDiterima);
             btnHubungiPenjual = itemView.findViewById(R.id.btnHubungiPenjual);
             btnAjukanPembatalan = itemView.findViewById(R.id.btnAjukanPembatalan);
+            btnSalinResi = itemView.findViewById(R.id.btnSalinResi);
         }
     }
 }

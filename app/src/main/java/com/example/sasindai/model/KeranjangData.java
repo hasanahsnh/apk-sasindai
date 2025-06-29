@@ -15,12 +15,13 @@ public class KeranjangData {
     private float berat;
     private String uidPenjual;
     private String idVarian;
+    private boolean isDataBerubah = false, isTidakTersedia = false;
 
     public KeranjangData() {
         //
     }
 
-    public KeranjangData(String idVarian, String idProduk, String namaProduk, String namaVarian, String createAt, String gambarVarian, int harga, int qty, String size, List<VarianProduk> varian, float berat, String uidPenjual) {
+    public KeranjangData(boolean isDataBerubah, boolean isTidakTersedia, String idVarian, String idProduk, String namaProduk, String namaVarian, String createAt, String gambarVarian, int harga, int qty, String size, List<VarianProduk> varian, float berat, String uidPenjual) {
         this.idProduk = idProduk;
         this.namaProduk = namaProduk;
         this.namaVarian = namaVarian;
@@ -33,6 +34,24 @@ public class KeranjangData {
         this.berat = berat;
         this.uidPenjual = uidPenjual;
         this.idVarian = idVarian;
+        this.isDataBerubah = isDataBerubah;
+        this.isTidakTersedia = isTidakTersedia;
+    }
+
+    public boolean isTidakTersedia() {
+        return isTidakTersedia;
+    }
+
+    public void setTidakTersedia(boolean tidakTersedia) {
+        isTidakTersedia = tidakTersedia;
+    }
+
+    public boolean isDataBerubah() {
+        return isDataBerubah;
+    }
+
+    public void setDataBerubah(boolean dataBerubah) {
+        isDataBerubah = dataBerubah;
     }
 
     public String getIdVarian() {

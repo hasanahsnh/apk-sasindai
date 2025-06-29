@@ -4,18 +4,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -28,10 +23,8 @@ import com.example.sasindai.adapter.TransaksiAdapter;
 import com.example.sasindai.model.OrdersData;
 import com.example.sasindai.theme.ThemeActivity;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
@@ -46,7 +39,9 @@ public class TransaksiActivity extends AppCompatActivity {
     List<OrdersData> ordersData = new ArrayList<>();
     LinearLayout layoutProgressBarRiwayatPesananNotFound, progressBarRiwayatPesanan;
     LottieAnimationView progressBarRiwayatPesananNotFound;
-    ImageView imgFilterStatusPesanan;
+    Query transaksiRefs;
+    ValueEventListener transaksiListener;
+    ImageView btnFilter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +57,11 @@ public class TransaksiActivity extends AppCompatActivity {
         progressBarRiwayatPesanan = findViewById(R.id.progressBarRiwayatPesanan);
         frameDataOrders = findViewById(R.id.frameDataOrders);
         progressBarRiwayatPesananNotFound = findViewById(R.id.progressBarRiwayatPesananNotFound);
+        btnFilter = findViewById(R.id.btnFilter);
+        
+        if (btnFilter != null) {
+            bukaFormFilter();
+        }
 
         recyclerViewRiwayatTransaksi.setLayoutManager(new LinearLayoutManager(this));
         adapter = new TransaksiAdapter(this, ordersData);
@@ -76,13 +76,16 @@ public class TransaksiActivity extends AppCompatActivity {
         });
     }
 
+    private void bukaFormFilter() {
+    }
+
     private void ambilDaftarRiwayatTransasksiUser() {
-        Query query = FirebaseDatabase.getInstance()
+        transaksiRefs = FirebaseDatabase.getInstance()
                 .getReference("orders")
                 .orderByChild("uid")
                 .equalTo(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
-        query.addValueEventListener(new ValueEventListener() {
+        transaksiListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 ordersData.clear();
@@ -95,17 +98,15 @@ public class TransaksiActivity extends AppCompatActivity {
                     }
                 }
 
-                progressBarRiwayatPesanan.setVisibility(View.GONE);
-
-                if (!ordersData.isEmpty()) {
+                if (ordersData != null) {
                     frameDataOrders.setVisibility(View.VISIBLE);
-                    progressBarRiwayatPesananNotFound.setVisibility(View.GONE);
+                    progressBarRiwayatPesanan.setVisibility(View.GONE);
                 } else {
                     frameDataOrders.setVisibility(View.GONE);
+                    progressBarRiwayatPesanan.setVisibility(View.GONE);
                     layoutProgressBarRiwayatPesananNotFound.setVisibility(View.VISIBLE);
-                    progressBarRiwayatPesananNotFound.setVisibility(View.VISIBLE);
-                    progressBarRiwayatPesananNotFound.setRepeatCount(LottieDrawable.INFINITE);
                     progressBarRiwayatPesananNotFound.playAnimation();
+                    progressBarRiwayatPesananNotFound.setRepeatCount(LottieDrawable.INFINITE);
                 }
 
                 if (recyclerViewRiwayatTransaksi.getAdapter() != null) {
@@ -120,16 +121,23 @@ public class TransaksiActivity extends AppCompatActivity {
                 frameDataOrders.setVisibility(View.GONE);
                 progressBarRiwayatPesananNotFound.setVisibility(View.VISIBLE);
             }
-        });
+        };
+        transaksiRefs.addValueEventListener(transaksiListener);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        progressBarRiwayatPesanan.setVisibility(View.VISIBLE);
-        frameDataOrders.setVisibility(View.GONE);
-        progressBarRiwayatPesananNotFound.setVisibility(View.GONE);
 
-        new Handler().postDelayed(this::ambilDaftarRiwayatTransasksiUser, 2000);
+
+        //new Handler().postDelayed(this::ambilDaftarRiwayatTransasksiUser, 2000);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (transaksiRefs != null && transaksiListener != null) {
+            transaksiRefs.removeEventListener(transaksiListener);
+        }
     }
 }

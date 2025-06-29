@@ -1,12 +1,15 @@
 package com.example.sasindai.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -21,8 +24,10 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
+import com.example.sasindai.DetailMotifActivity;
 import com.example.sasindai.R;
 import com.example.sasindai.model.KatalogMotifData;
+import com.google.gson.Gson;
 import com.makeramen.roundedimageview.RoundedImageView;
 
 import java.util.List;
@@ -70,6 +75,24 @@ public class KatalogMotifListAdapter extends RecyclerView.Adapter<KatalogMotifLi
                     }
                 })
                 .into(holder.img);
+
+        holder.imgMore.setOnClickListener(v -> {
+            Context wrapper = new ContextThemeWrapper(v.getContext(), R.style.PopupMenuFontStyle);
+            PopupMenu popupMenu = new PopupMenu(wrapper, holder.imgMore);
+            popupMenu.getMenuInflater().inflate(R.menu.menu_more_options, popupMenu.getMenu());
+
+            popupMenu.setOnMenuItemClickListener(item -> {
+                if (item.getItemId() == R.id.selengkapnya) {
+                    Intent intentKeDetail = new Intent(context, DetailMotifActivity.class);
+                    intentKeDetail.putExtra("detailMotif", new Gson().toJson(katalogMotifData));
+                    context.startActivity(intentKeDetail);
+                    return true;
+                }
+                return false;
+            });
+
+            popupMenu.show();
+        });
     }
 
     @Override
@@ -77,17 +100,16 @@ public class KatalogMotifListAdapter extends RecyclerView.Adapter<KatalogMotifLi
         return data.size();
     }
 
-    public void notifyItemChanged() {
-    }
-
     public static class KatalogMotifListViewHolder extends RecyclerView.ViewHolder {
         RoundedImageView img;
         TextView namaMotif, deskripsiMotif;
+        ImageView imgMore;
         public KatalogMotifListViewHolder(@NonNull View itemView) {
             super(itemView);
             img = itemView.findViewById(R.id.imgMotif);
             namaMotif = itemView.findViewById(R.id.tvNamaMotif);
             deskripsiMotif = itemView.findViewById(R.id.tvDeskripsiMotif);
+            imgMore = itemView.findViewById(R.id.imgMore);
         }
 
     }

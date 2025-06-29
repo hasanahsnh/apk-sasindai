@@ -1,5 +1,6 @@
 package com.example.sasindai.fragment;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -9,7 +10,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,6 +30,7 @@ import com.example.sasindai.adapter.HeroSliderAdapter;
 import com.example.sasindai.adapter.ProdukSliderAdapter;
 import com.example.sasindai.adapter.RilisMediaListAdapter;
 import com.example.sasindai.adapter.ShimmerRilisMediaAdapter;
+import com.example.sasindai.callback.CallbackLayanan;
 import com.example.sasindai.isLayanan.IsLayanan;
 import com.example.sasindai.model.ProdukData;
 import com.example.sasindai.model.RilisMediaData;
@@ -42,10 +43,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import org.checkerframework.checker.units.qual.A;
-
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -71,12 +69,13 @@ public class BerandaFragment extends Fragment {
     private ArrayList<ProdukData> produkDataList;
     private RecyclerView recyclerViewHero, previewKaPasaran, previewRilisMedia, shimmerPreviewRilisMedia;
     private ShimmerFrameLayout shimmerFrameLayout, shimmerProduk;
-    private LinearLayout layoutFiturKaPasaran, fiturAR;
+    private LinearLayout sejarahSasirangan, layoutFiturKaPasaran, fiturAR;
     private TextView tvLihatProduk;
     private ImageView btnGotoKeranjang, btnGotoPesanan;
     private SharedPreferences sharedPreferences;
     private FirebaseUser currentUser;
-    boolean isLayananAktif = false;
+    private DatabaseReference databaseReferenceRilisMedia, databaseReferenceProduk, databaseReferencePreviewRilisMedia;
+    private ValueEventListener rilisMediaListener, produkListener, previewRilisMediaListener;
 
     public BerandaFragment() {
         // Required empty public constructor
@@ -124,6 +123,7 @@ public class BerandaFragment extends Fragment {
         btnGotoKeranjang = view.findViewById(R.id.btnGotoKeranjang);
         fiturAR = view.findViewById(R.id.fiturAR);
         btnGotoPesanan = view.findViewById(R.id.btnGotoRiwayatPesanan);
+        sejarahSasirangan = view.findViewById(R.id.sejarahSasirangan);
         // End inisial
 
         // Navigate to
@@ -176,8 +176,8 @@ public class BerandaFragment extends Fragment {
         }
 
         // Hero
-        DatabaseReference databaseReferenceRilisMedia = FirebaseDatabase.getInstance().getReference("berita");
-        databaseReferenceRilisMedia.addValueEventListener(new ValueEventListener() {
+        databaseReferenceRilisMedia = FirebaseDatabase.getInstance().getReference("berita");
+        rilisMediaListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (!isAdded()) {
@@ -201,6 +201,10 @@ public class BerandaFragment extends Fragment {
                     }
                 }
 
+                if (!isAdded()) {
+                    return;
+                }
+
                 if (!rilisMediaDataList.isEmpty()) {
                     shimmerFrameLayout.stopShimmer();
                     shimmerFrameLayout.setVisibility(View.GONE);
@@ -209,10 +213,18 @@ public class BerandaFragment extends Fragment {
                     shimmerFrameLayout.setVisibility(View.VISIBLE);
                 }
 
-                heroSliderAdapter = new HeroSliderAdapter(getContext(), rilisMediaDataList);
-                recyclerViewHero.setAdapter(heroSliderAdapter);
-
-                heroSliderAdapter.notifyDataSetChanged();
+                try {
+                    Context context = getContext();
+                    if (context != null) {
+                        heroSliderAdapter = new HeroSliderAdapter(requireContext(), rilisMediaDataList);
+                        recyclerViewHero.setAdapter(heroSliderAdapter);
+                        heroSliderAdapter.notifyDataSetChanged();
+                    } else {
+                        Log.e("Beranda Fragment", "Context null saat membuat adapter hero!");
+                    }
+                } catch (Exception e) {
+                    Log.e("Beranda Fragment", "Adapter Hero error: " + e.getMessage());
+                }
             }
 
             @Override
@@ -222,12 +234,13 @@ public class BerandaFragment extends Fragment {
                     Toast.makeText(requireContext(), "Gagal Memuat Data", Toast.LENGTH_SHORT).show();
                 }
             }
-        });
+        };
+        databaseReferenceRilisMedia.addValueEventListener(rilisMediaListener);
         // End hero
 
         // Produk
-        DatabaseReference databaseReferenceProduk = FirebaseDatabase.getInstance().getReference("produk");
-        databaseReferenceProduk.addValueEventListener(new ValueEventListener() {
+        databaseReferenceProduk = FirebaseDatabase.getInstance().getReference("produk");
+        produkListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (!isAdded()) {
@@ -251,6 +264,10 @@ public class BerandaFragment extends Fragment {
                     }
                 }
 
+                if (!isAdded()) {
+                    return;
+                }
+
                 if (!produkDataList.isEmpty()) {
                     shimmerProduk.stopShimmer();
                     shimmerProduk.setVisibility(View.GONE);
@@ -259,22 +276,33 @@ public class BerandaFragment extends Fragment {
                     shimmerProduk.setVisibility(View.VISIBLE);
                 }
 
-                produkSliderAdapter = new ProdukSliderAdapter(requireContext(), produkDataList);
-                previewKaPasaran.setAdapter(produkSliderAdapter);
-
-                produkSliderAdapter.notifyDataSetChanged();
+                Context context = getContext();
+                try {
+                    if (context != null) {
+                        produkSliderAdapter = new ProdukSliderAdapter(requireContext(), produkDataList);
+                        previewKaPasaran.setAdapter(produkSliderAdapter);
+                        produkSliderAdapter.notifyDataSetChanged();
+                    } else {
+                        Log.e("Beranda Fragment", "Context null saat membuat adapter produk!");
+                    }
+                } catch (Exception e) {
+                    Log.e("Beranda Fragment", "Adapter Produk error: " + e.getMessage());
+                }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                if (!isAdded()) {
+                    Log.e("Beranda Fragment", "Gagal memuat database, Error: " + error.getMessage());
+                }
             }
-        });
+        };
+        databaseReferenceProduk.addValueEventListener(produkListener);
         // End produk
 
         // Rilis media
-        DatabaseReference databaseReferencePreviewRilisMedia = FirebaseDatabase.getInstance().getReference("berita");
-        databaseReferencePreviewRilisMedia.addValueEventListener(new ValueEventListener() {
+        databaseReferencePreviewRilisMedia = FirebaseDatabase.getInstance().getReference("berita");
+        previewRilisMediaListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (!isAdded()) {
@@ -298,14 +326,30 @@ public class BerandaFragment extends Fragment {
                     }
                 }
 
+                if (!isAdded()) {
+                    return;
+                }
+
                 if (rilisMediaDataList != null) {
                     shimmerPreviewRilisMedia.setVisibility(View.GONE);
                 } else {
                     shimmerPreviewRilisMedia.setVisibility(View.VISIBLE);
                 }
 
-                rilisMediaListAdapter = new RilisMediaListAdapter(requireContext(), rilisMediaDataList);
-                previewRilisMedia.setAdapter(rilisMediaListAdapter);
+                Context context = getContext();
+                try {
+                    if (context != null) {
+                        rilisMediaListAdapter = new RilisMediaListAdapter(requireContext(), rilisMediaDataList);
+                        previewRilisMedia.setAdapter(rilisMediaListAdapter);
+                        rilisMediaListAdapter.notifyDataSetChanged();
+                    } else {
+                        Log.e("Beranda Fragment", "Context null saat membuat adapter rilis media!");
+                    }
+                } catch (Exception e) {
+                    Log.e("Beranda Fragment", "Adapter rilis media error, Error: " + e.getMessage());
+                }
+
+
 
             }
 
@@ -316,116 +360,86 @@ public class BerandaFragment extends Fragment {
                     Toast.makeText(requireContext(), "Gagal Memuat Data rilis media", Toast.LENGTH_SHORT).show();
                 }
             }
-        });
+        };
+        databaseReferencePreviewRilisMedia.addValueEventListener(previewRilisMediaListener);
         // End rilis media
 
     }
 
     private void clickToNavigate() {
-        // Arahkan ke activity host ka pasaran
-        if (layoutFiturKaPasaran != null) {
-            layoutFiturKaPasaran.setOnClickListener(v -> {
-                IsLayanan.kaPasaran(requireContext(), isAktif -> {
-                    if (!isAktif) {
-                        Toast.makeText(requireContext(), "Fitur Ka Pasaran sedang tidak aktif", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    Intent intent = new Intent(requireContext(), KaPasaranHostActivity.class);
-                    startActivity(intent);
-                });
-            });
-        } else {
-            Log.e("Beranda Fragment", "layout fitur kapasaran bernilai null, gagal dimuat");
-        }
+        sejarahSasirangan.setOnClickListener(v -> {
+            if (!isAdded() || getContext() == null) return;
 
-        // Arahkan ke activity host kapasaran
-        if (tvLihatProduk != null) {
-            tvLihatProduk.setOnClickListener(v -> {
-                Intent intent = new Intent(requireContext(), KaPasaranHostActivity.class);
-                startActivity(intent);
+            IsLayanan.sejarah(getContext(), isAktif -> {
+                if (!isAktif) {
+                    Toast.makeText(getContext(), "Fitur Dengar Sejarah sedang tidak aktif", Toast.LENGTH_SHORT).show();
+                    return;
+                }
             });
-        } else {
-            Log.e("Beranda Fragment", "tv lihat produk gagal dimuat atau bernilai null!");
-        }
 
-        // Arahkan ke activity keranjang
-        if (btnGotoKeranjang != null) {
-            btnGotoKeranjang.setOnClickListener(v -> {
-                currentUser = FirebaseAuth.getInstance().getCurrentUser();
-                if (currentUser == null) {
-                    Intent intent = new Intent(requireContext(), AuthHostActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                    Toast.makeText(requireContext(), "Silakan login terlebih dahulu", Toast.LENGTH_SHORT).show();
+        });
+
+        fiturAR.setOnClickListener(v -> {
+            if (!isAdded() || getContext() == null) return;
+
+            IsLayanan.arProduk(getContext(), isAktif -> {
+                if (!isAktif) {
+                    Toast.makeText(getContext(), "Fitur AR Produk sedang tidak aktif", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                IsLayanan.kaPasaran(requireContext(), isAktif -> {
-                    if (!isAktif) {
-                        Toast.makeText(requireContext(), "Fitur Ka Pasaran sedang tidak aktif", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-
-                    try {
-                        if (currentUser.isEmailVerified()) {
-                            Intent intent = new Intent(requireContext(), KeranjangActivity.class);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(intent);
-                        } else {
-                            Toast.makeText(requireContext(), "Silakan verifikasi email Anda terlebih dahulu", Toast.LENGTH_LONG).show();
-                        }
-                    } catch (Exception e) {
-                        Log.e("Beranda fr", "User tidak ditemukan " + e.getMessage());
-                        Toast.makeText(requireContext(), "Terjadi kesalahan, coba lagi", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            });
-        } else {
-            Log.e("Beranda Fragment", "Dari btnGotoKeranjang, btn goto keranjang gagal dimuat atau bernilai null");
-        }
-
-        // arahkan ke activity ar
-        if (fiturAR != null) {
-            fiturAR.setOnClickListener(v -> {
-                Intent intent = new Intent(requireContext(), SceneActivity.class);
+                // misal pakai intent, pastikan context tidak null
+                Intent intent = new Intent(getContext(), SceneActivity.class);
                 startActivity(intent);
             });
-        } else {
-            Log.e("Beranda Fragment", "tv lihat produk gagal dimuat atau bernilai null!");
-        }
 
-        // Ke actv orders
-        if (btnGotoPesanan != null) {
-            btnGotoPesanan.setOnClickListener(v -> {
-                currentUser = FirebaseAuth.getInstance().getCurrentUser();
-                if (currentUser == null) {
-                    Intent intent = new Intent(requireContext(), AuthHostActivity.class);
-                    startActivity(intent);
-                    Toast.makeText(requireContext(), "Silakan login terlebih dahulu", Toast.LENGTH_SHORT).show();
+        });
+
+        btnGotoKeranjang.setOnClickListener(v -> {
+            if (!isAdded() || getContext() == null) return;
+
+            IsLayanan.kaPasaran(getContext(), isAktif -> {
+                if (!isAktif) {
+                    Toast.makeText(getContext(), "Fitur Ka Pasaran sedang tidak aktif", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                IsLayanan.kaPasaran(requireContext(), isAktif -> {
-                    if (!isAktif) {
-                        Toast.makeText(requireContext(), "Fitur Ka Pasaran sedang tidak aktif", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-
-                    try {
-                        Intent intent = new Intent(requireContext(), TransaksiActivity.class);
-                        startActivity(intent);
-                    } catch (Exception e) {
-                        Log.e("Beranda fr", "User tidak ditemukan " + e.getMessage());
-                        Toast.makeText(requireContext(), "Terjadi kesalahan, coba lagi", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
+                // misal pakai intent, pastikan context tidak null
+                Intent intent = new Intent(getContext(), KeranjangActivity.class);
+                startActivity(intent);
             });
-        } else {
-            Log.e("Beranda Fragment", "tv btn Goto orders gagal dimuat atau bernilai null!");
-        }
 
+        });
 
+        btnGotoPesanan.setOnClickListener(v -> {
+            if (!isAdded() || getContext() == null) return;
+
+            IsLayanan.kaPasaran(getContext(), isAktif -> {
+                if (!isAktif) {
+                    Toast.makeText(getContext(), "Fitur Ka Pasaran sedang tidak aktif", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                // misal pakai intent, pastikan context tidak null
+                Intent intent = new Intent(getContext(), TransaksiActivity.class);
+                startActivity(intent);
+            });
+
+        });
+
+        tvLihatProduk.setOnClickListener(v -> {
+            if (!isAdded() || getContext() == null) return;
+
+            Intent intent = new Intent(getContext(), KaPasaranHostActivity.class);
+            startActivity(intent);
+        });
+
+        layoutFiturKaPasaran.setOnClickListener(v -> {
+            if (!isAdded() || getContext() == null) return;
+
+            Intent intent = new Intent(getContext(), KaPasaranHostActivity.class);
+            startActivity(intent);
+        });
     }
 
     @Override
@@ -436,5 +450,21 @@ public class BerandaFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (databaseReferenceRilisMedia != null && rilisMediaListener != null) {
+            databaseReferenceRilisMedia.removeEventListener(rilisMediaListener);
+        }
+
+        if (databaseReferenceProduk != null && produkListener != null) {
+            databaseReferenceProduk.removeEventListener(produkListener);
+        }
+
+        if (databaseReferencePreviewRilisMedia != null && previewRilisMediaListener != null) {
+            databaseReferencePreviewRilisMedia.removeEventListener(previewRilisMediaListener);
+        }
     }
 }
