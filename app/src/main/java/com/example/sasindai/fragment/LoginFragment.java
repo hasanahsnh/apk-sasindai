@@ -25,7 +25,6 @@ import com.example.sasindai.AuthHostActivity;
 import com.example.sasindai.MainHostActivity;
 import com.example.sasindai.R;
 import com.example.sasindai.ResetPasswordActivity;
-import com.example.sasindai.service.FCMUtils;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -202,7 +201,6 @@ public class LoginFragment extends Fragment {
                                                 Log.d("Login Fragment", "User reguler berhasil login, akses diizinkan");
                                                 Toast.makeText(requireContext(), "Login Berhasil!", Toast.LENGTH_SHORT).show();
                                                 sharedPreferences.edit().putBoolean("isLoggedIn", true).apply();
-                                                FCMUtils.perbaruiTokenFirebase();
                                                 updateUI(user);
                                             } else {
                                                 Log.w("Login Fragment", "Bukan user reguler, akses dibatalkan. Role: " + role);
@@ -269,7 +267,6 @@ public class LoginFragment extends Fragment {
                         Toast.makeText(requireContext(), "Login Berhasil!", Toast.LENGTH_SHORT).show();
                         if (user != null) {
                             saveUserToFirebase(user);
-                            FCMUtils.perbaruiTokenFirebase();
                             sharedPreferences.edit().putBoolean("isLoggedIn", true).apply();
                             updateUI(firebaseAuth.getCurrentUser());
                         } else {

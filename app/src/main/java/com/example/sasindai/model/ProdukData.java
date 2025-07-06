@@ -1,21 +1,24 @@
 package com.example.sasindai.model;
 
+import com.google.firebase.database.IgnoreExtraProperties;
+
 import java.util.List;
 import java.util.Map;
 
+@IgnoreExtraProperties
 public class ProdukData {
-    private String
+    String
         createAt,
         deskripsiProduk,
         idProduk,
         namaProduk,
         uid,
         updateAt;
-    private int
+    int
         sisaStok,
         terjual;
-    private List<String> urlFotoProduk;
-    private Map<String, VarianProduk> varian;
+    List<String> urlFotoProduk;
+    Map<String, VarianProduk> varian;
 
     public ProdukData() {
         // Diperlukan untuk firebase

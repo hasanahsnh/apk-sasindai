@@ -28,6 +28,12 @@
         android:theme="@style/Theme.Sasindai"
         tools:targetApi="31">
         <activity
+            android:name=".DaftarNotifikasiBroadcastActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SejarahSasiranganActivity"
+            android:exported="false" />
+        <activity
             android:name=".DetailMotifActivity"
             android:exported="false" />
         <activity

@@ -30,6 +30,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.sasindai.theme.ThemeActivity;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -53,12 +54,12 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class ProfileActivity extends AppCompatActivity {
-    TextView aturEmail, aturNama, aturTelepon, aturAlamat, rincianInputKodePos, simpanAlamat, cariDetailKodepos;
+    TextView aturEmail, aturNama, aturTelepon, aturAlamat, rincianInputKodePos, simpanAlamat, cariDetailKodepos, simpanTelepon;
     FirebaseUser currentUser;
     String uid;
     ProgressBar progressBar;
     LinearLayout container;
-    EditText inputAlamat, inputKodePos;
+    EditText inputAlamat, inputKodePos, inputTelepon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,7 +105,79 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void tampilkanDialogTelepon() {
-        //
+        BottomSheetDialog dialog = new BottomSheetDialog(ProfileActivity.this, R.style.BottomSheetDialogTheme);
+        dialog.setContentView(R.layout.bottom_sheet_isi_telepon);
+        dialog.setCancelable(true);
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
+        inputTelepon = dialog.findViewById(R.id.inputTelepon);
+        simpanTelepon = dialog.findViewById(R.id.simpanTelepon);
+
+        // Validasi null sebelum lanjut
+        if (inputTelepon == null || simpanTelepon == null) {
+            Toast.makeText(this, "Gagal memuat dialog: komponen tidak ditemukan", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        simpanTelepon.setOnClickListener(v -> {
+            String telepon = inputTelepon.getText().toString().trim();
+            if (telepon.isEmpty()) {
+                Toast.makeText(this, "Masukkan nomor telepon terlebih dahulu", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (!telepon.matches("\\d+")) {
+                Toast.makeText(this, "Nomor telepon hanya boleh berisi angka", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (telepon.length() < 11) {
+                Toast.makeText(this, "Nomor telepon minimal 11 digit", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Ambil semua user dari Firebase Realtime Database
+            DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("users");
+            usersRef.orderByChild("noTelp").equalTo(telepon)
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if (snapshot.exists()) {
+                                Toast.makeText(ProfileActivity.this, "Nomor telepon sudah terdaftar", Toast.LENGTH_SHORT).show();
+                            } else {
+                                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                if (user != null) {
+                                    String uid = user.getUid();
+                                    DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(uid);
+                                    userRef.child("noTelp").setValue(telepon)
+                                            .addOnSuccessListener(aVoid -> {
+                                                Toast.makeText(ProfileActivity.this, "Nomor telepon berhasil disimpan", Toast.LENGTH_SHORT).show();
+                                                dialog.dismiss();
+                                            })
+                                            .addOnFailureListener(e -> {
+                                                Toast.makeText(ProfileActivity.this, "Gagal menyimpan nomor: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                            });
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            Toast.makeText(ProfileActivity.this, "Gagal memeriksa data: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        });
+
+        Window window = dialog.getWindow();
+        if (window != null) {
+            DisplayMetrics displayMetrics = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+            int halfHeight = displayMetrics.heightPixels / 2;
+            window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, halfHeight);
+            window.setGravity(Gravity.BOTTOM);
+        }
+
+        dialog.show();
     }
 
     private void tampilkanDialogAlamat() {

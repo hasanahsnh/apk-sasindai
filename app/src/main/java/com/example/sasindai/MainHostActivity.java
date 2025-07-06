@@ -24,7 +24,9 @@ import com.example.sasindai.fragment.AkunFragment;
 import com.example.sasindai.fragment.BerandaFragment;
 import com.example.sasindai.fragment.KatalogMotifFragment;
 import com.example.sasindai.fragment.RilisMediaFragment;
+import com.example.sasindai.service.FCMUtils;
 import com.example.sasindai.theme.ThemeActivity;
+import com.google.firebase.database.FirebaseDatabase;
 import com.ismaeldivita.chipnavigation.ChipNavigationBar;
 
 public class MainHostActivity extends AppCompatActivity {
@@ -38,27 +40,9 @@ public class MainHostActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main_host);
 
-        // Minta izin notifikasi (Android 13+), tapi lanjut render UI
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS)
-                    != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 101);
-            }
-        }
+        notifikasi();
 
-        // Channel notifikasi
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(
-                    "notif_channel",
-                    "Notifikasi Umum",
-                    NotificationManager.IMPORTANCE_HIGH
-            );
-            NotificationManager manager = getSystemService(NotificationManager.class);
-            if (manager != null) {
-                manager.createNotificationChannel(channel);
-            }
-        }
+        FCMUtils.simpanTokenGlobal(this);
 
         // import tema
         ThemeActivity.applyTheme(this);
@@ -105,6 +89,30 @@ public class MainHostActivity extends AppCompatActivity {
         });
     }
 
+    private void notifikasi() {
+        // Minta izin notifikasi (Android 13+), tapi lanjut render UI
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 101);
+            }
+        }
+
+        // Channel notifikasi
+        if  (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(
+                    "notif_channel",
+                    "Notifikasi Umum",
+                    NotificationManager.IMPORTANCE_HIGH
+            );
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            if (manager != null) {
+                manager.createNotificationChannel(channel);
+            }
+        }
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -148,4 +156,9 @@ public class MainHostActivity extends AppCompatActivity {
 
     };
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        FCMUtils.simpanTokenGlobal(this);
+    }
 }

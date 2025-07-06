@@ -57,11 +57,6 @@ public class TransaksiActivity extends AppCompatActivity {
         progressBarRiwayatPesanan = findViewById(R.id.progressBarRiwayatPesanan);
         frameDataOrders = findViewById(R.id.frameDataOrders);
         progressBarRiwayatPesananNotFound = findViewById(R.id.progressBarRiwayatPesananNotFound);
-        btnFilter = findViewById(R.id.btnFilter);
-        
-        if (btnFilter != null) {
-            bukaFormFilter();
-        }
 
         recyclerViewRiwayatTransaksi.setLayoutManager(new LinearLayoutManager(this));
         adapter = new TransaksiAdapter(this, ordersData);
@@ -74,9 +69,6 @@ public class TransaksiActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-    }
-
-    private void bukaFormFilter() {
     }
 
     private void ambilDaftarRiwayatTransasksiUser() {
@@ -105,6 +97,7 @@ public class TransaksiActivity extends AppCompatActivity {
                     frameDataOrders.setVisibility(View.GONE);
                     progressBarRiwayatPesanan.setVisibility(View.GONE);
                     layoutProgressBarRiwayatPesananNotFound.setVisibility(View.VISIBLE);
+                    progressBarRiwayatPesananNotFound.setVisibility(View.VISIBLE);
                     progressBarRiwayatPesananNotFound.playAnimation();
                     progressBarRiwayatPesananNotFound.setRepeatCount(LottieDrawable.INFINITE);
                 }

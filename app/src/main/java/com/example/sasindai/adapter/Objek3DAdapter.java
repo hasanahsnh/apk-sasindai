@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -86,6 +87,8 @@ public class Objek3DAdapter extends RecyclerView.Adapter<Objek3DAdapter.Objek3DV
             }
         });
 
+        holder.tvNamaObjek.setText(item.getNamaObjek());
+
         Log.d("Adapter", "Binding position: " + position + ", selected: " + selectedPosition);
     }
 
@@ -97,10 +100,12 @@ public class Objek3DAdapter extends RecyclerView.Adapter<Objek3DAdapter.Objek3DV
     public static class Objek3DViewHolder extends RecyclerView.ViewHolder {
         RoundedImageView img;
         LinearLayout linLayoutItem3d;
+        TextView tvNamaObjek;
         public Objek3DViewHolder(@NonNull View itemView) {
             super(itemView);
             img = itemView.findViewById(R.id.imgSliderObjek3d);
             linLayoutItem3d = itemView.findViewById(R.id.linLayoutItem3d);
+            tvNamaObjek = itemView.findViewById(R.id.tvNamaObjek);
         }
     }
 }

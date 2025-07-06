@@ -22,7 +22,6 @@ import android.widget.Toast;
 import com.example.sasindai.AuthHostActivity;
 import com.example.sasindai.MainHostActivity;
 import com.example.sasindai.R;
-import com.example.sasindai.service.FCMUtils;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -293,7 +292,6 @@ public class RegisterFragment extends Fragment {
             usersRef.child(uid).updateChildren(updateData).addOnCompleteListener(saveTask -> {
                 if (saveTask.isSuccessful()) {
                     Log.d("Firebase", "User berhasil disimpan dengan role: " + role);
-                    FCMUtils.perbaruiTokenFirebase();
                 } else {
                     Log.e("Firebase", "Gagal menyimpan user ke tabel users", saveTask.getException());
                 }

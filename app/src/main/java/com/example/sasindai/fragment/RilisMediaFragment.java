@@ -1,5 +1,7 @@
 package com.example.sasindai.fragment;
 
+import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -12,10 +14,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.airbnb.lottie.LottieDrawable;
+import com.example.sasindai.DaftarNotifikasiBroadcastActivity;
 import com.example.sasindai.R;
 import com.example.sasindai.adapter.RilisMediaAdapter;
 import com.example.sasindai.model.RilisMediaData;
@@ -50,6 +54,7 @@ public class RilisMediaFragment extends Fragment {
     private ValueEventListener rilisMediaListener;
     private ProgressBar progressBarRilisMedia;
     private LottieAnimationView animDataNotFoundRilisMedia;
+    private ImageView btnNotifikasi;
 
     public RilisMediaFragment() {
         // Required empty public constructor
@@ -97,6 +102,16 @@ public class RilisMediaFragment extends Fragment {
         rvRilisMedia = view.findViewById(R.id.rvRilisMedia);
         progressBarRilisMedia = view.findViewById(R.id.progressBarRilisMedia);
         animDataNotFoundRilisMedia = view.findViewById(R.id.animDataNotFoundRilisMedia);
+        btnNotifikasi = view.findViewById(R.id.btnNotifikasi);
+
+        if (btnNotifikasi != null) {
+            btnNotifikasi.setOnClickListener(v -> {
+                Intent intent = new Intent(requireContext(), DaftarNotifikasiBroadcastActivity.class);
+                startActivity(intent);
+            });
+        } else {
+            Log.w("btnNotifikasi", "btnNotifikasi bernilai null");
+        }
 
         adapter = new RilisMediaAdapter(requireContext(), data);
         rvRilisMedia.setAdapter(adapter);

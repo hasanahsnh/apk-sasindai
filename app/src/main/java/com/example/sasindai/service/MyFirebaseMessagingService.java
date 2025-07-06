@@ -14,6 +14,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import com.example.sasindai.DaftarNotifikasiBroadcastActivity;
 import com.example.sasindai.MainHostActivity;
 import com.example.sasindai.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -30,26 +31,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     public void onNewToken(String token) {
         super.onNewToken(token);
         Log.d("FCM_TOKEN", "Token baru: " + token);
-        updateFirebaseToken(token);
-    }
-
-    private void updateFirebaseToken(String token) {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
-            DatabaseReference userRef = FirebaseDatabase.getInstance()
-                    .getReference("users")
-                    .child(user.getUid());
-
-            userRef.child("device_token").setValue(token)
-                    .addOnSuccessListener(aVoid ->
-                            Log.d("FCM_TOKEN", "Token berhasil diperbarui ke database.")
-                    )
-                    .addOnFailureListener(e ->
-                            Log.e("FCM_TOKEN", "Gagal memperbarui token: " + e.getMessage())
-                    );
-        } else {
-            Log.w("FCM_TOKEN", "Belum login, token tidak dikirim.");
-        }
+        FirebaseDatabase.getInstance()
+                .getReference("push_tokens")
+                .child(token)
+                .setValue(System.currentTimeMillis())
+                .addOnSuccessListener(unused -> Log.d("FCM_TOKEN", "Token disimpan di push_tokens"))
+                .addOnFailureListener(e -> Log.e("FCM_TOKEN", "Gagal menyimpan token", e));
     }
 
     @Override
@@ -90,7 +77,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             }
         }
 
-        Intent intent = new Intent(this, MainHostActivity.class);
+        Intent intent = new Intent(this, DaftarNotifikasiBroadcastActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         intent.putExtra("from_broadcast", true); // jika ingin tandai berasal dari notifikasi
 

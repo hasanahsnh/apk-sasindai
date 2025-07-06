@@ -26,5 +26,6 @@
     <color name="merah">#FFF44336</color>
 
     <color name="dark_maroon">#700933</color>
+    <color name="dark_bg">#1F1F1F</color>
 
 </resources>

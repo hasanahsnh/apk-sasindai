@@ -135,7 +135,6 @@
                         android:orientation="vertical"
                         android:layout_columnWeight="1"
                         android:gravity="start|center_horizontal"
-                        android:background="@drawable/frame_bg_fitur"
                         android:padding="6dp">
 
                         <ImageView
@@ -173,7 +172,6 @@
                         android:orientation="vertical"
                         android:layout_columnWeight="1"
                         android:gravity="start|center_horizontal"
-                        android:background="@drawable/frame_bg_fitur"
                         android:layout_marginStart="6dp"
                         android:padding="6dp">
 
@@ -212,7 +210,6 @@
                         android:orientation="vertical"
                         android:layout_columnWeight="1"
                         android:gravity="start|center_horizontal"
-                        android:background="@drawable/frame_bg_fitur"
                         android:layout_marginStart="6dp"
                         android:padding="6dp">
 

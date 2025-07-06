@@ -25,6 +25,7 @@ import com.example.sasindai.KaPasaranHostActivity;
 import com.example.sasindai.KeranjangActivity;
 import com.example.sasindai.R;
 import com.example.sasindai.SceneActivity;
+import com.example.sasindai.SejarahSasiranganActivity;
 import com.example.sasindai.TransaksiActivity;
 import com.example.sasindai.adapter.HeroSliderAdapter;
 import com.example.sasindai.adapter.ProdukSliderAdapter;
@@ -67,13 +68,12 @@ public class BerandaFragment extends Fragment {
     private RilisMediaListAdapter rilisMediaListAdapter;
     private ArrayList<RilisMediaData> rilisMediaDataList;
     private ArrayList<ProdukData> produkDataList;
+    private ArrayList<RilisMediaData> heroDataList;
     private RecyclerView recyclerViewHero, previewKaPasaran, previewRilisMedia, shimmerPreviewRilisMedia;
     private ShimmerFrameLayout shimmerFrameLayout, shimmerProduk;
     private LinearLayout sejarahSasirangan, layoutFiturKaPasaran, fiturAR;
     private TextView tvLihatProduk;
     private ImageView btnGotoKeranjang, btnGotoPesanan;
-    private SharedPreferences sharedPreferences;
-    private FirebaseUser currentUser;
     private DatabaseReference databaseReferenceRilisMedia, databaseReferenceProduk, databaseReferencePreviewRilisMedia;
     private ValueEventListener rilisMediaListener, produkListener, previewRilisMediaListener;
 
@@ -133,7 +133,9 @@ public class BerandaFragment extends Fragment {
         // Hero
         if (recyclerViewHero != null) {
             recyclerViewHero.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
-            rilisMediaDataList = new ArrayList<>();
+            heroDataList = new ArrayList<>();
+            heroSliderAdapter = new HeroSliderAdapter(requireContext(), heroDataList);
+            recyclerViewHero.setAdapter(heroSliderAdapter);
         } else {
             Log.e("Beranda Fragment", "Recycler view hero gagal dimuat");
         }
@@ -143,6 +145,8 @@ public class BerandaFragment extends Fragment {
         if (previewKaPasaran != null) {
             previewKaPasaran.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
             produkDataList = new ArrayList<>();
+            produkSliderAdapter = new ProdukSliderAdapter(requireContext(), produkDataList);
+            previewKaPasaran.setAdapter(produkSliderAdapter);
         } else {
             Log.e("Beranda Fragment", "Recycler view preview ka pasaran gagal dimuat");
         }
@@ -153,6 +157,8 @@ public class BerandaFragment extends Fragment {
             previewRilisMedia.setNestedScrollingEnabled(false);
             previewRilisMedia.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));
             rilisMediaDataList = new ArrayList<>();
+            rilisMediaListAdapter = new RilisMediaListAdapter(requireContext(), rilisMediaDataList);
+            previewRilisMedia.setAdapter(rilisMediaListAdapter);
         } else {
             Log.e("Beranda Fragment", "Recycler view preview rilis media gagal dimuat");
         }
@@ -180,18 +186,19 @@ public class BerandaFragment extends Fragment {
         rilisMediaListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Log.d("Firebase", "onDataChange called for hero");
                 if (!isAdded()) {
                     Log.e("Beranda Fragment", "Fragment telah dimuat, lewati perubahan data");
                     return;
                 }
-                rilisMediaDataList.clear();
+                heroDataList.clear();
 
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     try {
                         RilisMediaData heroData = dataSnapshot.getValue(RilisMediaData.class);
 
                         if (heroData != null) {
-                            rilisMediaDataList.add(heroData);
+                            heroDataList.add(heroData);
                         } else {
                             Log.e("Beranda Fragment", "Tidak ada data untuk hero yang dimuat" + dataSnapshot);
                         }
@@ -205,7 +212,7 @@ public class BerandaFragment extends Fragment {
                     return;
                 }
 
-                if (!rilisMediaDataList.isEmpty()) {
+                if (!heroDataList.isEmpty()) {
                     shimmerFrameLayout.stopShimmer();
                     shimmerFrameLayout.setVisibility(View.GONE);
                 } else {
@@ -216,8 +223,6 @@ public class BerandaFragment extends Fragment {
                 try {
                     Context context = getContext();
                     if (context != null) {
-                        heroSliderAdapter = new HeroSliderAdapter(requireContext(), rilisMediaDataList);
-                        recyclerViewHero.setAdapter(heroSliderAdapter);
                         heroSliderAdapter.notifyDataSetChanged();
                     } else {
                         Log.e("Beranda Fragment", "Context null saat membuat adapter hero!");
@@ -243,6 +248,7 @@ public class BerandaFragment extends Fragment {
         produkListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Log.d("Firebase", "onDataChange called for produk");
                 if (!isAdded()) {
                     Log.e("Beranda Fragment", "Fragment telah dimuat, lewati perubahan data");
                     return;
@@ -279,8 +285,6 @@ public class BerandaFragment extends Fragment {
                 Context context = getContext();
                 try {
                     if (context != null) {
-                        produkSliderAdapter = new ProdukSliderAdapter(requireContext(), produkDataList);
-                        previewKaPasaran.setAdapter(produkSliderAdapter);
                         produkSliderAdapter.notifyDataSetChanged();
                     } else {
                         Log.e("Beranda Fragment", "Context null saat membuat adapter produk!");
@@ -305,6 +309,7 @@ public class BerandaFragment extends Fragment {
         previewRilisMediaListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Log.d("Firebase", "onDataChange called for produk");
                 if (!isAdded()) {
                     Log.e("Beranda Fragment", "Fragment telah dimuat, lewati perubahan data");
                     return;
@@ -339,8 +344,6 @@ public class BerandaFragment extends Fragment {
                 Context context = getContext();
                 try {
                     if (context != null) {
-                        rilisMediaListAdapter = new RilisMediaListAdapter(requireContext(), rilisMediaDataList);
-                        previewRilisMedia.setAdapter(rilisMediaListAdapter);
                         rilisMediaListAdapter.notifyDataSetChanged();
                     } else {
                         Log.e("Beranda Fragment", "Context null saat membuat adapter rilis media!");
@@ -349,7 +352,7 @@ public class BerandaFragment extends Fragment {
                     Log.e("Beranda Fragment", "Adapter rilis media error, Error: " + e.getMessage());
                 }
 
-
+                Log.d("Firebase Rilis Media", "Total berita: " + rilisMediaDataList.size());
 
             }
 
@@ -375,6 +378,12 @@ public class BerandaFragment extends Fragment {
                     Toast.makeText(getContext(), "Fitur Dengar Sejarah sedang tidak aktif", Toast.LENGTH_SHORT).show();
                     return;
                 }
+
+                String webUrl = "https://www.youtube.com/embed/1UlE4Lm2xuw";
+
+                Intent intent = new Intent(getContext(), SejarahSasiranganActivity.class);
+                intent.putExtra("sejarahUrl", webUrl);
+                startActivity(intent);
             });
 
         });
@@ -404,9 +413,19 @@ public class BerandaFragment extends Fragment {
                     return;
                 }
 
-                // misal pakai intent, pastikan context tidak null
-                Intent intent = new Intent(getContext(), KeranjangActivity.class);
-                startActivity(intent);
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                if (user != null) {
+                    if (user.isEmailVerified()) {
+                        Intent intent = new Intent(getContext(), KeranjangActivity.class);
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(getContext(), "Silakan verifikasi email terlebih dahulu", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Intent intent = new Intent(getContext(), AuthHostActivity.class);
+                    startActivity(intent);
+                }
+
             });
 
         });
@@ -420,9 +439,19 @@ public class BerandaFragment extends Fragment {
                     return;
                 }
 
-                // misal pakai intent, pastikan context tidak null
-                Intent intent = new Intent(getContext(), TransaksiActivity.class);
-                startActivity(intent);
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                if (user != null) {
+                    if (user.isEmailVerified()) {
+                        Intent intent = new Intent(getContext(), TransaksiActivity.class);
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(getContext(), "Silakan verifikasi email terlebih dahulu", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Intent intent = new Intent(getContext(), AuthHostActivity.class);
+                    startActivity(intent);
+                }
+
             });
 
         });

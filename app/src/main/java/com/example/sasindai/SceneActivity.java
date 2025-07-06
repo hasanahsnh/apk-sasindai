@@ -1,9 +1,11 @@
 package com.example.sasindai;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -27,6 +29,7 @@ import com.google.ar.sceneform.rendering.Color;
 import com.google.ar.sceneform.rendering.Light;
 import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.ux.ArFragment;
+import com.google.ar.sceneform.ux.TransformableNode;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -47,6 +50,8 @@ public class SceneActivity extends AppCompatActivity {
     boolean isModelPlaced = false;
     DatabaseReference modelRefs;
     ValueEventListener modelListener;
+    boolean isDataLoaded = false;
+    ImageView btnGotoKaPasaran, btnKembaliDariAr;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,11 +63,35 @@ public class SceneActivity extends AppCompatActivity {
         // end import tema
 
         arSceneView = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.arSceneView);
+        Toast.makeText(this, "Gerakkan ponsel perlahan ke arah lantai sampai muncul grid", Toast.LENGTH_LONG).show();
+
         recyclerViewProduk = findViewById(R.id.recyclerViewObjek3D);
         shimmerPreviewObjek3d = findViewById(R.id.shimmerPreviewObjek3d);
+        btnGotoKaPasaran = findViewById(R.id.btnGotoKaPasaran);
+        btnKembaliDariAr = findViewById(R.id.btnKembaliDariAr);
+
+        if (btnGotoKaPasaran != null) {
+            btnGotoKaPasaran.setOnClickListener(v -> {
+                Intent intent = new Intent(this, KaPasaranHostActivity.class);
+                startActivity(intent);
+            });
+        } else {
+            Log.w("btnGotoKaPasaran", "btnGotoKaPasaran tidak ditemukan");
+        }
+
+        if (btnKembaliDariAr != null) {
+            btnKembaliDariAr.setOnClickListener(v -> {
+                finish();
+            });
+        } else {
+            Log.w("btnKembaliDariAr", "btnKembaliDariAr tidak ditemukan");
+        }
 
         shimmerPreviewObjek3d.setVisibility(View.VISIBLE);
         recyclerViewProduk.setVisibility(View.GONE);
+
+        recyclerViewProduk.setEnabled(false);
+        recyclerViewProduk.setAlpha(0.5f);
 
         arSceneView.setOnTapArPlaneListener((hitResult, plane, motionEvent) -> {
             if (isModelPlaced) {
@@ -98,10 +127,10 @@ public class SceneActivity extends AppCompatActivity {
                         AnchorNode anchorNode = new AnchorNode(anchor);
                         anchorNode.setParent(arSceneView.getArSceneView().getScene());
 
-                        Node modelNode = new Node();
+                        TransformableNode modelNode = new TransformableNode(arSceneView.getTransformationSystem());
                         modelNode.setParent(anchorNode);
                         modelNode.setRenderable(modelRenderable);
-                        modelNode.setLocalPosition(new Vector3(0f, 0f, 0f));
+                        modelNode.select();
                     })
                     .exceptionally(throwable -> {
                         isModelPlaced = false;
@@ -156,6 +185,11 @@ public class SceneActivity extends AppCompatActivity {
                 }
 
                 adapter = new Objek3DAdapter(SceneActivity.this, dataList, objek3DData -> {
+                    if (!isDataLoaded) {
+                        Toast.makeText(SceneActivity.this, "Data belum siap, harap tunggu sinkronisasi...", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
                     isModelPlaced = false;
                     selectedModelUrl = objek3DData.getGlbUrl();
                     List<Node> toRemove = new ArrayList<>();
@@ -172,8 +206,13 @@ public class SceneActivity extends AppCompatActivity {
                 });
 
                 recyclerViewProduk.setAdapter(adapter);
-
                 adapter.notifyDataSetChanged();
+
+                recyclerViewProduk.setEnabled(true);
+                recyclerViewProduk.setAlpha(1f);
+                isDataLoaded = true;
+
+
 
             }
 

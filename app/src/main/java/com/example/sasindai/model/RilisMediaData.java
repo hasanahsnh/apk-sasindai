@@ -2,8 +2,8 @@ package com.example.sasindai.model;
 
 public class RilisMediaData {
 
-    private int BeritaId;
-    private String judulArtikel, jurnalis, kontenBerita, tanggalTerbit, fotoBeritaUrl;
+    int BeritaId;
+    String judulArtikel, jurnalis, kontenBerita, tanggalTerbit, fotoBeritaUrl;
 
     public RilisMediaData(int beritaId, String judulArtikel, String jurnalis, String kontenBerita, String tanggalTerbit, String fotoBeritaUrl) {
         BeritaId = beritaId;
@@ -22,23 +22,47 @@ public class RilisMediaData {
         return BeritaId;
     }
 
+    public void setBeritaId(int beritaId) {
+        BeritaId = beritaId;
+    }
+
     public String getJudulArtikel() {
         return judulArtikel;
+    }
+
+    public void setJudulArtikel(String judulArtikel) {
+        this.judulArtikel = judulArtikel;
     }
 
     public String getJurnalis() {
         return jurnalis;
     }
 
+    public void setJurnalis(String jurnalis) {
+        this.jurnalis = jurnalis;
+    }
+
     public String getKontenBerita() {
         return kontenBerita;
+    }
+
+    public void setKontenBerita(String kontenBerita) {
+        this.kontenBerita = kontenBerita;
     }
 
     public String getTanggalTerbit() {
         return tanggalTerbit;
     }
 
+    public void setTanggalTerbit(String tanggalTerbit) {
+        this.tanggalTerbit = tanggalTerbit;
+    }
+
     public String getFotoBeritaUrl() {
         return fotoBeritaUrl;
+    }
+
+    public void setFotoBeritaUrl(String fotoBeritaUrl) {
+        this.fotoBeritaUrl = fotoBeritaUrl;
     }
 }
