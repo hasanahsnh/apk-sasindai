@@ -29,9 +29,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.sasindai.adapter.BottomSheetProdukAdapter;
 import com.example.sasindai.adapter.ProdukFotoSliderAdapter;
 import com.example.sasindai.adapter.UkuranListAdapter;
+import com.example.sasindai.adapter.UlasanListAdapter;
 import com.example.sasindai.isLayanan.IsLayanan;
+import com.example.sasindai.model.ItemProdukOrderData;
 import com.example.sasindai.model.KeranjangData;
 import com.example.sasindai.model.ProdukData;
+import com.example.sasindai.model.UlasanData;
 import com.example.sasindai.model.VarianProduk;
 import com.example.sasindai.theme.ThemeActivity;
 import com.facebook.shimmer.ShimmerFrameLayout;
@@ -57,7 +60,7 @@ import java.util.Locale;
 import java.util.Map;
 
 public class DetailProdukActivity extends AppCompatActivity {
-    private RecyclerView sliderGambarProduk, recyclerViewUkuranVarian;
+    private RecyclerView sliderGambarProduk, recyclerViewUkuranVarian, rvDaftarUlasan;
     private List<String> gambarProduk = new ArrayList<>();
     private List<VarianProduk> ukuranData = new ArrayList<>();
     private ProdukData produkData;
@@ -68,6 +71,9 @@ public class DetailProdukActivity extends AppCompatActivity {
     FirebaseUser currentUser;
     DatabaseReference keranjangRef;
     FloatingActionButton fabKembaliDetailProduk;
+    UlasanListAdapter adapterDaftarUlasan;
+    List<UlasanData> dataUlasan = new ArrayList<>();
+    String produkJson, idProduk, idVarian, namaVarian;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +99,7 @@ public class DetailProdukActivity extends AppCompatActivity {
         btnTambahProdukDetail = findViewById(R.id.btnTambahProdukDetail);
         btnBeliSekarang = findViewById(R.id.btnBeliSekarang);
         fabKembaliDetailProduk = findViewById(R.id.fabKembaliDetailProduk);
+        rvDaftarUlasan = findViewById(R.id.rvDaftarUlasan);
         // End inisial
 
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -102,6 +109,10 @@ public class DetailProdukActivity extends AppCompatActivity {
                 finish();
             });
         }
+
+        produkJson = getIntent().getStringExtra("produk");
+        produkData = new Gson().fromJson(produkJson, ProdukData.class);
+        idProduk = produkData.getIdProduk();
 
         // Show bottom sheet
         btnTambahProdukDetail.setOnClickListener(v -> {
@@ -144,6 +155,12 @@ public class DetailProdukActivity extends AppCompatActivity {
         recyclerViewUkuranVarian.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         recyclerViewUkuranVarian.setAdapter(adapterUkuran);
         // End ukuran
+
+        // Adpter daftar ulasan
+        adapterDaftarUlasan = new UlasanListAdapter(this, dataUlasan);
+        rvDaftarUlasan.setNestedScrollingEnabled(false);
+        rvDaftarUlasan.setLayoutManager(new LinearLayoutManager(this));
+        rvDaftarUlasan.setAdapter(adapterDaftarUlasan);
 
         // Intent data ke detail
         tampilkanDetail();
@@ -496,8 +513,8 @@ public class DetailProdukActivity extends AppCompatActivity {
 
     // Tampilkan detail produk
     private void tampilkanDetail() {
-        String produkJson = getIntent().getStringExtra("produk");
-        produkData = new Gson().fromJson(produkJson, ProdukData.class);
+        // tampilkan daftar ulasan per produk
+        ambilUlasan();
 
         // Nampilkan data nama produk
         if (produkData.getNamaProduk() != null && namaProduk != null) {
@@ -601,7 +618,44 @@ public class DetailProdukActivity extends AppCompatActivity {
         // End deskripsi
 
         adapter.notifyDataSetChanged();
+        adapterUkuran.notifyDataSetChanged();
     }
+
+    private void ambilUlasan() {
+        Map<String, VarianProduk> semuaVarian = produkData.getVarian();
+
+        if (semuaVarian != null) {
+            for (Map.Entry<String, VarianProduk> entry : semuaVarian.entrySet()) {
+                String idVarian = entry.getKey();
+                VarianProduk varian = entry.getValue();
+
+                if (varian == null) continue;
+
+                // Buat produkItem untuk ulasan
+                ItemProdukOrderData produkItem = new ItemProdukOrderData();
+                produkItem.setIdProduk(produkData.getIdProduk());
+                produkItem.setIdVarian(idVarian);
+                produkItem.setNamaVarian(varian.getNama());
+                produkItem.setNamaProduk(produkData.getNamaProduk());
+                produkItem.setVarianUrl(varian.getGambar());
+                produkItem.setHarga(varian.getHarga());
+
+                // Ambil ulasan dari varian
+                Map<String, UlasanData> daftarUlasan = varian.getUlasan();
+                if (daftarUlasan != null) {
+                    for (UlasanData ulasan : daftarUlasan.values()) {
+                        if (ulasan == null) continue;
+                        ulasan.setItemProduk(produkItem); // Penting!
+                        dataUlasan.add(ulasan);
+                    }
+                }
+            }
+        }
+
+        // Update RecyclerView satu kali saja
+        adapterDaftarUlasan.notifyDataSetChanged();
+    }
+
     // End tampilkan produk
 
     @Override

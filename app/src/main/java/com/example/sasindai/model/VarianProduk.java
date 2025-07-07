@@ -1,5 +1,7 @@
 package com.example.sasindai.model;
 
+import java.util.Map;
+
 public class VarianProduk {
     private String
             idVarian,
@@ -11,13 +13,14 @@ public class VarianProduk {
             stok;
 
     private float berat;
+    private Map<String, UlasanData> ulasan;
 
     public VarianProduk() {
         // Diperlukan untuk firebase
     }
 
     // Gen constructor
-    public VarianProduk(String idVarian, String gambar, String nama, String size, int harga, int stok, float berat) {
+    public VarianProduk(Map<String, UlasanData> ulasan, String idVarian, String gambar, String nama, String size, int harga, int stok, float berat) {
         this.gambar = gambar;
         this.nama = nama;
         this.size = size;
@@ -25,10 +28,19 @@ public class VarianProduk {
         this.stok = stok;
         this.berat = berat;
         this.idVarian = idVarian;
+        this.ulasan = ulasan;
     }
 
     // Gen getter, setter
 
+
+    public Map<String, UlasanData> getUlasan() {
+        return ulasan;
+    }
+
+    public void setUlasan(Map<String, UlasanData> ulasan) {
+        this.ulasan = ulasan;
+    }
 
     public String getIdVarian() {
         return idVarian;

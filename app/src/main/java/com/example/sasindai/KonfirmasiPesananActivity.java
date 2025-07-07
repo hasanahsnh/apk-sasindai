@@ -127,12 +127,20 @@ public class KonfirmasiPesananActivity extends AppCompatActivity {
                         .child(idProduk)
                         .child("varian")
                         .child(idVarian)
-                        .child("ulasan")
-                        .child(uid);
+                        .child("ulasan");
 
-                ulasanRef.child("rating").setValue(rating);
-                ulasanRef.child("komentar").setValue(komentar);
-                ulasanRef.child("waktu").setValue(ServerValue.TIMESTAMP);
+                // Buat random id ulasan
+                String idUlasan = ulasanRef.push().getKey();
+
+                if (idUlasan != null) {
+                    DatabaseReference currentUlasan = ulasanRef.child(idUlasan);
+                    currentUlasan.child("idVarian").setValue(idVarian);
+                    currentUlasan.child("idProduk").setValue(idProduk);
+                    currentUlasan.child("uidPembeli").setValue(uid);
+                    currentUlasan.child("rating").setValue(rating);
+                    currentUlasan.child("komentar").setValue(komentar);
+                    currentUlasan.child("waktu").setValue(ServerValue.TIMESTAMP);
+                }
             }
         }
 

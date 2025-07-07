@@ -55,6 +55,12 @@ public class MainHostActivity extends AppCompatActivity {
         sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
         isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false);
 
+        SharedPreferences prefs = getSharedPreferences("app_prefs", MODE_PRIVATE);
+        if (!prefs.contains("install_time")) {
+            long currentTime = System.currentTimeMillis();
+            prefs.edit().putLong("install_time", currentTime).apply();
+        }
+
         /* Jika widget bottom nav ditemukan, maka
         aktifkan indikator pertama di nav_beranda, dan
         posisikan sebagai BerandaFragment: */

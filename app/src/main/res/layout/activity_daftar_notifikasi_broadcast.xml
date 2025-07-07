@@ -38,6 +38,13 @@
 
     </androidx.appcompat.widget.Toolbar>
 
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/notifEmpty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:lottie_rawRes="@raw/ghost"
+        android:visibility="gone"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvDaftarNotifikasi"
         android:layout_width="match_parent"

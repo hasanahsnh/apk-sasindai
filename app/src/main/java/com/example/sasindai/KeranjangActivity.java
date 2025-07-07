@@ -294,6 +294,8 @@ public class KeranjangActivity extends AppCompatActivity {
         progressBarKeranjangDataNotFound.setVisibility(View.VISIBLE);
         progressBarKeranjangDataNotFound.setRepeatCount(LottieDrawable.INFINITE);
         progressBarKeranjangDataNotFound.playAnimation();
+        progressBarKeranjangDataNotFound.setAlpha(0f);
+        progressBarKeranjangDataNotFound.animate().alpha(1f).setDuration(400).start(); // animasi fade-in
     }
 
     @Override
