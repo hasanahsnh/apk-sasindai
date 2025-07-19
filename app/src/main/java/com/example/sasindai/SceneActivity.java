@@ -131,6 +131,7 @@ public class SceneActivity extends AppCompatActivity {
                         modelNode.setParent(anchorNode);
                         modelNode.setRenderable(modelRenderable);
                         modelNode.select();
+                        modelNode.getRotationController().setEnabled(true);
                     })
                     .exceptionally(throwable -> {
                         isModelPlaced = false;
